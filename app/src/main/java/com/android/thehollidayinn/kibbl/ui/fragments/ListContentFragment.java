@@ -17,11 +17,20 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.android.thehollidayinn.kibbl.R;
+import com.android.thehollidayinn.kibbl.data.models.Pet;
+import com.android.thehollidayinn.kibbl.data.remote.ApiUtils;
+import com.android.thehollidayinn.kibbl.data.remote.KibblAPIInterface;
 import com.android.thehollidayinn.kibbl.ui.activities.PetDetailActivity;
 
 
+import java.util.ArrayList;
+import java.util.List;
+
 import rx.Observable;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
 
 /**
@@ -29,13 +38,15 @@ import rx.subjects.PublishSubject;
  */
 
 public class ListContentFragment extends Fragment {
+    private ContentAdapter adapter;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         RecyclerView recyclerView = (RecyclerView) inflater.inflate(
                 R.layout.recycler_view, container, false);
 
-        ContentAdapter adapter = new ContentAdapter(recyclerView.getContext());
+        adapter = new ContentAdapter(recyclerView.getContext());
         adapter.getPositionClicks().subscribe(new Action1<String>() {
             @Override
             public void call(String s) {
@@ -49,7 +60,32 @@ public class ListContentFragment extends Fragment {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
+        loadPets();
+
         return recyclerView;
+    }
+
+    private void loadPets() {
+        KibblAPIInterface mService = ApiUtils.getKibbleService();
+        mService.getPets()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<List<Pet>>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.v("test", e.toString());
+                    }
+
+                    @Override
+                    public void onNext(List<Pet> petList) {
+                        adapter.updatePets(petList);
+                    }
+                });
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -63,6 +99,7 @@ public class ListContentFragment extends Fragment {
             description = (TextView) itemView.findViewById(R.id.list_desc);
         }
     }
+
     /**
      * Adapter to display recycler view.
      */
@@ -74,6 +111,8 @@ public class ListContentFragment extends Fragment {
         private final Drawable[] mPlaceAvators;
 
         private final PublishSubject<String> onClickSubject = PublishSubject.create();
+
+        private List<Pet> pets = new ArrayList<Pet>();
 
         public ContentAdapter(Context context) {
             Resources resources = context.getResources();
@@ -94,11 +133,16 @@ public class ListContentFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(ViewHolder holder, final int position) {
-            holder.avator.setImageDrawable(mPlaceAvators[position % mPlaceAvators.length]);
-            holder.name.setText(mPlaces[position % mPlaces.length]);
-            holder.description.setText(mPlaceDesc[position % mPlaceDesc.length]);
-
-//            final String element = mPlaces[position];
+            if (pets.size() > position) {
+                Pet currentPet = pets.get(position);
+                holder.avator.setImageDrawable(mPlaceAvators[position % mPlaceAvators.length]);
+                holder.name.setText(currentPet.getName());
+                holder.description.setText(currentPet.getDescription());
+            } else {
+                holder.avator.setImageDrawable(mPlaceAvators[position % mPlaceAvators.length]);
+                holder.name.setText(mPlaces[position % mPlaces.length]);
+                holder.description.setText(mPlaceDesc[position % mPlaceDesc.length]);
+            }
 
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -115,6 +159,11 @@ public class ListContentFragment extends Fragment {
 
         public Observable<String> getPositionClicks(){
             return onClickSubject.asObservable();
+        }
+
+        public void updatePets(List<Pet> pets) {
+            this.pets = pets;
+            notifyDataSetChanged();
         }
     }
 }

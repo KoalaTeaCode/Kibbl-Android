@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.android.thehollidayinn.kibbl">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -21,6 +23,10 @@
         <activity
             android:name=".ui.activities.PetDetailActivity"
             android:label="@string/title_activity_pet_detail"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ui.activities.FiltersActivity"
+            android:label="@string/title_activity_filters"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 

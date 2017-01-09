@@ -1,5 +1,6 @@
 package com.android.thehollidayinn.kibbl;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
@@ -11,11 +12,25 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.android.thehollidayinn.kibbl.data.models.Pet;
+import com.android.thehollidayinn.kibbl.data.models.PetResponse;
+import com.android.thehollidayinn.kibbl.data.remote.ApiUtils;
+import com.android.thehollidayinn.kibbl.data.remote.KibblAPIInterface;
+import com.android.thehollidayinn.kibbl.ui.activities.FiltersActivity;
 import com.android.thehollidayinn.kibbl.ui.adapters.MainTabsAdapter;
 import com.android.thehollidayinn.kibbl.ui.fragments.ListContentFragment;
+
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Response;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -49,6 +64,8 @@ public class MainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            Intent filterIntent = new Intent(this, FiltersActivity.class);
+            startActivity(filterIntent);
             return true;
         } else if (id == android.R.id.home) {
             mDrawerLayout.openDrawer(GravityCompat.START);
