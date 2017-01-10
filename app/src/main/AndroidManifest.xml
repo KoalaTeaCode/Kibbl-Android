@@ -27,6 +27,10 @@
         <activity
             android:name=".ui.activities.FiltersActivity"
             android:label="@string/title_activity_filters"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ui.activities.LoginRegisterActivity"
+            android:label="@string/title_activity_login_register"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 

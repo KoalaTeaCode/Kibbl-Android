@@ -16,4 +16,5 @@
     <string name="detail_location">"8 Rue Scribe, 75009 Paris, France"</string>
     <string name="title_activity_pet_detail">PetDetailActivity</string>
     <string name="title_activity_filters">FiltersActivity</string>
+    <string name="title_activity_login_register">LoginRegisterActivity</string>
 </resources>

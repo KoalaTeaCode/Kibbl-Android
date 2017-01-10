@@ -1,5 +1,6 @@
 package com.android.thehollidayinn.kibbl;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -16,11 +17,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.android.thehollidayinn.kibbl.data.models.Pet;
-import com.android.thehollidayinn.kibbl.data.models.PetResponse;
-import com.android.thehollidayinn.kibbl.data.remote.ApiUtils;
-import com.android.thehollidayinn.kibbl.data.remote.KibblAPIInterface;
 import com.android.thehollidayinn.kibbl.ui.activities.FiltersActivity;
+import com.android.thehollidayinn.kibbl.ui.activities.LoginRegisterActivity;
 import com.android.thehollidayinn.kibbl.ui.adapters.MainTabsAdapter;
 import com.android.thehollidayinn.kibbl.ui.fragments.ListContentFragment;
 
@@ -35,6 +33,7 @@ import rx.schedulers.Schedulers;
 public class MainActivity extends AppCompatActivity {
 
     private DrawerLayout mDrawerLayout;
+    private Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +42,8 @@ public class MainActivity extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        context = this;
 
         setUpNavBar();
         setUpTabs();
@@ -99,6 +100,10 @@ public class MainActivity extends AppCompatActivity {
                         menuItem.setChecked(true);
 
                         // TODO: handle navigation
+                        if (menuItem.getTitle().equals("Login/Register")) {
+                            Intent loginRegisterIntent = new Intent(context, LoginRegisterActivity.class);
+                            startActivity(loginRegisterIntent);
+                        }
 
                         // Closing drawer on item click
                         mDrawerLayout.closeDrawers();

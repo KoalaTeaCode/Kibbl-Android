@@ -13,5 +13,10 @@
             android:icon="@drawable/ic_bookmark_border_black_24dp"
             android:tint="@color/button_grey"
             android:title="About Us" />
+
+        <item
+            android:icon="@drawable/ic_bookmark_border_black_24dp"
+            android:tint="@color/button_grey"
+            android:title="Login/Register" />
     </group>
 </menu>
