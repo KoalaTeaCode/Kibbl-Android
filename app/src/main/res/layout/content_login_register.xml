@@ -13,4 +13,10 @@
     tools:context="com.android.thehollidayinn.kibbl.ui.activities.LoginRegisterActivity"
     tools:showIn="@layout/activity_login_register">
 
+    <FrameLayout android:id="@+id/frame_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="?android:attr/detailsElementBackground" />
+
+
 </RelativeLayout>
