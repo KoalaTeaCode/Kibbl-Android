@@ -49,7 +49,6 @@ public class LoginFragment extends Fragment {
             public void onClick(View view) {
                 String email = emailEditText.getText().toString();
                 String password = passwordEditText.getText().toString();
-                Log.v("test", email + password);
                 loginUser(email, password);
             }
         });

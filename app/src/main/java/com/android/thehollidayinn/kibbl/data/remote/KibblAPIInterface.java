@@ -23,4 +23,7 @@ public interface KibblAPIInterface {
 
     @POST("login")
     Observable<UserResponse> login(@Body Map<String, String> userLogin);
+
+    @POST("register")
+    Observable<UserResponse> register(@Body Map<String, String> userLogin);
 }
