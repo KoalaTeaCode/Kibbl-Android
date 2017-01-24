@@ -20,4 +20,7 @@
 
     <string name="action_login">Login</string>
     <string name="action_register">Register</string>
+
+    <string name="user_token_preference">UserTokenPreference</string>
+    <string name="app_prefrences">KibblAppPref</string>
 </resources>

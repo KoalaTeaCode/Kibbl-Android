@@ -13,7 +13,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class ApiUtils {
 //    public static final String BASE_URL = "https://kibbl.herokuapp.com/api/v1/";
 
-    public static final String BASE_URL = "http://192.168.1.109:3000/api/v1/";
+    public static final String BASE_URL = "http://10.1.10.107:3000/api/v1/";
 
     private static OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
 
@@ -30,7 +30,7 @@ public class ApiUtils {
 //        }
 
         OkHttpClient client = new OkHttpClient.Builder()
-                .addInterceptor(logging)
+//                .addInterceptor(logging)
                 .build();
 
         Retrofit retrofit = builder

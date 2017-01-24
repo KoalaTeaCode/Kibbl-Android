@@ -17,6 +17,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.android.thehollidayinn.kibbl.data.models.UserLogin;
 import com.android.thehollidayinn.kibbl.ui.activities.FiltersActivity;
 import com.android.thehollidayinn.kibbl.ui.activities.LoginRegisterActivity;
 import com.android.thehollidayinn.kibbl.ui.adapters.MainTabsAdapter;
@@ -44,6 +45,8 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         context = this;
+
+        UserLogin userLogin = UserLogin.getInstance(this);
 
         setUpNavBar();
         setUpTabs();
