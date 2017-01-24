@@ -66,7 +66,7 @@ public class ListContentFragment extends Fragment {
     }
 
     private void loadPets() {
-        KibblAPIInterface mService = ApiUtils.getKibbleService();
+        KibblAPIInterface mService = ApiUtils.getKibbleService(getActivity());
         mService.getPets()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

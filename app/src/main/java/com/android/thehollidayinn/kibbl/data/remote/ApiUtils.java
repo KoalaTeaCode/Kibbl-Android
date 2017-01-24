@@ -1,6 +1,16 @@
 package com.android.thehollidayinn.kibbl.data.remote;
 
+import android.content.Context;
+import android.util.Log;
+
+import com.android.thehollidayinn.kibbl.data.models.UserLogin;
+
+import java.io.IOException;
+
+import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
@@ -23,13 +33,26 @@ public class ApiUtils {
                     .addConverterFactory(GsonConverterFactory.create())
                     .baseUrl(BASE_URL);
 
-    public static KibblAPIInterface getKibbleService() {
+    public static KibblAPIInterface getKibbleService(Context context) {
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
 //        if (BuildConfig.DEBUG) {
             logging.setLevel(HttpLoggingInterceptor.Level.BODY);
 //        }
 
+        final UserLogin userLogin = UserLogin.getInstance(context);
+
         OkHttpClient client = new OkHttpClient.Builder()
+                .addInterceptor(new Interceptor() {
+                    @Override
+                    public Response intercept(Interceptor.Chain chain) throws IOException {
+                        Request.Builder ongoing = chain.request().newBuilder();
+                        ongoing.addHeader("Accept", "application/json;versions=1");
+                        if (!userLogin.getToken().equals("")) {
+                            ongoing.addHeader("Authorization", userLogin.getToken());
+                        }
+                        return chain.proceed(ongoing.build());
+                    }
+                })
 //                .addInterceptor(logging)
                 .build();
 

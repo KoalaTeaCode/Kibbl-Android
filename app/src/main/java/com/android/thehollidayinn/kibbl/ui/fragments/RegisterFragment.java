@@ -88,7 +88,7 @@ public class RegisterFragment extends Fragment {
         userLoginMap.put("email", email);
         userLoginMap.put("password", password);
 
-        KibblAPIInterface mService = ApiUtils.getKibbleService();
+        KibblAPIInterface mService = ApiUtils.getKibbleService(getActivity());
         mService.register(userLoginMap)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
