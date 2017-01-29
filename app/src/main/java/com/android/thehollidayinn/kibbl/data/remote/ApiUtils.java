@@ -53,7 +53,7 @@ public class ApiUtils {
                         return chain.proceed(ongoing.build());
                     }
                 })
-//                .addInterceptor(logging)
+                .addInterceptor(logging)
                 .build();
 
         Retrofit retrofit = builder

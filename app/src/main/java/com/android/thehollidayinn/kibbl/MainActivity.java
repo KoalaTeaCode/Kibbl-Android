@@ -17,7 +17,11 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.android.thehollidayinn.kibbl.data.models.GenericResponse;
+import com.android.thehollidayinn.kibbl.data.models.PetResponse;
 import com.android.thehollidayinn.kibbl.data.models.UserLogin;
+import com.android.thehollidayinn.kibbl.data.remote.ApiUtils;
+import com.android.thehollidayinn.kibbl.data.remote.KibblAPIInterface;
 import com.android.thehollidayinn.kibbl.ui.activities.FiltersActivity;
 import com.android.thehollidayinn.kibbl.ui.activities.LoginRegisterActivity;
 import com.android.thehollidayinn.kibbl.ui.adapters.MainTabsAdapter;
@@ -50,6 +54,27 @@ public class MainActivity extends AppCompatActivity {
 
         setUpNavBar();
         setUpTabs();
+
+        KibblAPIInterface mService = ApiUtils.getKibbleService(this);
+        mService.getPetDetail("5871baf036858c0cda0aa60e")
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<GenericResponse>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.v("test", e.toString());
+                    }
+
+                    @Override
+                    public void onNext(GenericResponse petResponse) {
+                        Log.v("testshhit", String.valueOf(petResponse.data));
+                    }
+                });
     }
 
     @Override

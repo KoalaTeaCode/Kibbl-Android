@@ -18,6 +18,7 @@ import android.widget.TextView;
 
 import com.android.thehollidayinn.kibbl.R;
 import com.android.thehollidayinn.kibbl.data.models.Pet;
+import com.android.thehollidayinn.kibbl.data.models.PetResponse;
 import com.android.thehollidayinn.kibbl.data.remote.ApiUtils;
 import com.android.thehollidayinn.kibbl.data.remote.KibblAPIInterface;
 import com.android.thehollidayinn.kibbl.ui.activities.PetDetailActivity;
@@ -70,7 +71,7 @@ public class ListContentFragment extends Fragment {
         mService.getPets()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<List<Pet>>() {
+                .subscribe(new Subscriber<PetResponse>() {
                     @Override
                     public void onCompleted() {
 
@@ -82,8 +83,8 @@ public class ListContentFragment extends Fragment {
                     }
 
                     @Override
-                    public void onNext(List<Pet> petList) {
-                        adapter.updatePets(petList);
+                    public void onNext(PetResponse petResponse) {
+                        adapter.updatePets(petResponse.getPets());
                     }
                 });
     }
