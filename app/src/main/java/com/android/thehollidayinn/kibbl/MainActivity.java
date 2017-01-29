@@ -131,9 +131,13 @@ public class MainActivity extends AppCompatActivity {
 
     private void setupViewPager(ViewPager viewPager) {
         MainTabsAdapter adapter = new MainTabsAdapter(getSupportFragmentManager());
-        adapter.addFragment(new ListContentFragment(), "Dogs");
-        adapter.addFragment(new ListContentFragment(), "Cats");
-        adapter.addFragment(new ListContentFragment(), "Birds");
+
+        adapter.addFragment(ListContentFragment.newInstance(""), "Recommended");
+        adapter.addFragment(ListContentFragment.newInstance("Dog"), "Dogs");
+        adapter.addFragment(ListContentFragment.newInstance("Cat"), "Cats");
+        adapter.addFragment(ListContentFragment.newInstance("Small & Furry"), "Birds");
+        adapter.addFragment(ListContentFragment.newInstance("Rabit"), "Rabit");
+        adapter.addFragment(ListContentFragment.newInstance("Horse"), "Horse");
 //        adapter.addFragment(new TileContentFragment(), "Tile");
 //        adapter.addFragment(new CardContentFragment(), "Card");
         viewPager.setAdapter(adapter);

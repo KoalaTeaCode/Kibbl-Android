@@ -13,6 +13,7 @@ import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
+import retrofit2.http.QueryMap;
 import rx.Observable;
 
 /**
@@ -27,7 +28,7 @@ public interface KibblAPIInterface {
     Observable<UserResponse> register(@Body Map<String, String> userLogin);
 
     @GET("pets")
-    Observable<PetResponse> getPets();
+    Observable<PetResponse> getPets(@QueryMap Map<String, String> options);
 
     @GET("pets/{petId}")
     Observable<GenericResponse<Pet>> getPetDetail(@Path("petId") String petId);

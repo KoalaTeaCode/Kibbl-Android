@@ -26,7 +26,9 @@ import com.squareup.picasso.Picasso;
 
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import rx.Observable;
 import rx.Subscriber;
@@ -42,6 +44,21 @@ import rx.subjects.PublishSubject;
 public class ListContentFragment extends Fragment {
     private ContentAdapter adapter;
     private static Context context;
+    private String filter;
+
+    public ListContentFragment() {
+    }
+
+    public static ListContentFragment newInstance(String filter) {
+        ListContentFragment f = new ListContentFragment();
+
+        // Supply index input as an argument.
+        Bundle args = new Bundle();
+        args.putString("FILTER", filter);
+        f.setArguments(args);
+
+        return f;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -65,6 +82,7 @@ public class ListContentFragment extends Fragment {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
+        this.filter = getArguments().getString("FILTER");
         loadPets();
 
         return recyclerView;
@@ -72,7 +90,13 @@ public class ListContentFragment extends Fragment {
 
     private void loadPets() {
         KibblAPIInterface mService = ApiUtils.getKibbleService(getActivity());
-        mService.getPets()
+
+        Map<String, String> query = new HashMap<>();
+        if (!this.filter.isEmpty()) {
+            query.put("type", this.filter);
+        }
+
+        mService.getPets(query)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<PetResponse>() {
