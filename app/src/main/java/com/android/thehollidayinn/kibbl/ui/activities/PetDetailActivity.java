@@ -6,11 +6,22 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 
 import com.android.thehollidayinn.kibbl.R;
+import com.android.thehollidayinn.kibbl.data.models.GenericResponse;
+import com.android.thehollidayinn.kibbl.data.models.Pet;
+import com.android.thehollidayinn.kibbl.data.remote.ApiUtils;
+import com.android.thehollidayinn.kibbl.data.remote.KibblAPIInterface;
+
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 public class PetDetailActivity extends AppCompatActivity {
+
+    private CollapsingToolbarLayout collapsingToolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,12 +32,40 @@ public class PetDetailActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        // Set Collapsing Toolbar layout to the screen
-        CollapsingToolbarLayout collapsingToolbar =
-                (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
-        // Set title of Detail page
-         collapsingToolbar.setTitle(getString(R.string.item_title));
+        Bundle extras = getIntent().getExtras();
+        String petId = extras.getString("PET_ID");
+        loadPet(petId);
 
+
+        collapsingToolbar =
+                (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
     }
 
+    private void loadPet(String petId) {
+        KibblAPIInterface mService = ApiUtils.getKibbleService(this);
+        mService.getPetDetail(petId)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<GenericResponse>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.v("test", e.toString());
+                    }
+
+                    @Override
+                    public void onNext(GenericResponse petResponse) {
+                        Pet pet = (Pet) petResponse.data;
+                        displayPetInfo(pet);
+                    }
+                });
+    }
+
+    private void displayPetInfo(Pet pet) {
+        collapsingToolbar.setTitle(pet.getName());
+    }
 }

@@ -50,9 +50,9 @@ public class ListContentFragment extends Fragment {
         adapter = new ContentAdapter(recyclerView.getContext());
         adapter.getPositionClicks().subscribe(new Action1<String>() {
             @Override
-            public void call(String s) {
-                Log.v("test", "test");
+            public void call(String petId) {
                 Intent detailViewIntent = new Intent(ListContentFragment.this.getContext(), PetDetailActivity.class);
+                detailViewIntent.putExtra("PET_ID", petId);
                 ListContentFragment.this.getActivity().startActivity(detailViewIntent);
             }
         });
@@ -148,7 +148,8 @@ public class ListContentFragment extends Fragment {
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    onClickSubject.onNext(String.valueOf(position));
+                    Pet currentPet = pets.get(position);
+                    onClickSubject.onNext(String.valueOf(currentPet.getId()));
                 }
             });
         }

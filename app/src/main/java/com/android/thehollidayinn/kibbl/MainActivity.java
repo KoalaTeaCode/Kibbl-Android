@@ -54,27 +54,6 @@ public class MainActivity extends AppCompatActivity {
 
         setUpNavBar();
         setUpTabs();
-
-        KibblAPIInterface mService = ApiUtils.getKibbleService(this);
-        mService.getPetDetail("5871baf036858c0cda0aa60e")
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<GenericResponse>() {
-                    @Override
-                    public void onCompleted() {
-
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Log.v("test", e.toString());
-                    }
-
-                    @Override
-                    public void onNext(GenericResponse petResponse) {
-                        Log.v("testshhit", String.valueOf(petResponse.data));
-                    }
-                });
     }
 
     @Override
