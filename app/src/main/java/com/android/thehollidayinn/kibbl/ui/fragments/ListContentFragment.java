@@ -22,6 +22,7 @@ import com.android.thehollidayinn.kibbl.data.models.PetResponse;
 import com.android.thehollidayinn.kibbl.data.remote.ApiUtils;
 import com.android.thehollidayinn.kibbl.data.remote.KibblAPIInterface;
 import com.android.thehollidayinn.kibbl.ui.activities.PetDetailActivity;
+import com.squareup.picasso.Picasso;
 
 
 import java.util.ArrayList;
@@ -40,12 +41,15 @@ import rx.subjects.PublishSubject;
 
 public class ListContentFragment extends Fragment {
     private ContentAdapter adapter;
+    private static Context context;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         RecyclerView recyclerView = (RecyclerView) inflater.inflate(
                 R.layout.recycler_view, container, false);
+
+        this.context = getContext();
 
         adapter = new ContentAdapter(recyclerView.getContext());
         adapter.getPositionClicks().subscribe(new Action1<String>() {
@@ -93,6 +97,7 @@ public class ListContentFragment extends Fragment {
         public ImageView avator;
         public TextView name;
         public TextView description;
+
         public ViewHolder(LayoutInflater inflater, ViewGroup parent) {
             super(inflater.inflate(R.layout.item_list, parent, false));
             avator = (ImageView) itemView.findViewById(R.id.list_avatar);
@@ -136,7 +141,14 @@ public class ListContentFragment extends Fragment {
         public void onBindViewHolder(ViewHolder holder, final int position) {
             if (pets.size() > position) {
                 Pet currentPet = pets.get(position);
-                holder.avator.setImageDrawable(mPlaceAvators[position % mPlaceAvators.length]);
+
+                String petImageUrl = currentPet.getMedia().get(3);
+                Picasso.with(context)
+                        .load(petImageUrl)
+                        .resize(50, 50)
+                        .centerCrop()
+                        .into(holder.avator);
+
                 holder.name.setText(currentPet.getName());
                 holder.description.setText(currentPet.getDescription());
             } else {
