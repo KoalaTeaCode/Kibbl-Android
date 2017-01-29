@@ -8,12 +8,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.android.thehollidayinn.kibbl.R;
 import com.android.thehollidayinn.kibbl.data.models.GenericResponse;
 import com.android.thehollidayinn.kibbl.data.models.Pet;
 import com.android.thehollidayinn.kibbl.data.remote.ApiUtils;
 import com.android.thehollidayinn.kibbl.data.remote.KibblAPIInterface;
+import com.squareup.picasso.Picasso;
 
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
@@ -22,6 +25,8 @@ import rx.schedulers.Schedulers;
 public class PetDetailActivity extends AppCompatActivity {
 
     private CollapsingToolbarLayout collapsingToolbar;
+    private ImageView image;
+    private TextView descriptionTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,9 +41,10 @@ public class PetDetailActivity extends AppCompatActivity {
         String petId = extras.getString("PET_ID");
         loadPet(petId);
 
-
         collapsingToolbar =
                 (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
+        image = (ImageView) findViewById(R.id.image);
+        descriptionTextView = (TextView) findViewById(R.id.description);
     }
 
     private void loadPet(String petId) {
@@ -67,5 +73,12 @@ public class PetDetailActivity extends AppCompatActivity {
 
     private void displayPetInfo(Pet pet) {
         collapsingToolbar.setTitle(pet.getName());
+        descriptionTextView.setText(pet.getDescription());
+
+        Picasso.with(this)
+                .load(pet.getMedia().get(3))
+//                .resize(300, 300)
+//                .centerCrop()
+                .into(image);
     }
 }
