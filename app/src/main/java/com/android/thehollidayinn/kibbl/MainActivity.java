@@ -17,11 +17,13 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.android.thehollidayinn.kibbl.data.models.Favorite;
 import com.android.thehollidayinn.kibbl.data.models.GenericResponse;
 import com.android.thehollidayinn.kibbl.data.models.PetResponse;
 import com.android.thehollidayinn.kibbl.data.models.UserLogin;
 import com.android.thehollidayinn.kibbl.data.remote.ApiUtils;
 import com.android.thehollidayinn.kibbl.data.remote.KibblAPIInterface;
+import com.android.thehollidayinn.kibbl.ui.activities.FavoritesActivity;
 import com.android.thehollidayinn.kibbl.ui.activities.FiltersActivity;
 import com.android.thehollidayinn.kibbl.ui.activities.LoginRegisterActivity;
 import com.android.thehollidayinn.kibbl.ui.adapters.MainTabsAdapter;
@@ -115,6 +117,9 @@ public class MainActivity extends AppCompatActivity {
                         if (menuItem.getTitle().equals("Login/Register")) {
                             Intent loginRegisterIntent = new Intent(context, LoginRegisterActivity.class);
                             startActivity(loginRegisterIntent);
+                        } else if (menuItem.getItemId() == R.id.favorites) {
+                            Intent filterIntent = new Intent(context, FavoritesActivity.class);
+                            startActivity(filterIntent);
                         }
 
                         // Closing drawer on item click

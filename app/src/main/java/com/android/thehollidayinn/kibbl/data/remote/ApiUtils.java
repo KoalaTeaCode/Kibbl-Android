@@ -48,7 +48,7 @@ public class ApiUtils {
                         Request.Builder ongoing = chain.request().newBuilder();
                         ongoing.addHeader("Accept", "application/json;versions=1");
                         if (!userLogin.getToken().equals("")) {
-                            ongoing.addHeader("Authorization", userLogin.getToken());
+                            ongoing.addHeader("x-access-token", userLogin.getToken());
                         }
                         return chain.proceed(ongoing.build());
                     }

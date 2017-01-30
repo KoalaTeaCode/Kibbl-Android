@@ -1,5 +1,6 @@
 package com.android.thehollidayinn.kibbl.data.remote;
 
+import com.android.thehollidayinn.kibbl.data.models.Favorite;
 import com.android.thehollidayinn.kibbl.data.models.GenericResponse;
 import com.android.thehollidayinn.kibbl.data.models.Pet;
 import com.android.thehollidayinn.kibbl.data.models.PetResponse;
@@ -35,4 +36,7 @@ public interface KibblAPIInterface {
 
     @POST("pets/{petId}/favorite")
     Observable<Pet> favoritePet(@Path("petId") String petId);
+
+    @GET("favorites")
+    Observable<GenericResponse<List<Favorite>>> getFavorites();
 }
