@@ -39,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
 
     private DrawerLayout mDrawerLayout;
     private Context context;
+    private UserLogin user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
 
         context = this;
 
-        UserLogin userLogin = UserLogin.getInstance(this);
+        user = UserLogin.getInstance(this);
 
         setUpNavBar();
         setUpTabs();
@@ -95,6 +96,10 @@ public class MainActivity extends AppCompatActivity {
             indicator.setTint(ResourcesCompat.getColor(getResources(),R.color.white,getTheme()));
             supportActionBar.setHomeAsUpIndicator(indicator);
             supportActionBar.setDisplayHomeAsUpEnabled(true);
+        }
+
+        if (user.isLoggedIn()) {
+            navigationView.getMenu().findItem(R.id.login_register).setVisible(false);
         }
 
         // Set behavior of Navigation drawer
