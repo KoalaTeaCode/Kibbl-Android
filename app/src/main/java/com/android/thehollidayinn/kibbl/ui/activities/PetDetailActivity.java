@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -27,6 +28,8 @@ public class PetDetailActivity extends AppCompatActivity {
     private CollapsingToolbarLayout collapsingToolbar;
     private ImageView image;
     private TextView descriptionTextView;
+    private String petId;
+    private Button favoriteButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,13 +41,48 @@ public class PetDetailActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         Bundle extras = getIntent().getExtras();
-        String petId = extras.getString("PET_ID");
+        petId = extras.getString("PET_ID");
         loadPet(petId);
 
         collapsingToolbar =
                 (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
         image = (ImageView) findViewById(R.id.image);
         descriptionTextView = (TextView) findViewById(R.id.description);
+
+        favoriteButton = (Button) findViewById(R.id.favoriteButton);
+        favoriteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                favoritePet(petId);
+            }
+        });
+    }
+
+    private void favoritePet(String petId) {
+        KibblAPIInterface mService = ApiUtils.getKibbleService(this);
+        mService.favoritePet(petId)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<GenericResponse<Pet>>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.v("test", e.toString());
+                    }
+
+                    @Override
+                    public void onNext(GenericResponse petResponse) {
+                        if (favoriteButton.getText().equals("Favorite")) {
+                            favoriteButton.setText("Unfavorite");
+                        } else {
+                            favoriteButton.setText("Favorite");
+                        }
+                    }
+                });
     }
 
     private void loadPet(String petId) {

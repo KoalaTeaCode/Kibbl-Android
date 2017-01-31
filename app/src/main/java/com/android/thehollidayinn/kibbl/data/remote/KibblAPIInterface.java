@@ -35,7 +35,7 @@ public interface KibblAPIInterface {
     Observable<GenericResponse<Pet>> getPetDetail(@Path("petId") String petId);
 
     @POST("pets/{petId}/favorite")
-    Observable<Pet> favoritePet(@Path("petId") String petId);
+    Observable<GenericResponse<Pet>> favoritePet(@Path("petId") String petId);
 
     @GET("favorites")
     Observable<GenericResponse<List<Favorite>>> getFavorites();
