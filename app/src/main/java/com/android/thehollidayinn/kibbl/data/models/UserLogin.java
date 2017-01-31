@@ -51,4 +51,8 @@ public class UserLogin {
     public Boolean isLoggedIn() {
         return !this.token.isEmpty();
     }
+
+    public void logOut() {
+        this.setToken("");
+    }
 }

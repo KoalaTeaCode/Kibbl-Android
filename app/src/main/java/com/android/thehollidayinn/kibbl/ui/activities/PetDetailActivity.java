@@ -76,13 +76,17 @@ public class PetDetailActivity extends AppCompatActivity {
 
                     @Override
                     public void onNext(GenericResponse petResponse) {
-                        if (favoriteButton.getText().equals("Favorite")) {
-                            favoriteButton.setText("Unfavorite");
-                        } else {
-                            favoriteButton.setText("Favorite");
-                        }
+                        togglePetText();
                     }
                 });
+    }
+
+    private void togglePetText() {
+        if (favoriteButton.getText().equals("Favorite")) {
+            favoriteButton.setText("Unfavorite");
+        } else {
+            favoriteButton.setText("Favorite");
+        }
     }
 
     private void loadPet(String petId) {
@@ -118,5 +122,9 @@ public class PetDetailActivity extends AppCompatActivity {
 //                .resize(300, 300)
 //                .centerCrop()
                 .into(image);
+
+        if (pet.favorited) {
+            togglePetText();
+        }
     }
 }

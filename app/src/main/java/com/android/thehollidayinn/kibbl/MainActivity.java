@@ -42,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
     private DrawerLayout mDrawerLayout;
     private Context context;
     private UserLogin user;
+    private NavigationView navigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void setUpNavBar() {
         // Create Navigation drawer and inlfate layout
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer);
 
         // Adding menu icon to Toolbar
@@ -102,6 +103,10 @@ public class MainActivity extends AppCompatActivity {
 
         if (user.isLoggedIn()) {
             navigationView.getMenu().findItem(R.id.login_register).setVisible(false);
+            navigationView.getMenu().findItem(R.id.logout).setVisible(true);
+        } else {
+            navigationView.getMenu().findItem(R.id.login_register).setVisible(true);
+            navigationView.getMenu().findItem(R.id.logout).setVisible(false);
         }
 
         // Set behavior of Navigation drawer
@@ -120,6 +125,10 @@ public class MainActivity extends AppCompatActivity {
                         } else if (menuItem.getItemId() == R.id.favorites) {
                             Intent filterIntent = new Intent(context, FavoritesActivity.class);
                             startActivity(filterIntent);
+                        } else if (menuItem.getItemId() == R.id.logout) {
+                            user.logOut();
+                            navigationView.getMenu().findItem(R.id.login_register).setVisible(true);
+                            navigationView.getMenu().findItem(R.id.logout).setVisible(false);
                         }
 
                         // Closing drawer on item click

@@ -46,9 +46,14 @@ public class Pet {
     @SerializedName("lastUpdate")
     @Expose
     private String lastUpdate;
+
     @SerializedName("animal")
     @Expose
     private String animal;
+
+    @SerializedName("favorited")
+    @Expose
+    public Boolean favorited;
 
     public String getId() {
         return id;
