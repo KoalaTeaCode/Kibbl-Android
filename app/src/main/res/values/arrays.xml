@@ -62,6 +62,7 @@
         deserunt mollit anim id est laborum.
         </item>
     </string-array>
+
     <string-array name="place_locations">
         <item>8 Rue Scribe, 75009 Paris, France</item>
         <item>Piazza del Capitolo - 50122 Florence</item>
@@ -70,6 +71,7 @@
         <item>At Meydanı No:7, 34122 Fatih/İstanbul, Turkey</item>
         <item>Cape Town, South Africa</item>
     </string-array>
+
     <array name="place_avator">
         <item>@drawable/a_avator</item>
         <item>@drawable/b_avator</item>
@@ -88,6 +90,7 @@
     </array>
 
     <string-array name="breeds">
+        <item>All</item>
         <item>Mercury</item>
         <item>Venus</item>
         <item>Earth</item>
@@ -99,24 +102,17 @@
     </string-array>
 
     <string-array name="age">
-        <item>Mercury</item>
-        <item>Venus</item>
-        <item>Earth</item>
-        <item>Mars</item>
-        <item>Jupiter</item>
-        <item>Saturn</item>
-        <item>Uranus</item>
-        <item>Neptune</item>
+        <item>All</item>
+        <item>Baby</item>
+        <item>Young</item>
+        <item>Adult</item>
+        <item>Senior</item>
     </string-array>
 
     <string-array name="gender">
-        <item>Mercury</item>
-        <item>Venus</item>
-        <item>Earth</item>
-        <item>Mars</item>
-        <item>Jupiter</item>
-        <item>Saturn</item>
-        <item>Uranus</item>
-        <item>Neptune</item>
+        <item>All</item>
+        <item>Male</item>
+        <item>Female</item>
+        <item>Unkown</item>
     </string-array>
 </resources>

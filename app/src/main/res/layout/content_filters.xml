@@ -13,12 +13,21 @@
     tools:context="com.android.thehollidayinn.kibbl.ui.activities.FiltersActivity"
     tools:showIn="@layout/activity_filters">
 
+    <TextView
+        android:text="Location"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/locationText"
+        android:layout_marginTop="12dp"
+        android:layout_centerHorizontal="true" />
+
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:inputType="textPersonName"
-        android:text="Location"
+        android:hint=""
         android:id="@+id/locationEditText"
+        android:layout_below="@+id/locationText"
         android:layout_centerHorizontal="true"  />
 
     <TextView
