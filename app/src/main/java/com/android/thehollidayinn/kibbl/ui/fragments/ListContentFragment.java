@@ -195,7 +195,7 @@ public class ListContentFragment extends Fragment {
 
         @Override
         public int getItemCount() {
-            return LENGTH;
+            return pets.size();
         }
 
         public Observable<String> getPositionClicks(){

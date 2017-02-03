@@ -2,7 +2,13 @@ package com.android.thehollidayinn.kibbl;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.graphics.drawable.VectorDrawableCompat;
@@ -13,6 +19,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -28,8 +35,14 @@ import com.android.thehollidayinn.kibbl.ui.activities.FiltersActivity;
 import com.android.thehollidayinn.kibbl.ui.activities.LoginRegisterActivity;
 import com.android.thehollidayinn.kibbl.ui.adapters.MainTabsAdapter;
 import com.android.thehollidayinn.kibbl.ui.fragments.ListContentFragment;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import retrofit2.Call;
 import retrofit2.Response;
@@ -37,12 +50,14 @@ import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     private DrawerLayout mDrawerLayout;
     private Context context;
     private UserLogin user;
     private NavigationView navigationView;
+
+    private GoogleApiClient mGoogleApiClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +73,15 @@ public class MainActivity extends AppCompatActivity {
 
         setUpNavBar();
         setUpTabs();
+
+        // Create an instance of GoogleAPIClient.
+        if (mGoogleApiClient == null) {
+            mGoogleApiClient = new GoogleApiClient.Builder(this)
+                    .addConnectionCallbacks(this)
+                    .addOnConnectionFailedListener(this)
+                    .addApi(LocationServices.API)
+                    .build();
+        }
     }
 
     @Override
@@ -84,6 +108,16 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    protected void onStart() {
+        mGoogleApiClient.connect();
+        super.onStart();
+    }
+
+    protected void onStop() {
+        mGoogleApiClient.disconnect();
+        super.onStop();
     }
 
     private void setUpNavBar() {
@@ -160,5 +194,86 @@ public class MainActivity extends AppCompatActivity {
 //        adapter.addFragment(new TileContentFragment(), "Tile");
 //        adapter.addFragment(new CardContentFragment(), "Card");
         viewPager.setAdapter(adapter);
+    }
+
+    private boolean checkForLocationPermission()
+    {
+
+        String permission = "android.permission.ACCESS_COARSE_LOCATION";
+        int res = this.checkCallingOrSelfPermission(permission);
+        return (res == PackageManager.PERMISSION_GRANTED);
+    }
+
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+        Log.v("testshit", String.valueOf(checkForLocationPermission()));
+        if (!checkForLocationPermission()) {
+            return;
+        }
+        Location mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
+                mGoogleApiClient);
+        if (mLastLocation != null) {
+            setLocation(mLastLocation);
+        }
+    }
+
+    public void setLocation (Location location) {
+        Log.v("testshit", String.valueOf(location));
+        Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+        List<Address> addresses = null;
+
+        try {
+            addresses = geocoder.getFromLocation(
+                    location.getLatitude(),
+                    location.getLongitude(),
+                    // In this sample, get just a single address.
+                    1);
+        } catch (IOException ioException) {
+            // Catch network or other I/O problems.
+//            errorMessage = getString(R.string.service_not_available);
+//            Log.e(TAG, errorMessage, ioException);
+        } catch (IllegalArgumentException illegalArgumentException) {
+            // Catch invalid latitude or longitude values.
+//            errorMessage = getString(R.string.invalid_lat_long_used);
+//            Log.e(TAG, errorMessage + ". " +
+//                    "Latitude = " + location.getLatitude() +
+//                    ", Longitude = " +
+//                    location.getLongitude(), illegalArgumentException);
+        }
+
+        // Handle case where no address was found.
+        if (addresses == null || addresses.size()  == 0) {
+//            if (errorMessage.isEmpty()) {
+//                errorMessage = getString(R.string.no_address_found);
+//                Log.e(TAG, errorMessage);
+//            }
+//            deliverResultToReceiver(Constants.FAILURE_RESULT, errorMessage);
+        } else {
+            Address address = addresses.get(0);
+            ArrayList<String> addressFragments = new ArrayList<String>();
+
+            // Fetch the address lines using getAddressLine,
+            // join them, and send them to the thread.
+            for(int i = 0; i < address.getMaxAddressLineIndex(); i++) {
+                addressFragments.add(address.getAddressLine(i));
+            }
+//            Log.i(TAG, getString(R.string.address_found));
+//            deliverResultToReceiver(Constants.SUCCESS_RESULT,
+//                    TextUtils.join(System.getProperty("line.separator"),
+//
+//            System.getProperty("line.separator")
+//            String locationString = TextUtils.join(", ");
+            Log.v("test", String.valueOf(addressFragments));
+        }
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
     }
 }
