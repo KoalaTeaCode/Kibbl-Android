@@ -86,5 +86,5 @@
         android:layout_below="@+id/genderSpinner"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="42dp"
-        android:id="@+id/button" />
+        android:id="@+id/findButton" />
 </RelativeLayout>

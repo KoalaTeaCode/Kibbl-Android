@@ -17,6 +17,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.android.thehollidayinn.kibbl.R;
+import com.android.thehollidayinn.kibbl.data.models.Filters;
 import com.android.thehollidayinn.kibbl.data.models.Pet;
 import com.android.thehollidayinn.kibbl.data.models.PetResponse;
 import com.android.thehollidayinn.kibbl.data.remote.ApiUtils;
@@ -45,6 +46,7 @@ public class ListContentFragment extends Fragment {
     private ContentAdapter adapter;
     private static Context context;
     private String filter;
+    private Filters filters;
 
     public ListContentFragment() {
     }
@@ -56,6 +58,7 @@ public class ListContentFragment extends Fragment {
         Bundle args = new Bundle();
         args.putString("FILTER", filter);
         f.setArguments(args);
+        f.filters = Filters.getSharedInstance();
 
         return f;
     }
@@ -91,12 +94,12 @@ public class ListContentFragment extends Fragment {
     private void loadPets() {
         KibblAPIInterface mService = ApiUtils.getKibbleService(getActivity());
 
-        Map<String, String> query = new HashMap<>();
         if (!this.filter.isEmpty()) {
-            query.put("type", this.filter);
+//            query.put("type", this.filter);
+            filters.type = this.filter;
         }
 
-        mService.getPets(query)
+        mService.getPets(filters.toMap())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<PetResponse>() {
