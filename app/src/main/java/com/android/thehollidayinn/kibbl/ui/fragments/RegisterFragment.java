@@ -19,6 +19,14 @@ import com.android.thehollidayinn.kibbl.data.models.UserLogin;
 import com.android.thehollidayinn.kibbl.data.models.UserResponse;
 import com.android.thehollidayinn.kibbl.data.remote.ApiUtils;
 import com.android.thehollidayinn.kibbl.data.remote.KibblAPIInterface;
+import com.facebook.AccessToken;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.FacebookSdk;
+import com.facebook.login.LoginManager;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -35,8 +43,10 @@ public class RegisterFragment extends Fragment {
     private EditText emailEditText;
     private EditText passwordEditText;
     private Button loginButton;
+    private LoginButton facebookLoginButton;
     private UserLogin userLogin;
     private ProgressDialog progDialog;
+    private CallbackManager callbackManager;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -62,7 +72,16 @@ public class RegisterFragment extends Fragment {
             }
         });
 
+        callbackManager = CallbackManager.Factory.create();
+        setUpFBLogin(view);
+
         return view;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        callbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
     private void showLoading() {
@@ -110,5 +129,68 @@ public class RegisterFragment extends Fragment {
                         getActivity().startActivity(mainActivityIntent);
                     }
                 });
+    }
+
+    private void registerUserViaSocial(String network, String accessToken) {
+        showLoading();
+
+        Map<String, String> userLoginMap = new HashMap<>();
+        userLoginMap.put("network", network);
+        userLoginMap.put("accessToken", accessToken);
+
+        KibblAPIInterface mService = ApiUtils.getKibbleService(getActivity());
+        mService.registerSocial(userLoginMap)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<UserResponse>() {
+                    @Override
+                    public void onCompleted() {}
+
+                    @Override
+                    public void onError(Throwable e) {
+                        hideLoading();
+                        showErrorMessage(e.toString());
+                    }
+
+                    @Override
+                    public void onNext(UserResponse userResponse) {
+                        hideLoading();
+                        userLogin.setToken(userResponse.getToken());
+                        Intent mainActivityIntent = new Intent(getActivity(), MainActivity.class);
+                        getActivity().startActivity(mainActivityIntent);
+                    }
+                });
+    }
+
+    private void setUpFBLogin(View view) {
+        facebookLoginButton = (LoginButton) view.findViewById(R.id.login_button);
+        facebookLoginButton.setReadPermissions("email");
+        // If using in a fragment
+        facebookLoginButton.setFragment(this);
+        // Other app specific specialization
+
+        // Callback registration
+        LoginManager.getInstance().registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                // App code
+//                String accessToken = loginResult.getAccessToken().toString();
+                AccessToken accessToken = AccessToken.getCurrentAccessToken();
+                registerUserViaSocial("facebook", accessToken.getToken());
+            }
+
+            @Override
+            public void onCancel() {
+                // App code
+                Log.v("testshit", "test");
+            }
+
+            @Override
+            public void onError(FacebookException exception) {
+                // App code
+                Log.v("testshit", "ERROR");
+                Log.v("testshit", exception.toString());
+            }
+        });
     }
 }

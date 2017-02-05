@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.android.thehollidayinn.kibbl.R;
+import com.facebook.login.LoginManager;
 
 /**
  * Created by krh12 on 1/23/2017.
@@ -54,5 +55,6 @@ public class UserLogin {
 
     public void logOut() {
         this.setToken("");
+        LoginManager.getInstance().logOut();
     }
 }

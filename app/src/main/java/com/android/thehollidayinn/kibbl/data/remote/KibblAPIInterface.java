@@ -28,6 +28,9 @@ public interface KibblAPIInterface {
     @POST("register")
     Observable<UserResponse> register(@Body Map<String, String> userLogin);
 
+    @POST("auth/social")
+    Observable<UserResponse> registerSocial(@Body Map<String, String> userLogin);
+
     @GET("pets")
     Observable<PetResponse> getPets(@QueryMap Map<String, String> options);
 
