@@ -1,5 +1,5 @@
 
-package com.android.thehollidayinn.kibbl.data.models;
+package com.thehollidayinn.kibbl.data.models;
 
 import java.util.List;
 import com.google.gson.annotations.Expose;

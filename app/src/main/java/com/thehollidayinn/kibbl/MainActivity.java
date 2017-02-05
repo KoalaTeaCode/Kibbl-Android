@@ -1,4 +1,4 @@
-package com.android.thehollidayinn.kibbl;
+package com.thehollidayinn.kibbl;
 
 import android.content.Context;
 import android.content.Intent;
@@ -24,17 +24,17 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.android.thehollidayinn.kibbl.data.models.Favorite;
-import com.android.thehollidayinn.kibbl.data.models.GenericResponse;
-import com.android.thehollidayinn.kibbl.data.models.PetResponse;
-import com.android.thehollidayinn.kibbl.data.models.UserLogin;
-import com.android.thehollidayinn.kibbl.data.remote.ApiUtils;
-import com.android.thehollidayinn.kibbl.data.remote.KibblAPIInterface;
-import com.android.thehollidayinn.kibbl.ui.activities.FavoritesActivity;
-import com.android.thehollidayinn.kibbl.ui.activities.FiltersActivity;
-import com.android.thehollidayinn.kibbl.ui.activities.LoginRegisterActivity;
-import com.android.thehollidayinn.kibbl.ui.adapters.MainTabsAdapter;
-import com.android.thehollidayinn.kibbl.ui.fragments.ListContentFragment;
+import com.thehollidayinn.kibbl.data.models.Favorite;
+import com.thehollidayinn.kibbl.data.models.GenericResponse;
+import com.thehollidayinn.kibbl.data.models.PetResponse;
+import com.thehollidayinn.kibbl.data.models.UserLogin;
+import com.thehollidayinn.kibbl.data.remote.ApiUtils;
+import com.thehollidayinn.kibbl.data.remote.KibblAPIInterface;
+import com.thehollidayinn.kibbl.ui.activities.FavoritesActivity;
+import com.thehollidayinn.kibbl.ui.activities.FiltersActivity;
+import com.thehollidayinn.kibbl.ui.activities.LoginRegisterActivity;
+import com.thehollidayinn.kibbl.ui.adapters.MainTabsAdapter;
+import com.thehollidayinn.kibbl.ui.fragments.ListContentFragment;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;

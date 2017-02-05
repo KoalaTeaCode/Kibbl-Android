@@ -1,10 +1,10 @@
-package com.android.thehollidayinn.kibbl.data.remote;
+package com.thehollidayinn.kibbl.data.remote;
 
-import com.android.thehollidayinn.kibbl.data.models.Favorite;
-import com.android.thehollidayinn.kibbl.data.models.GenericResponse;
-import com.android.thehollidayinn.kibbl.data.models.Pet;
-import com.android.thehollidayinn.kibbl.data.models.PetResponse;
-import com.android.thehollidayinn.kibbl.data.models.UserResponse;
+import com.thehollidayinn.kibbl.data.models.Favorite;
+import com.thehollidayinn.kibbl.data.models.GenericResponse;
+import com.thehollidayinn.kibbl.data.models.Pet;
+import com.thehollidayinn.kibbl.data.models.PetResponse;
+import com.thehollidayinn.kibbl.data.models.UserResponse;
 
 import java.util.List;
 import java.util.Map;

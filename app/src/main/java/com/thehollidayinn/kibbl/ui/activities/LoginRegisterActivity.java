@@ -1,4 +1,4 @@
-package com.android.thehollidayinn.kibbl.ui.activities;
+package com.thehollidayinn.kibbl.ui.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,9 +9,9 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.android.thehollidayinn.kibbl.R;
-import com.android.thehollidayinn.kibbl.ui.fragments.LoginFragment;
-import com.android.thehollidayinn.kibbl.ui.fragments.RegisterFragment;
+import com.thehollidayinn.kibbl.R;
+import com.thehollidayinn.kibbl.ui.fragments.LoginFragment;
+import com.thehollidayinn.kibbl.ui.fragments.RegisterFragment;
 
 public class LoginRegisterActivity extends AppCompatActivity {
 

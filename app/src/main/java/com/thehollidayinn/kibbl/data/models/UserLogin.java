@@ -1,11 +1,11 @@
-package com.android.thehollidayinn.kibbl.data.models;
+package com.thehollidayinn.kibbl.data.models;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
-import com.android.thehollidayinn.kibbl.R;
+import com.thehollidayinn.kibbl.R;
 import com.facebook.login.LoginManager;
 
 /**

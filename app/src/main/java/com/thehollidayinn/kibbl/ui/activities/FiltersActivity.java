@@ -1,4 +1,4 @@
-package com.android.thehollidayinn.kibbl.ui.activities;
+package com.thehollidayinn.kibbl.ui.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,9 +14,9 @@ import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.android.thehollidayinn.kibbl.MainActivity;
-import com.android.thehollidayinn.kibbl.R;
-import com.android.thehollidayinn.kibbl.data.models.Filters;
+import com.thehollidayinn.kibbl.MainActivity;
+import com.thehollidayinn.kibbl.R;
+import com.thehollidayinn.kibbl.data.models.Filters;
 
 public class FiltersActivity extends AppCompatActivity {
 

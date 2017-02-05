@@ -1,4 +1,4 @@
-package com.android.thehollidayinn.kibbl.data.models;
+package com.thehollidayinn.kibbl.data.models;
 
 import java.util.HashMap;
 import java.util.Map;

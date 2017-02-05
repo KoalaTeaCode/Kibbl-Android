@@ -1,4 +1,4 @@
-package com.android.thehollidayinn.kibbl.data.remote;
+package com.thehollidayinn.kibbl.data.remote;
 
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;

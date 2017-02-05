@@ -1,4 +1,4 @@
-package com.android.thehollidayinn.kibbl.ui.adapters;
+package com.thehollidayinn.kibbl.ui.adapters;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;

@@ -1,9 +1,9 @@
-package com.android.thehollidayinn.kibbl.data.remote;
+package com.thehollidayinn.kibbl.data.remote;
 
 import android.content.Context;
 import android.util.Log;
 
-import com.android.thehollidayinn.kibbl.data.models.UserLogin;
+import com.thehollidayinn.kibbl.data.models.UserLogin;
 
 import java.io.IOException;
 

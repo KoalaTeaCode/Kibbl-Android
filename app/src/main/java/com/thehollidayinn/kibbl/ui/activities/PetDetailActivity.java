@@ -1,4 +1,4 @@
-package com.android.thehollidayinn.kibbl.ui.activities;
+package com.thehollidayinn.kibbl.ui.activities;
 
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -12,11 +12,11 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.android.thehollidayinn.kibbl.R;
-import com.android.thehollidayinn.kibbl.data.models.GenericResponse;
-import com.android.thehollidayinn.kibbl.data.models.Pet;
-import com.android.thehollidayinn.kibbl.data.remote.ApiUtils;
-import com.android.thehollidayinn.kibbl.data.remote.KibblAPIInterface;
+import com.thehollidayinn.kibbl.R;
+import com.thehollidayinn.kibbl.data.models.GenericResponse;
+import com.thehollidayinn.kibbl.data.models.Pet;
+import com.thehollidayinn.kibbl.data.remote.ApiUtils;
+import com.thehollidayinn.kibbl.data.remote.KibblAPIInterface;
 import com.squareup.picasso.Picasso;
 
 import rx.Subscriber;

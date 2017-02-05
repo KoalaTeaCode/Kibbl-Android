@@ -1,4 +1,4 @@
-package com.android.thehollidayinn.kibbl.ui.fragments;
+package com.thehollidayinn.kibbl.ui.fragments;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -11,29 +11,24 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.TextView;
 
-import com.android.thehollidayinn.kibbl.MainActivity;
-import com.android.thehollidayinn.kibbl.R;
-import com.android.thehollidayinn.kibbl.data.models.Pet;
-import com.android.thehollidayinn.kibbl.data.models.UserLogin;
-import com.android.thehollidayinn.kibbl.data.models.UserResponse;
-import com.android.thehollidayinn.kibbl.data.remote.ApiUtils;
-import com.android.thehollidayinn.kibbl.data.remote.KibblAPIInterface;
+import com.thehollidayinn.kibbl.MainActivity;
+import com.thehollidayinn.kibbl.R;
+import com.thehollidayinn.kibbl.data.models.UserLogin;
+import com.thehollidayinn.kibbl.data.models.UserResponse;
+import com.thehollidayinn.kibbl.data.remote.ApiUtils;
+import com.thehollidayinn.kibbl.data.remote.KibblAPIInterface;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
+import com.facebook.FacebookSdk;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import rx.Subscriber;
@@ -44,14 +39,13 @@ import rx.schedulers.Schedulers;
  * Created by krh12 on 1/10/2017.
  */
 
-public class LoginFragment extends Fragment {
-
+public class RegisterFragment extends Fragment {
     private EditText emailEditText;
     private EditText passwordEditText;
     private Button loginButton;
+    private LoginButton facebookLoginButton;
     private UserLogin userLogin;
     private ProgressDialog progDialog;
-    private LoginButton facebookLoginButton;
     private CallbackManager callbackManager;
 
     @Override
@@ -63,7 +57,7 @@ public class LoginFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_login, container, false);
 
         TextView title = (TextView) view.findViewById(R.id.title);
-        title.setText("Login");
+        title.setText("Register");
 
         emailEditText = (EditText) view.findViewById(R.id.emailEditText);
         passwordEditText = (EditText) view.findViewById(R.id.passwordEditText);
@@ -109,12 +103,12 @@ public class LoginFragment extends Fragment {
     private void loginUser(String email, String password) {
         showLoading();
 
-        final Map<String, String> userLoginMap = new HashMap<>();
+        Map<String, String> userLoginMap = new HashMap<>();
         userLoginMap.put("email", email);
         userLoginMap.put("password", password);
 
         KibblAPIInterface mService = ApiUtils.getKibbleService(getActivity());
-        mService.login(userLoginMap)
+        mService.register(userLoginMap)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<UserResponse>() {
@@ -124,8 +118,7 @@ public class LoginFragment extends Fragment {
                     @Override
                     public void onError(Throwable e) {
                         hideLoading();
-                        // @TODO: How do we do this?
-//                        showErrorMessage(e.toString());
+                        showErrorMessage(e.toString());
                     }
 
                     @Override
