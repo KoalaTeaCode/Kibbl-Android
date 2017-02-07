@@ -6,13 +6,17 @@ import android.util.Log;
 import com.thehollidayinn.kibbl.data.models.UserLogin;
 
 import java.io.IOException;
+import java.lang.annotation.Annotation;
 
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
+import okhttp3.ResponseBody;
 import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.logging.HttpLoggingInterceptor;
+import retrofit2.Converter;
 import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava.HttpException;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -26,11 +30,13 @@ public class ApiUtils {
     public static final String BASE_URL = "https://kibbl.herokuapp.com/api/v1/";
 
     private static OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
+    private static GsonConverterFactory gsonConverter = GsonConverterFactory.create();
+    private static Retrofit retrofitAdapter;
 
     private static Retrofit.Builder builder =
             new Retrofit.Builder()
                     .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-                    .addConverterFactory(GsonConverterFactory.create())
+                    .addConverterFactory(gsonConverter)
                     .baseUrl(BASE_URL);
 
     public static KibblAPIInterface getKibbleService(Context context) {
@@ -56,9 +62,28 @@ public class ApiUtils {
                 .addInterceptor(logging)
                 .build();
 
-        Retrofit retrofit = builder
+        retrofitAdapter = builder
                 .client(client)
                 .build();
-        return retrofit.create(KibblAPIInterface.class);
+
+
+        return retrofitAdapter.create(KibblAPIInterface.class);
+    }
+
+    public static ErrorResponse getErrorResponse(HttpException error) {
+        retrofit2.Response<?> response = error.response();
+        Converter<ResponseBody, ?> errorConverter =
+                gsonConverter
+                        .responseBodyConverter(ErrorResponse.class, new Annotation[0], retrofitAdapter);
+        try {
+            return (ErrorResponse) errorConverter.convert(response.errorBody());
+        } catch (IOException e) {
+            return new ErrorResponse();
+        }
+    }
+
+
+    public static class ErrorResponse {
+        public String message;
     }
 }

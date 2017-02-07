@@ -31,6 +31,7 @@ import com.facebook.login.widget.LoginButton;
 import java.util.HashMap;
 import java.util.Map;
 
+import retrofit2.adapter.rxjava.HttpException;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -116,9 +117,14 @@ public class RegisterFragment extends Fragment {
                     public void onCompleted() {}
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void onError(Throwable throwable) {
                         hideLoading();
-                        showErrorMessage(e.toString());
+                        final Class<?> throwableClass = throwable.getClass();
+                        if (throwableClass.equals(HttpException.class)) {
+                            HttpException error = (HttpException) throwable;
+                            ApiUtils.ErrorResponse res = ApiUtils.getErrorResponse(error);
+                            showErrorMessage(res.message);
+                        }
                     }
 
                     @Override
@@ -147,9 +153,14 @@ public class RegisterFragment extends Fragment {
                     public void onCompleted() {}
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void onError(Throwable throwable) {
                         hideLoading();
-                        showErrorMessage(e.toString());
+                        final Class<?> throwableClass = throwable.getClass();
+                        if (throwableClass.equals(HttpException.class)) {
+                            HttpException error = (HttpException) throwable;
+                            ApiUtils.ErrorResponse res = ApiUtils.getErrorResponse(error);
+                            showErrorMessage(res.message);
+                        }
                     }
 
                     @Override

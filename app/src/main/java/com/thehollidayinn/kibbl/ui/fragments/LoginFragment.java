@@ -36,6 +36,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import okhttp3.ResponseBody;
+import retrofit2.Converter;
+import retrofit2.adapter.rxjava.HttpException;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -122,10 +125,15 @@ public class LoginFragment extends Fragment {
                     public void onCompleted() {}
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void onError(Throwable throwable) {
                         hideLoading();
-                        // @TODO: How do we do this?
-//                        showErrorMessage(e.toString());
+
+                        final Class<?> throwableClass = throwable.getClass();
+                        if (throwableClass.equals(HttpException.class)) {
+                            HttpException error = (HttpException) throwable;
+                            ApiUtils.ErrorResponse res = ApiUtils.getErrorResponse(error);
+                            showErrorMessage(res.message);
+                        }
                     }
 
                     @Override
@@ -154,9 +162,14 @@ public class LoginFragment extends Fragment {
                     public void onCompleted() {}
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void onError(Throwable throwable) {
                         hideLoading();
-                        showErrorMessage(e.toString());
+                        final Class<?> throwableClass = throwable.getClass();
+                        if (throwableClass.equals(HttpException.class)) {
+                            HttpException error = (HttpException) throwable;
+                            ApiUtils.ErrorResponse res = ApiUtils.getErrorResponse(error);
+                            showErrorMessage(res.message);
+                        }
                     }
 
                     @Override
