@@ -55,22 +55,24 @@ public class FiltersActivity extends AppCompatActivity {
 
     };
 
-    private void navigateHome () {
-        Intent intent = new Intent(this, MainActivity.class);
-        startActivity(intent);
-    };
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_filters);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         filters = Filters.getSharedInstance();
 
         setUpView();
     }
+
+    private void navigateHome () {
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+    };
 
     private void setUpView() {
         Spinner spinner = (Spinner) findViewById(R.id.breedSpinner);

@@ -188,9 +188,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         adapter.addFragment(ListContentFragment.newInstance("All"), "Recommended");
         adapter.addFragment(ListContentFragment.newInstance("Dog"), "Dogs");
         adapter.addFragment(ListContentFragment.newInstance("Cat"), "Cats");
-        adapter.addFragment(ListContentFragment.newInstance("Small & Furry"), "Birds");
-        adapter.addFragment(ListContentFragment.newInstance("Rabit"), "Rabit");
-        adapter.addFragment(ListContentFragment.newInstance("Horse"), "Horse");
+//        adapter.addFragment(ListContentFragment.newInstance("Small & Furry"), "Birds");
+//        adapter.addFragment(ListContentFragment.newInstance("Rabit"), "Rabit");
+//        adapter.addFragment(ListContentFragment.newInstance("Horse"), "Horse");
 //        adapter.addFragment(new TileContentFragment(), "Tile");
 //        adapter.addFragment(new CardContentFragment(), "Card");
         viewPager.setAdapter(adapter);

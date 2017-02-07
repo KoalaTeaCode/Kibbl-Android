@@ -22,6 +22,9 @@ public class LoginRegisterActivity extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
 //        if (savedInstanceState == null) {
             showLoginFragment();
 //        }
@@ -36,7 +39,10 @@ public class LoginRegisterActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        String title = item.getTitle().toString();
+        String title = "";
+        if (item.getTitle() != null) {
+            title = item.getTitle().toString();
+        }
 
         String registerTitle = getResources().getString(R.string.action_register);
         String loginTitle = getResources().getString(R.string.action_login);

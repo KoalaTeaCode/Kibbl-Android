@@ -23,8 +23,10 @@ public class FavoritesActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fragment);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         // Obtain the FirebaseAnalytics instance.
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
@@ -40,11 +42,6 @@ public class FavoritesActivity extends AppCompatActivity {
 
     private void setUpListFragment() {
         FavoritesListFragment favoritesList = FavoritesListFragment.newInstance();
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-
-        transaction.replace(R.id.content_fragment, favoritesList);
-        transaction.addToBackStack(null);
-
-        transaction.commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.content_fragment, favoritesList).commit();
     }
 }
