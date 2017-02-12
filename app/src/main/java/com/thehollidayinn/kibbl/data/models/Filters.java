@@ -27,6 +27,10 @@ public class Filters {
     public Map<String, String> toMap() {
         Map<String, String> filterMap = new HashMap<>();
 
+        if (location != null && !location.equals("All")) {
+            filterMap.put("zipCode", location);
+        }
+
         if (type != null && !type.equals("All")) {
             filterMap.put("type", type);
         }

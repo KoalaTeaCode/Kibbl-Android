@@ -10,8 +10,10 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.android.thehollidayinn.kibbl.ui.activities.FiltersActivity"
+    tools:context="com.thehollidayinn.kibbl.ui.activities.FiltersActivity"
     tools:showIn="@layout/activity_filters">
+
+
 
     <TextView
         android:text="Location"
@@ -21,21 +23,30 @@
         android:layout_marginTop="12dp"
         android:layout_centerHorizontal="true" />
 
-    <EditText
+    <fragment
+        android:id="@+id/place_autocomplete_fragment"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:inputType="textPersonName"
-        android:hint=""
-        android:id="@+id/locationEditText"
         android:layout_below="@+id/locationText"
-        android:layout_centerHorizontal="true"  />
+        android:layout_centerHorizontal="true"
+        android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
+        />
+
+    <!--<EditText-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:inputType="textPersonName"-->
+        <!--android:hint=""-->
+        <!--android:id="@+id/locationEditText"-->
+        <!--android:layout_below="@+id/locationText"-->
+        <!--android:layout_centerHorizontal="true"  />-->
 
     <TextView
         android:text="Breed"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/breedText"
-        android:layout_below="@+id/locationEditText"
+        android:layout_below="@+id/place_autocomplete_fragment"
         android:layout_marginTop="12dp"
         android:layout_centerHorizontal="true" />
 

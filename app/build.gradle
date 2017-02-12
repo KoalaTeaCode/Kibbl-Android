@@ -54,6 +54,7 @@ dependencies {
 
     // Google Play
     compile 'com.google.android.gms:play-services-location:10.0.1'
+    compile 'com.google.android.gms:play-services-places:10.0.1'
 
     compile 'com.facebook.android:facebook-android-sdk:[4,5)'
 }

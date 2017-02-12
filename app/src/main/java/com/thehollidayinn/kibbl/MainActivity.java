@@ -218,7 +218,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     }
 
     public void setLocation (Location location) {
-        Log.v("testshit", String.valueOf(location));
         Geocoder geocoder = new Geocoder(this, Locale.getDefault());
         List<Address> addresses = null;
 

@@ -16,6 +16,8 @@ public class UserLogin {
     private static UserLogin instance;
     private String token = "";
     private Context context;
+    private String place = "";
+    private String zipCode = "";
 
     private UserLogin(Context context) {
         this.context = context;
@@ -56,5 +58,21 @@ public class UserLogin {
     public void logOut() {
         this.setToken("");
         LoginManager.getInstance().logOut();
+    }
+
+    public void setPlace(String place) {
+        this.place = place;
+    }
+
+    public String getPlace() {
+        return this.place;
+    }
+
+    public void setZipCode(String zipCode) {
+        this.zipCode = zipCode;
+    }
+
+    public String getZipCode() {
+        return this.zipCode;
     }
 }

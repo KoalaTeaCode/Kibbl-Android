@@ -82,7 +82,6 @@ public class ApiUtils {
         }
     }
 
-
     public static class ErrorResponse {
         public String message;
     }
