@@ -50,12 +50,21 @@
         android:layout_marginTop="12dp"
         android:layout_centerHorizontal="true" />
 
-    <Spinner
-        android:layout_width="match_parent"
+    <AutoCompleteTextView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/breedAutoComplete"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/breedSpinner"
         android:layout_below="@+id/breedText"
-        android:layout_centerHorizontal="true" />
+        android:layout_marginTop="12dp"
+        android:layout_centerHorizontal="true"/>
+
+    <!--<Spinner-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:id="@+id/breedSpinner"-->
+        <!--android:layout_below="@+id/breedText"-->
+        <!--android:layout_centerHorizontal="true" />-->
 
     <TextView
         android:text="Age"
@@ -63,7 +72,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/ageTextView"
         android:layout_marginTop="45dp"
-        android:layout_below="@+id/breedSpinner"
+        android:layout_below="@+id/breedAutoComplete"
         android:layout_centerHorizontal="true" />
 
     <Spinner

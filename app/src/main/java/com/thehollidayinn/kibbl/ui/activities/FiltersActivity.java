@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -44,9 +45,7 @@ public class FiltersActivity extends AppCompatActivity {
 
             Integer spinnerID = spinnerView.getId();
             String spinnerText = selectedTextView.getText().toString();
-            if (spinnerID == R.id.breedSpinner) {
-                filters.breed = spinnerText;
-            } else if (spinnerID == R.id.ageSpinner) {
+            if (spinnerID == R.id.ageSpinner) {
                 filters.age = spinnerText;
             } else if (spinnerID == R.id.genderSpinner) {
                 filters.gender = spinnerText;
@@ -148,13 +147,19 @@ public class FiltersActivity extends AppCompatActivity {
                 Log.i("test", "An error occurred: " + status);
             }
         });
+        
+        final AutoCompleteTextView autocompleteTextView = (AutoCompleteTextView) findViewById(R.id.breedAutoComplete);
+        String[] countries = getResources().getStringArray(R.array.breeds);
+        ArrayAdapter<String> adapter =
+                new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, countries);
+        autocompleteTextView.setAdapter(adapter);
+        autocompleteTextView.setOnDismissListener(new AutoCompleteTextView.OnDismissListener() {
 
-        Spinner spinner = (Spinner) findViewById(R.id.breedSpinner);
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-                R.array.breeds, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(adapter);
-        spinner.setOnItemSelectedListener(onItemSelectedListener);
+            @Override
+            public void onDismiss() {
+                filters.breed = autocompleteTextView.getText().toString();
+            }
+        });
 
         Spinner ageSpinner = (Spinner) findViewById(R.id.ageSpinner);
         ArrayAdapter<CharSequence> ageAdpater = ArrayAdapter.createFromResource(this,
