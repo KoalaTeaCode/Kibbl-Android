@@ -14,8 +14,8 @@
         deserunt mollit anim id est laborum.
     </string>
     <string name="detail_location">"8 Rue Scribe, 75009 Paris, France"</string>
-    <string name="title_activity_pet_detail">PetDetailActivity</string>
-    <string name="title_activity_filters">FiltersActivity</string>
+    <string name="title_activity_pet_detail">Pet Detail</string>
+    <string name="title_activity_filters">Filter</string>
     <string name="title_activity_login_register">Kibbl</string>
 
     <string name="action_login">Login</string>
@@ -23,7 +23,7 @@
 
     <string name="user_token_preference">UserTokenPreference</string>
     <string name="app_prefrences">KibblAppPref</string>
-    <string name="title_activity_fragment">FragmentActivity</string>
+    <string name="title_activity_fragment">Favorites</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

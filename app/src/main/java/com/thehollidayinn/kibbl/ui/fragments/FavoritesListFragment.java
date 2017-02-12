@@ -55,6 +55,8 @@ public class FavoritesListFragment extends Fragment {
 
     private ContentAdapter adapter;
     private static Context context;
+    private static RecyclerView recyclerView;
+    private static TextView emptyTextView;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -94,10 +96,11 @@ public class FavoritesListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        RecyclerView recyclerView = (RecyclerView) inflater.inflate(
-                R.layout.recycler_view, container, false);
+        View view = inflater.inflate(R.layout.fragment_favorites_list, container, false);
 
-        this.context = getContext();
+        recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
+        emptyTextView = (TextView) view.findViewById(R.id.empty_view);
+        recyclerView.setVisibility(View.INVISIBLE);
 
         adapter = new FavoritesListFragment.ContentAdapter(recyclerView.getContext());
 
@@ -107,7 +110,7 @@ public class FavoritesListFragment extends Fragment {
 
         loadFavorites();
 
-        return recyclerView;
+        return view;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -193,24 +196,12 @@ public class FavoritesListFragment extends Fragment {
     public static class ContentAdapter extends RecyclerView.Adapter<ViewHolder> {
         // Set numbers of List in RecyclerView.
         private static final int LENGTH = 18;
-        private final String[] mPlaces;
-        private final String[] mPlaceDesc;
-        private final Drawable[] mPlaceAvators;
 
         private final PublishSubject<String> onClickSubject = PublishSubject.create();
 
         private List<Favorite> favorites = new ArrayList<>();
 
         public ContentAdapter(Context context) {
-            Resources resources = context.getResources();
-            mPlaces = resources.getStringArray(R.array.places);
-            mPlaceDesc = resources.getStringArray(R.array.place_desc);
-            TypedArray a = resources.obtainTypedArray(R.array.place_avator);
-            mPlaceAvators = new Drawable[a.length()];
-            for (int i = 0; i < mPlaceAvators.length; i++) {
-                mPlaceAvators[i] = a.getDrawable(i);
-            }
-            a.recycle();
         }
 
         @Override
@@ -233,10 +224,6 @@ public class FavoritesListFragment extends Fragment {
 
                 holder.name.setText(currentPet.getName());
                 holder.description.setText(currentPet.getDescription());
-            } else {
-                holder.avator.setImageDrawable(mPlaceAvators[position % mPlaceAvators.length]);
-                holder.name.setText(mPlaces[position % mPlaces.length]);
-                holder.description.setText(mPlaceDesc[position % mPlaceDesc.length]);
             }
 
             holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -250,7 +237,7 @@ public class FavoritesListFragment extends Fragment {
 
         @Override
         public int getItemCount() {
-            return LENGTH;
+            return favorites.size();
         }
 
         public Observable<String> getPositionClicks(){
@@ -259,6 +246,10 @@ public class FavoritesListFragment extends Fragment {
 
         public void updatePets(List<Favorite> favorites) {
             this.favorites = favorites;
+            if (favorites.size() != 0) {
+                emptyTextView.setVisibility(View.INVISIBLE);
+                recyclerView.setVisibility(View.VISIBLE);
+            }
             notifyDataSetChanged();
         }
     }
