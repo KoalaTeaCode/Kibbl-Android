@@ -30,4 +30,10 @@
 
     <string name="facebook_app_id">1773720656197985</string>
     <string name="fb_login_protocol_scheme">1773720656197985</string>
+
+    <!-- Main Menu -->
+    <string name="text_home">Home</string>
+    <string name="text_events">Events</string>
+    <string name="text_pets">Pets</string>
+    <string name="text_shelters">Shelters</string>
 </resources>

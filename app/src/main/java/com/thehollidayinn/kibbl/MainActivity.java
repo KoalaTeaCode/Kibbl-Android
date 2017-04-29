@@ -1,5 +1,7 @@
 package com.thehollidayinn.kibbl;
 
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -9,6 +11,7 @@ import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.graphics.drawable.VectorDrawableCompat;
@@ -27,6 +30,7 @@ import android.view.MenuItem;
 import com.thehollidayinn.kibbl.data.models.Favorite;
 import com.thehollidayinn.kibbl.data.models.GenericResponse;
 import com.thehollidayinn.kibbl.data.models.PetResponse;
+import com.thehollidayinn.kibbl.data.models.Shelter;
 import com.thehollidayinn.kibbl.data.models.UserLogin;
 import com.thehollidayinn.kibbl.data.remote.ApiUtils;
 import com.thehollidayinn.kibbl.data.remote.KibblAPIInterface;
@@ -34,10 +38,12 @@ import com.thehollidayinn.kibbl.ui.activities.FavoritesActivity;
 import com.thehollidayinn.kibbl.ui.activities.FiltersActivity;
 import com.thehollidayinn.kibbl.ui.activities.LoginRegisterActivity;
 import com.thehollidayinn.kibbl.ui.adapters.MainTabsAdapter;
+import com.thehollidayinn.kibbl.ui.fragments.EventListFragment;
 import com.thehollidayinn.kibbl.ui.fragments.ListContentFragment;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
+import com.thehollidayinn.kibbl.ui.fragments.ShelterListFragment;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -50,7 +56,8 @@ import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-public class MainActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+public class MainActivity extends AppCompatActivity
+        implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     private DrawerLayout mDrawerLayout;
     private Context context;
@@ -73,6 +80,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
         setUpNavBar();
         setUpTabs();
+        setUpBottomBar(savedInstanceState);
 
         // Create an instance of GoogleAPIClient.
         if (mGoogleApiClient == null) {
@@ -86,19 +94,14 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             Intent filterIntent = new Intent(this, FiltersActivity.class);
             startActivity(filterIntent);
@@ -118,6 +121,34 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     protected void onStop() {
         mGoogleApiClient.disconnect();
         super.onStop();
+    }
+
+    private void setUpBottomBar(Bundle savedInstanceState) {
+        BottomNavigationView bottomNavigationView = (BottomNavigationView)
+                findViewById(R.id.bottom_navigation);
+
+        bottomNavigationView.setOnNavigationItemSelectedListener(
+                new BottomNavigationView.OnNavigationItemSelectedListener() {
+                    @Override
+                    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                        switch (item.getItemId()) {
+                            case R.id.action_favorites:
+                                FragmentManager fragmentManager = getFragmentManager();
+                                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                                EventListFragment fragment = new EventListFragment();
+//                                fragmentTransaction.add(R.id.fragment_container, fragment);
+                                fragmentTransaction.commit();
+                                break;
+                            case R.id.action_schedules:
+
+                                break;
+                            case R.id.action_music:
+
+                                break;
+                        }
+                        return false;
+                    }
+                });
     }
 
     private void setUpNavBar() {
@@ -165,7 +196,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                             navigationView.getMenu().findItem(R.id.logout).setVisible(false);
                         }
 
-                        // Closing drawer on item click
                         mDrawerLayout.closeDrawers();
                         return true;
                     }
@@ -173,11 +203,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     }
 
     private void setUpTabs() {
-        // Setting ViewPager for each Tabs
         ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
         setupViewPager(viewPager);
 
-        // Set Tabs inside Toolbar
         TabLayout tabs = (TabLayout) findViewById(R.id.tabs);
         tabs.setupWithViewPager(viewPager);
     }
@@ -186,13 +214,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         MainTabsAdapter adapter = new MainTabsAdapter(getSupportFragmentManager());
 
         adapter.addFragment(ListContentFragment.newInstance("All"), "Recommended");
-        adapter.addFragment(ListContentFragment.newInstance("Dog"), "Dogs");
-        adapter.addFragment(ListContentFragment.newInstance("Cat"), "Cats");
-//        adapter.addFragment(ListContentFragment.newInstance("Small & Furry"), "Birds");
-//        adapter.addFragment(ListContentFragment.newInstance("Rabit"), "Rabit");
-//        adapter.addFragment(ListContentFragment.newInstance("Horse"), "Horse");
-//        adapter.addFragment(new TileContentFragment(), "Tile");
-//        adapter.addFragment(new CardContentFragment(), "Card");
+//        adapter.addFragment(ListContentFragment.newInstance("Dog"), "Dogs");
+//        adapter.addFragment(ListContentFragment.newInstance("Cat"), "Cats");
+        adapter.addFragment(EventListFragment.newInstance("Events"), "Events");
+        adapter.addFragment(ShelterListFragment.newInstance("Shelters"), "Shelters");
         viewPager.setAdapter(adapter);
     }
 
@@ -206,7 +231,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-        Log.v("testshit", String.valueOf(checkForLocationPermission()));
         if (!checkForLocationPermission()) {
             return;
         }

@@ -1,9 +1,12 @@
 package com.thehollidayinn.kibbl.data.remote;
 
+import com.thehollidayinn.kibbl.data.models.Event;
 import com.thehollidayinn.kibbl.data.models.Favorite;
 import com.thehollidayinn.kibbl.data.models.GenericResponse;
+import com.thehollidayinn.kibbl.data.models.LatestResponse;
 import com.thehollidayinn.kibbl.data.models.Pet;
 import com.thehollidayinn.kibbl.data.models.PetResponse;
+import com.thehollidayinn.kibbl.data.models.Shelter;
 import com.thehollidayinn.kibbl.data.models.UserResponse;
 
 import java.util.List;
@@ -42,4 +45,19 @@ public interface KibblAPIInterface {
 
     @GET("favorites")
     Observable<GenericResponse<List<Favorite>>> getFavorites();
+
+    @GET("latest")
+    Observable<LatestResponse> getLatest();
+
+    @GET("events")
+    Observable<GenericResponse<List<Event>>> getEvents(@QueryMap Map<String, String> options);
+
+    @GET("events/{eventId}")
+    Observable<GenericResponse<Event>> getEventDetail(@Path("eventId") String eventId);
+
+    @GET("shelters")
+    Observable<GenericResponse<List<Shelter>>> getShelters(@QueryMap Map<String, String> options);
+
+    @GET("shelters/{shelterId}")
+    Observable<GenericResponse<Shelter>> getShelterDetail(@Path("shelterId") String shelterId);
 }

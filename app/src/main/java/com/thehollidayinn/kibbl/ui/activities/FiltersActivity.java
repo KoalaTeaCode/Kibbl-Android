@@ -147,7 +147,7 @@ public class FiltersActivity extends AppCompatActivity {
                 Log.i("test", "An error occurred: " + status);
             }
         });
-        
+
         final AutoCompleteTextView autocompleteTextView = (AutoCompleteTextView) findViewById(R.id.breedAutoComplete);
         String[] countries = getResources().getStringArray(R.array.breeds);
         ArrayAdapter<String> adapter =
