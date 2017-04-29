@@ -13,6 +13,18 @@ public class Facebook {
     @Expose
     private String cover;
 
+    @SerializedName("id")
+    @Expose
+    private String id;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
     public String getCover() {
         return cover;
     }

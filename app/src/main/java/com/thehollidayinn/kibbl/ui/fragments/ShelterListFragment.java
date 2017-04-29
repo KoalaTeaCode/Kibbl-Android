@@ -19,12 +19,14 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 import com.thehollidayinn.kibbl.R;
+import com.thehollidayinn.kibbl.data.models.Event;
+import com.thehollidayinn.kibbl.data.models.Facebook;
 import com.thehollidayinn.kibbl.data.models.Filters;
-import com.thehollidayinn.kibbl.data.models.Pet;
-import com.thehollidayinn.kibbl.data.models.PetResponse;
+import com.thehollidayinn.kibbl.data.models.GenericResponse;
+import com.thehollidayinn.kibbl.data.models.Shelter;
+import com.thehollidayinn.kibbl.data.models.Shelter;
 import com.thehollidayinn.kibbl.data.remote.ApiUtils;
 import com.thehollidayinn.kibbl.data.remote.KibblAPIInterface;
-import com.thehollidayinn.kibbl.ui.activities.PetDetailActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -73,9 +75,9 @@ public class ShelterListFragment extends Fragment {
         adapter.getPositionClicks().subscribe(new Action1<String>() {
             @Override
             public void call(String petId) {
-                Intent detailViewIntent = new Intent(ShelterListFragment.this.getContext(), PetDetailActivity.class);
-                detailViewIntent.putExtra("PET_ID", petId);
-                ShelterListFragment.this.getActivity().startActivity(detailViewIntent);
+//                Intent detailViewIntent = new Intent(ShelterListFragment.this.getContext(), ShelterDetailActivity.class);
+//                detailViewIntent.putExtra("PET_ID", petId);
+//                ShelterListFragment.this.getActivity().startActivity(detailViewIntent);
             }
         });
 
@@ -84,23 +86,23 @@ public class ShelterListFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         this.filter = getArguments().getString("FILTER");
-        loadPets();
+        loadShelters();
 
         return recyclerView;
     }
 
-    private void loadPets() {
+    private void loadShelters() {
         KibblAPIInterface mService = ApiUtils.getKibbleService(getActivity());
 
         if (!this.filter.isEmpty()) {
 //            query.put("type", this.filter);
-            filters.type = this.filter;
+//            filters.type = this.filter;
         }
 
-        mService.getPets(filters.toMap())
+        mService.getShelters(filters.toMap())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<PetResponse>() {
+                .subscribe(new Subscriber<GenericResponse<List<Shelter>>>() {
                     @Override
                     public void onCompleted() {
 
@@ -112,8 +114,8 @@ public class ShelterListFragment extends Fragment {
                     }
 
                     @Override
-                    public void onNext(PetResponse petResponse) {
-                        adapter.updatePets(petResponse.getPets());
+                    public void onNext(GenericResponse<List<Shelter>> response) {
+                        adapter.updateShelters(response.data);
                     }
                 });
     }
@@ -143,7 +145,7 @@ public class ShelterListFragment extends Fragment {
 
         private final PublishSubject<String> onClickSubject = PublishSubject.create();
 
-        private List<Pet> pets = new ArrayList<Pet>();
+        private List<Shelter> pets = new ArrayList<Shelter>();
 
         public ContentAdapter(Context context) {
             Resources resources = context.getResources();
@@ -165,17 +167,20 @@ public class ShelterListFragment extends Fragment {
         @Override
         public void onBindViewHolder(ShelterListFragment.ViewHolder holder, final int position) {
             if (pets.size() > position) {
-                Pet currentPet = pets.get(position);
+                Shelter currentShelter = pets.get(position);
 
-                String petImageUrl = currentPet.getMedia().get(3);
-                Picasso.with(context)
-                        .load(petImageUrl)
-                        .resize(50, 50)
-                        .centerCrop()
-                        .into(holder.avator);
+                Facebook facebook = currentShelter.getFacebook();
+                if (facebook != null) {
+                    String petImageUrl = facebook.getCover();
+                    Picasso.with(context)
+                            .load(petImageUrl)
+                            .resize(50, 50)
+                            .centerCrop()
+                            .into(holder.avator);
+                }
 
-                holder.name.setText(currentPet.getName());
-                holder.description.setText(currentPet.getDescription());
+                holder.name.setText(currentShelter.getName());
+                holder.description.setText(currentShelter.getDescription());
             } else {
                 holder.avator.setImageDrawable(mPlaceAvators[position % mPlaceAvators.length]);
                 holder.name.setText(mPlaces[position % mPlaces.length]);
@@ -185,8 +190,8 @@ public class ShelterListFragment extends Fragment {
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Pet currentPet = pets.get(position);
-                    onClickSubject.onNext(String.valueOf(currentPet.getId()));
+                    Shelter currentShelter = pets.get(position);
+                    onClickSubject.onNext(String.valueOf(currentShelter.getId()));
                 }
             });
         }
@@ -200,7 +205,7 @@ public class ShelterListFragment extends Fragment {
             return onClickSubject.asObservable();
         }
 
-        public void updatePets(List<Pet> pets) {
+        public void updateShelters(List<Shelter> pets) {
             this.pets = pets;
             notifyDataSetChanged();
         }
