@@ -25,6 +25,7 @@ import com.thehollidayinn.kibbl.data.models.GenericResponse;
 import com.thehollidayinn.kibbl.data.models.Pet;
 import com.thehollidayinn.kibbl.data.remote.ApiUtils;
 import com.thehollidayinn.kibbl.data.remote.KibblAPIInterface;
+import com.thehollidayinn.kibbl.ui.activities.EventDetailActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -77,9 +78,9 @@ public class EventListFragment extends Fragment {
         adapter.getPositionClicks().subscribe(new Action1<String>() {
             @Override
             public void call(String petId) {
-//                Intent detailViewIntent = new Intent(EventListFragment.this.getContext(), EventDetailActivity.class);
-//                detailViewIntent.putExtra("PET_ID", petId);
-//                EventListFragment.this.getActivity().startActivity(detailViewIntent);
+                Intent detailViewIntent = new Intent(EventListFragment.this.getContext(), EventDetailActivity.class);
+                detailViewIntent.putExtra("PET_ID", petId);
+                EventListFragment.this.getActivity().startActivity(detailViewIntent);
             }
         });
 
@@ -231,7 +232,7 @@ public class EventListFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
                     Event currentEvent = pets.get(position);
-//                    onClickSubject.onNext(String.valueOf(currentEvent.getId()));
+                    onClickSubject.onNext(String.valueOf(currentEvent.getId()));
                 }
             });
         }

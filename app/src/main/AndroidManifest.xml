@@ -41,6 +41,16 @@
                 android:value="com.thehollidayinn.kibbl.MainActivity" /></activity>
 
         <activity
+            android:name=".ui.activities.EventDetailActivity"
+            android:label="@string/title_activity_pet_detail"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:parentActivityName="com.thehollidayinn.kibbl.MainActivity" >
+            <!-- Parent activity meta-data to support 4.0 and lower -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.thehollidayinn.kibbl.MainActivity" /></activity>
+
+        <activity
             android:name=".ui.activities.FiltersActivity"
             android:label="@string/title_activity_filters"
             android:theme="@style/AppTheme.NoActionBar"
