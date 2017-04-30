@@ -48,6 +48,10 @@ public class ListContentFragment extends Fragment {
     private String filter;
     private Filters filters;
 
+    private LinearLayoutManager mLayoutManager;
+    private boolean loading = false;
+    int pastVisiblesItems, visibleItemCount, totalItemCount;
+
     public ListContentFragment() {
     }
 
@@ -85,18 +89,54 @@ public class ListContentFragment extends Fragment {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
+        mLayoutManager = new LinearLayoutManager(this.getContext());
+        recyclerView.setLayoutManager(mLayoutManager);
+
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener()
+        {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy)
+            {
+                if(dy <= 0) {
+                    return;
+                }
+
+                visibleItemCount = mLayoutManager.getChildCount();
+                totalItemCount = mLayoutManager.getItemCount();
+                pastVisiblesItems = mLayoutManager.findFirstVisibleItemPosition();
+
+                if (loading) {
+                    return;
+                }
+
+                if ( (visibleItemCount + pastVisiblesItems) >= totalItemCount)
+                {
+                    loading = true;
+                    Pet lastPet = adapter.pets.get(adapter.pets.size() - 1);
+                    Log.v("testlast", lastPet.getLastUpdate());
+
+                    loadPets(lastPet.getLastUpdate());
+                }
+            }
+
+        });
+
         this.filter = getArguments().getString("FILTER");
-        loadPets();
+        loadPets("");
 
         return recyclerView;
     }
 
-    private void loadPets() {
+    private void loadPets(String lastUpdatedBefore) {
         KibblAPIInterface mService = ApiUtils.getKibbleService(getActivity());
 
         if (!this.filter.isEmpty()) {
 //            query.put("type", this.filter);
             filters.type = this.filter;
+        }
+
+        if (!lastUpdatedBefore.isEmpty()) {
+            filters.lastUpdatedBefore = lastUpdatedBefore;
         }
 
         mService.getPets(filters.toMap())
@@ -115,6 +155,7 @@ public class ListContentFragment extends Fragment {
 
                     @Override
                     public void onNext(PetResponse petResponse) {
+                        loading = false;
                         adapter.updatePets(petResponse.getPets());
                     }
                 });
@@ -203,7 +244,7 @@ public class ListContentFragment extends Fragment {
         }
 
         public void updatePets(List<Pet> pets) {
-            this.pets = pets;
+            this.pets.addAll(pets);
             notifyDataSetChanged();
         }
     }

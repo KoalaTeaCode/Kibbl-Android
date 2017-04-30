@@ -11,7 +11,7 @@
         android:layout_width="@dimen/avator_size"
         android:layout_height="@dimen/avator_size"
         android:scaleType="centerCrop"
-        tools:src="@drawable/a_avator" />
+        android:src="@drawable/logo_web" />
 
     <TextView
         android:id="@+id/list_title"
