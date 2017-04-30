@@ -79,8 +79,8 @@ public class MainActivity extends AppCompatActivity
         user = UserLogin.getInstance(this);
 
         setUpNavBar();
-        setUpTabs();
-        setUpBottomBar(savedInstanceState);
+//        setUpTabs();
+        setUpBottomBar();
 
         // Create an instance of GoogleAPIClient.
         if (mGoogleApiClient == null) {
@@ -123,7 +123,13 @@ public class MainActivity extends AppCompatActivity
         super.onStop();
     }
 
-    private void setUpBottomBar(Bundle savedInstanceState) {
+    private void setUpBottomBar() {
+        // Initial fragment
+        EventListFragment fragment = EventListFragment.newInstance("");
+        getSupportFragmentManager().beginTransaction()
+                .add(R.id.fragment_container, fragment)
+                .commit();
+
         BottomNavigationView bottomNavigationView = (BottomNavigationView)
                 findViewById(R.id.bottom_navigation);
 
@@ -133,18 +139,30 @@ public class MainActivity extends AppCompatActivity
                     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                         switch (item.getItemId()) {
                             case R.id.action_favorites:
-                                FragmentManager fragmentManager = getFragmentManager();
-                                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                                EventListFragment fragment = new EventListFragment();
-//                                fragmentTransaction.add(R.id.fragment_container, fragment);
-                                fragmentTransaction.commit();
+                                EventListFragment fragment = EventListFragment.newInstance("");
+                                getSupportFragmentManager().beginTransaction()
+                                        .replace(R.id.fragment_container, fragment)
+                                        .commit();
                                 break;
                             case R.id.action_schedules:
-
+                                EventListFragment eventListFragment = EventListFragment.newInstance("");
+                                getSupportFragmentManager().beginTransaction()
+                                        .replace(R.id.fragment_container, eventListFragment)
+                                        .commit();
                                 break;
                             case R.id.action_music:
-
+                                ListContentFragment listContentFragment = ListContentFragment.newInstance("");
+                                getSupportFragmentManager().beginTransaction()
+                                        .replace(R.id.fragment_container, listContentFragment)
+                                        .commit();
                                 break;
+
+//                            case R.id.action_shelters:
+//                                ShelterListFragment shelterListFragment = ShelterListFragment.newInstance("");
+//                                getSupportFragmentManager().beginTransaction()
+//                                        .replace(R.id.fragment_container, shelterListFragment)
+//                                        .commit();
+//                                break;
                         }
                         return false;
                     }
@@ -203,11 +221,11 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void setUpTabs() {
-        ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
-        setupViewPager(viewPager);
+//        ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
+//        setupViewPager(viewPager);
 
-        TabLayout tabs = (TabLayout) findViewById(R.id.tabs);
-        tabs.setupWithViewPager(viewPager);
+//        TabLayout tabs = (TabLayout) findViewById(R.id.tabs);
+//        tabs.setupWithViewPager(viewPager);
     }
 
     private void setupViewPager(ViewPager viewPager) {

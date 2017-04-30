@@ -22,6 +22,7 @@ import com.thehollidayinn.kibbl.data.models.Event;
 import com.thehollidayinn.kibbl.data.models.Facebook;
 import com.thehollidayinn.kibbl.data.models.Filters;
 import com.thehollidayinn.kibbl.data.models.GenericResponse;
+import com.thehollidayinn.kibbl.data.models.Pet;
 import com.thehollidayinn.kibbl.data.remote.ApiUtils;
 import com.thehollidayinn.kibbl.data.remote.KibblAPIInterface;
 
@@ -44,6 +45,10 @@ public class EventListFragment extends Fragment {
     private static Context context;
     private String filter;
     private Filters filters;
+
+    private LinearLayoutManager mLayoutManager;
+    private boolean loading = false;
+    int pastVisiblesItems, visibleItemCount, totalItemCount;
 
     public EventListFragment() {
     }
@@ -82,18 +87,54 @@ public class EventListFragment extends Fragment {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        this.filter = getArguments().getString("FILTER");
-        loadEvents();
+        mLayoutManager = new LinearLayoutManager(this.getContext());
+        recyclerView.setLayoutManager(mLayoutManager);
+
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener()
+        {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy)
+            {
+                if(dy <= 0) {
+                    return;
+                }
+
+                visibleItemCount = mLayoutManager.getChildCount();
+                totalItemCount = mLayoutManager.getItemCount();
+                pastVisiblesItems = mLayoutManager.findFirstVisibleItemPosition();
+
+                if (loading) {
+                    return;
+                }
+
+                if ( (visibleItemCount + pastVisiblesItems) >= totalItemCount)
+                {
+                    loading = true;
+                    Event lastEvent = adapter.pets.get(adapter.pets.size() - 1);
+                    Log.v("testlast", lastEvent.getStartTime());
+
+                    loadEvents(lastEvent.getStartTime());
+                }
+            }
+
+        });
+
+//        this.filter = getArguments().getString("FILTER");
+        loadEvents("");
 
         return recyclerView;
     }
 
-    private void loadEvents() {
+    private void loadEvents(String createdAtBefore) {
         KibblAPIInterface mService = ApiUtils.getKibbleService(getActivity());
 
-        if (!this.filter.isEmpty()) {
+//        if (!this.filter.isEmpty()) {
 //            query.put("type", this.filter);
 //            filters.type = this.filter;
+//        }
+
+        if (!createdAtBefore.isEmpty()) {
+            filters.createdAtBefore = createdAtBefore;
         }
 
         mService.getEvents(filters.toMap())
@@ -112,6 +153,7 @@ public class EventListFragment extends Fragment {
 
                     @Override
                     public void onNext(GenericResponse<List<Event>> response) {
+                        loading = false;
                         adapter.updateEvents(response.data);
                     }
                 });
@@ -204,7 +246,7 @@ public class EventListFragment extends Fragment {
         }
 
         public void updateEvents(List<Event> pets) {
-            this.pets = pets;
+            this.pets.addAll(pets);
             notifyDataSetChanged();
         }
     }

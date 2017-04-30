@@ -24,6 +24,7 @@ public class Filters {
     public String gender;
     public String type;
     public String lastUpdatedBefore;
+    public String createdAtBefore;
 
     public Map<String, String> toMap() {
         Map<String, String> filterMap = new HashMap<>();
@@ -50,6 +51,10 @@ public class Filters {
 
         if (lastUpdatedBefore != null && !lastUpdatedBefore.equals("All")) {
             filterMap.put("lastUpdatedBefore", lastUpdatedBefore);
+        }
+
+        if (createdAtBefore != null && !createdAtBefore.equals("All")) {
+            filterMap.put("createdAtBefore", createdAtBefore);
         }
 
         return filterMap;
