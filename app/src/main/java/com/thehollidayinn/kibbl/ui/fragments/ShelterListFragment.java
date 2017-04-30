@@ -27,6 +27,7 @@ import com.thehollidayinn.kibbl.data.models.Shelter;
 import com.thehollidayinn.kibbl.data.models.Shelter;
 import com.thehollidayinn.kibbl.data.remote.ApiUtils;
 import com.thehollidayinn.kibbl.data.remote.KibblAPIInterface;
+import com.thehollidayinn.kibbl.ui.activities.ShelterDetailActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,6 +48,10 @@ public class ShelterListFragment extends Fragment {
     private static Context context;
     private String filter;
     private Filters filters;
+
+    private LinearLayoutManager mLayoutManager;
+    private boolean loading = false;
+    int pastVisiblesItems, visibleItemCount, totalItemCount;
 
     public ShelterListFragment() {
     }
@@ -75,9 +80,9 @@ public class ShelterListFragment extends Fragment {
         adapter.getPositionClicks().subscribe(new Action1<String>() {
             @Override
             public void call(String petId) {
-//                Intent detailViewIntent = new Intent(ShelterListFragment.this.getContext(), ShelterDetailActivity.class);
-//                detailViewIntent.putExtra("PET_ID", petId);
-//                ShelterListFragment.this.getActivity().startActivity(detailViewIntent);
+                Intent detailViewIntent = new Intent(ShelterListFragment.this.getContext(), ShelterDetailActivity.class);
+                detailViewIntent.putExtra("PET_ID", petId);
+                ShelterListFragment.this.getActivity().startActivity(detailViewIntent);
             }
         });
 
@@ -85,18 +90,54 @@ public class ShelterListFragment extends Fragment {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
+        mLayoutManager = new LinearLayoutManager(this.getContext());
+        recyclerView.setLayoutManager(mLayoutManager);
+
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener()
+        {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy)
+            {
+                if(dy <= 0) {
+                    return;
+                }
+
+                visibleItemCount = mLayoutManager.getChildCount();
+                totalItemCount = mLayoutManager.getItemCount();
+                pastVisiblesItems = mLayoutManager.findFirstVisibleItemPosition();
+
+                if (loading) {
+                    return;
+                }
+
+                if ( (visibleItemCount + pastVisiblesItems) >= totalItemCount)
+                {
+                    loading = true;
+                    Shelter lastEvent = adapter.pets.get(adapter.pets.size() - 1);
+                    Log.v("testlast", lastEvent.getCreatedAt());
+
+                    loadShelters(lastEvent.getCreatedAt());
+                }
+            }
+
+        });
+
         this.filter = getArguments().getString("FILTER");
-        loadShelters();
+        loadShelters("");
 
         return recyclerView;
     }
 
-    private void loadShelters() {
+    private void loadShelters(String createdAtBefore) {
         KibblAPIInterface mService = ApiUtils.getKibbleService(getActivity());
 
         if (!this.filter.isEmpty()) {
 //            query.put("type", this.filter);
 //            filters.type = this.filter;
+        }
+
+        if (!createdAtBefore.isEmpty()) {
+            filters.createdAtBefore = createdAtBefore;
         }
 
         mService.getShelters(filters.toMap())

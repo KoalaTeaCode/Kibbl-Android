@@ -125,7 +125,7 @@ public class MainActivity extends AppCompatActivity
 
     private void setUpBottomBar() {
         // Initial fragment
-        EventListFragment fragment = EventListFragment.newInstance("");
+        ShelterListFragment fragment = ShelterListFragment.newInstance("");
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.fragment_container, fragment)
                 .commit();
