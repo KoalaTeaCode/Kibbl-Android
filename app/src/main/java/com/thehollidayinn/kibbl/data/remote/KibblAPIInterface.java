@@ -2,6 +2,8 @@ package com.thehollidayinn.kibbl.data.remote;
 
 import com.thehollidayinn.kibbl.data.models.Event;
 import com.thehollidayinn.kibbl.data.models.Favorite;
+import com.thehollidayinn.kibbl.data.models.Feedback;
+import com.thehollidayinn.kibbl.data.models.FeedbackResponse;
 import com.thehollidayinn.kibbl.data.models.GenericResponse;
 import com.thehollidayinn.kibbl.data.models.LatestResponse;
 import com.thehollidayinn.kibbl.data.models.Notification;
@@ -64,4 +66,10 @@ public interface KibblAPIInterface {
 
     @GET("notifications")
     Observable<GenericResponse<List<Notification>>> getNotifications();
+
+    @GET("feedback")
+    Observable<FeedbackResponse> getFeedbacks();
+
+    @POST("feedback")
+    Observable<Feedback> postFeedback(@Body Map<String, String> feedback);
 }

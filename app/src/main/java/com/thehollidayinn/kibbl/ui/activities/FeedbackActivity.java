@@ -1,29 +1,29 @@
 package com.thehollidayinn.kibbl.ui.activities;
 
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.thehollidayinn.kibbl.R;
-import com.thehollidayinn.kibbl.ui.fragments.FavoritesListFragment;
-import com.thehollidayinn.kibbl.ui.fragments.NotificationListFragment;
+import com.thehollidayinn.kibbl.ui.fragments.FeedbackFragment;
 
-public class NotificationsActivity extends AppCompatActivity {
+public class FeedbackActivity extends AppCompatActivity {
 
     private FirebaseAnalytics mFirebaseAnalytics;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+//        setContentView(R.layout.activity_feedback);
         setContentView(R.layout.activity_fragment);
-
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         logStat();
-
         setUpListFragment();
     }
 
@@ -36,7 +36,7 @@ public class NotificationsActivity extends AppCompatActivity {
     }
 
     private void setUpListFragment() {
-        NotificationListFragment favoritesList = NotificationListFragment.newInstance();
+        FeedbackFragment favoritesList = FeedbackFragment.newInstance();
         getSupportFragmentManager().beginTransaction().replace(R.id.content_fragment, favoritesList).commit();
     }
 }

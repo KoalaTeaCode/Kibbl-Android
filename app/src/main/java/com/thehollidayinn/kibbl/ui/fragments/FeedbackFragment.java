@@ -15,10 +15,9 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 import com.thehollidayinn.kibbl.R;
-import com.thehollidayinn.kibbl.data.models.Notification;
+import com.thehollidayinn.kibbl.data.models.FeedbackResponse;
 import com.thehollidayinn.kibbl.data.models.GenericResponse;
-import com.thehollidayinn.kibbl.data.models.Notification;
-import com.thehollidayinn.kibbl.data.models.Pet;
+import com.thehollidayinn.kibbl.data.models.Feedback;
 import com.thehollidayinn.kibbl.data.models.Shelter;
 import com.thehollidayinn.kibbl.data.remote.ApiUtils;
 import com.thehollidayinn.kibbl.data.remote.KibblAPIInterface;
@@ -32,22 +31,18 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
 
-/**
- * Created by krh12 on 4/30/2017.
- */
-
-public class NotificationListFragment extends Fragment {
-    private NotificationListFragment.ContentAdapter adapter;
+public class FeedbackFragment extends Fragment {
+    private FeedbackFragment.ContentAdapter adapter;
     private static Context context;
     private static RecyclerView recyclerView;
     private static TextView emptyTextView;
 
-    public NotificationListFragment() {
+    public FeedbackFragment() {
         // Required empty public constructor
     }
 
-    public static NotificationListFragment newInstance() {
-        NotificationListFragment fragment = new NotificationListFragment();
+    public static FeedbackFragment newInstance() {
+        FeedbackFragment fragment = new FeedbackFragment();
         Bundle args = new Bundle();
         fragment.setArguments(args);
         return fragment;
@@ -67,24 +62,24 @@ public class NotificationListFragment extends Fragment {
         emptyTextView = (TextView) view.findViewById(R.id.empty_view);
         recyclerView.setVisibility(View.INVISIBLE);
 
-        adapter = new NotificationListFragment.ContentAdapter(recyclerView.getContext());
+        adapter = new FeedbackFragment.ContentAdapter(recyclerView.getContext());
 
         recyclerView.setAdapter(adapter);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        loadNotifications();
+        loadFeedbacks();
 
         return view;
     }
 
-    private void loadNotifications() {
+    private void loadFeedbacks() {
         KibblAPIInterface mService = ApiUtils.getKibbleService(getActivity());
 
-        mService.getNotifications()
+        mService.getFeedbacks()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<GenericResponse<List<Notification>>>() {
+                .subscribe(new Subscriber<FeedbackResponse>() {
                     @Override
                     public void onCompleted() {
 
@@ -96,8 +91,9 @@ public class NotificationListFragment extends Fragment {
                     }
 
                     @Override
-                    public void onNext(GenericResponse<List<Notification>> genericResponse) {
-                        List<Notification> favorties = genericResponse.data;
+                    public void onNext(FeedbackResponse genericResponse) {
+                        List<Feedback> favorties = genericResponse.feedback;
+                        Log.v("test", favorties.toString());
                         adapter.updatePets(favorties);
                     }
                 });
@@ -119,37 +115,29 @@ public class NotificationListFragment extends Fragment {
     /**
      * Adapter to display recycler view.
      */
-    public static class ContentAdapter extends RecyclerView.Adapter<NotificationListFragment.ViewHolder> {
+    public static class ContentAdapter extends RecyclerView.Adapter<FeedbackFragment.ViewHolder> {
         // Set numbers of List in RecyclerView.
         private static final int LENGTH = 18;
 
         private final PublishSubject<String> onClickSubject = PublishSubject.create();
 
-        private List<Notification> favorites = new ArrayList<>();
+        private List<Feedback> favorites = new ArrayList<>();
 
         public ContentAdapter(Context context) {
         }
 
         @Override
-        public NotificationListFragment.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            return new NotificationListFragment.ViewHolder(LayoutInflater.from(parent.getContext()), parent);
+        public FeedbackFragment.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            return new FeedbackFragment.ViewHolder(LayoutInflater.from(parent.getContext()), parent);
         }
 
         @Override
-        public void onBindViewHolder(NotificationListFragment.ViewHolder holder, final int position) {
+        public void onBindViewHolder(FeedbackFragment.ViewHolder holder, final int position) {
             if (favorites != null && favorites.size() > position) {
-                Notification favorite = favorites.get(position);
-                Shelter currentPet = favorite.shelterId;
+                Feedback favorite = favorites.get(position);
 
-                String petImageUrl = currentPet.getFacebook().getCover();
-                Picasso.with(context)
-                        .load(petImageUrl)
-                        .resize(50, 50)
-                        .centerCrop()
-                        .into(holder.avator);
 
-                holder.name.setText(currentPet.getName());
-                holder.description.setText(currentPet.getDescription());
+                holder.name.setText(favorite.text);
             }
 
             holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -170,7 +158,7 @@ public class NotificationListFragment extends Fragment {
             return onClickSubject.asObservable();
         }
 
-        public void updatePets(List<Notification> favorites) {
+        public void updatePets(List<Feedback> favorites) {
             this.favorites = favorites;
             if (favorites.size() != 0) {
                 emptyTextView.setVisibility(View.INVISIBLE);
