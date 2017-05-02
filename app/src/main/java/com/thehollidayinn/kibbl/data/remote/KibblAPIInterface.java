@@ -4,6 +4,7 @@ import com.thehollidayinn.kibbl.data.models.Event;
 import com.thehollidayinn.kibbl.data.models.Favorite;
 import com.thehollidayinn.kibbl.data.models.GenericResponse;
 import com.thehollidayinn.kibbl.data.models.LatestResponse;
+import com.thehollidayinn.kibbl.data.models.Notification;
 import com.thehollidayinn.kibbl.data.models.Pet;
 import com.thehollidayinn.kibbl.data.models.PetResponse;
 import com.thehollidayinn.kibbl.data.models.Shelter;
@@ -60,4 +61,7 @@ public interface KibblAPIInterface {
 
     @GET("shelters/{shelterId}")
     Observable<GenericResponse<Shelter>> getShelterDetail(@Path("shelterId") String shelterId);
+
+    @GET("notifications")
+    Observable<GenericResponse<List<Notification>>> getNotifications();
 }

@@ -37,6 +37,7 @@ import com.thehollidayinn.kibbl.data.remote.KibblAPIInterface;
 import com.thehollidayinn.kibbl.ui.activities.FavoritesActivity;
 import com.thehollidayinn.kibbl.ui.activities.FiltersActivity;
 import com.thehollidayinn.kibbl.ui.activities.LoginRegisterActivity;
+import com.thehollidayinn.kibbl.ui.activities.NotificationsActivity;
 import com.thehollidayinn.kibbl.ui.adapters.MainTabsAdapter;
 import com.thehollidayinn.kibbl.ui.fragments.EventListFragment;
 import com.thehollidayinn.kibbl.ui.fragments.ListContentFragment;
@@ -207,6 +208,9 @@ public class MainActivity extends AppCompatActivity
                             startActivity(loginRegisterIntent);
                         } else if (menuItem.getItemId() == R.id.favorites) {
                             Intent filterIntent = new Intent(context, FavoritesActivity.class);
+                            startActivity(filterIntent);
+                        } else if (menuItem.getItemId() == R.id.notifications) {
+                            Intent filterIntent = new Intent(context, NotificationsActivity.class);
                             startActivity(filterIntent);
                         } else if (menuItem.getItemId() == R.id.logout) {
                             user.logOut();
