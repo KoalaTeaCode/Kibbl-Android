@@ -2,22 +2,22 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/action_favorites"
+        android:id="@+id/action_events"
         android:enabled="true"
-        android:icon="@drawable/ic_favorite"
-        android:title="@string/text_home"
-        app:showAsAction="ifRoom" />
-    <item
-        android:id="@+id/action_schedules"
-        android:enabled="true"
-        android:icon="@drawable/ic_favorite"
+        android:icon="@drawable/events_icon"
         android:title="@string/text_events"
         app:showAsAction="ifRoom" />
     <item
-        android:id="@+id/action_music"
+        android:id="@+id/action_pets"
         android:enabled="true"
-        android:icon="@drawable/ic_favorite"
+        android:icon="@drawable/pets_icon"
         android:title="@string/text_pets"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_shelters"
+        android:enabled="true"
+        android:icon="@drawable/shelters_icon"
+        android:title="@string/text_shelters"
         app:showAsAction="ifRoom" />
     <!--<item-->
         <!--android:id="@+id/action_shelters"-->

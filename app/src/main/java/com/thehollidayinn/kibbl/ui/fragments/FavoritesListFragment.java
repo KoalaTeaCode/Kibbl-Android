@@ -215,12 +215,12 @@ public class FavoritesListFragment extends Fragment {
                 Favorite favorite = favorites.get(position);
                 Pet currentPet = favorite.pet;
 
-                String petImageUrl = currentPet.getMedia().get(3);
-                Picasso.with(context)
-                        .load(petImageUrl)
-                        .resize(50, 50)
-                        .centerCrop()
-                        .into(holder.avator);
+//                String petImageUrl = currentPet.getMedia().get(3);
+//                Picasso.with(context)
+//                        .load(petImageUrl)
+//                        .resize(50, 50)
+//                        .centerCrop()
+//                        .into(holder.avator);
 
                 holder.name.setText(currentPet.getName());
                 holder.description.setText(currentPet.getDescription());

@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.thehollidayinn.kibbl.R;
@@ -29,13 +30,14 @@ public class PetDetailActivity extends AppCompatActivity {
     private CollapsingToolbarLayout collapsingToolbar;
     private ImageView image;
     private TextView descriptionTextView;
+    private TextView titleTextView2;
     private String petId;
     private Button favoriteButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_pet_detail);
+        setContentView(R.layout.activity_event_detail);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -49,27 +51,28 @@ public class PetDetailActivity extends AppCompatActivity {
                 (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
         image = (ImageView) findViewById(R.id.image);
         descriptionTextView = (TextView) findViewById(R.id.description);
+        titleTextView2 = (TextView) findViewById(R.id.titleTextView2);
 
-        favoriteButton = (Button) findViewById(R.id.favoriteButton);
-        favoriteButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                favoritePet(petId);
-            }
-        });
+//        favoriteButton = (Button) findViewById(R.id.favoriteButton);
+//        favoriteButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                favoritePet(petId);
+//            }
+//        });
 
-        Button shareButton = (Button) findViewById(R.id.shareButton);
-        shareButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
-                sharingIntent.setType("text/plain");
-                String shareBody = "Here is the share content body";
-                sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Subject Here");
-                sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
-                startActivity(Intent.createChooser(sharingIntent, "Share via"));
-            }
-        });
+//        Button shareButton = (Button) findViewById(R.id.shareButton);
+//        shareButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+//                sharingIntent.setType("text/plain");
+//                String shareBody = "Here is the share content body";
+//                sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Subject Here");
+//                sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
+//                startActivity(Intent.createChooser(sharingIntent, "Share via"));
+//            }
+//        });
     }
 
     private void favoritePet(String petId) {
@@ -128,11 +131,19 @@ public class PetDetailActivity extends AppCompatActivity {
     }
 
     private void displayPetInfo(Pet pet) {
-        collapsingToolbar.setTitle(pet.getName());
+        collapsingToolbar.setTitle("");
+        titleTextView2.setText(pet.getName());
         descriptionTextView.setText(pet.getDescription());
 
+        if (pet.getMedia() != null && pet.getMedia().get(0).urlSecureThumbnail != null) {
+            findViewById(R.id.details_top).setVisibility(View.INVISIBLE);
+        } else {
+            findViewById(R.id.detail_content2).setVisibility(View.INVISIBLE);
+            findViewById(R.id.detail_content2).setLayoutParams(new LinearLayout.LayoutParams(0, 0));
+        }
+
         Picasso.with(this)
-                .load(pet.getMedia().get(3))
+                .load(pet.getMedia().get(0).urlSecureFullsize)
 //                .resize(300, 300)
 //                .centerCrop()
                 .into(image);

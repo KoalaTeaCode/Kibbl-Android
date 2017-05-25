@@ -24,7 +24,7 @@ public class Pet {
     private String size;
     @SerializedName("media")
     @Expose
-    private List<String> media = null;
+    private List<PetMedia> media = null;
     @SerializedName("petId")
     @Expose
     private String petId;
@@ -95,11 +95,11 @@ public class Pet {
         this.size = size;
     }
 
-    public List<String> getMedia() {
+    public List<PetMedia> getMedia() {
         return media;
     }
 
-    public void setMedia(List<String> media) {
+    public void setMedia(List<PetMedia> media) {
         this.media = media;
     }
 

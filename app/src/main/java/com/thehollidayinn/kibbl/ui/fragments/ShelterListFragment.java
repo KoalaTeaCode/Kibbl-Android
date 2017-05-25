@@ -1,5 +1,6 @@
 package com.thehollidayinn.kibbl.ui.fragments;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -48,6 +49,7 @@ public class ShelterListFragment extends Fragment {
     private static Context context;
     private String filter;
     private Filters filters;
+    private ProgressDialog dialog;
 
     private LinearLayoutManager mLayoutManager;
     private boolean loading = false;
@@ -140,13 +142,16 @@ public class ShelterListFragment extends Fragment {
             filters.createdAtBefore = createdAtBefore;
         }
 
+        dialog = ProgressDialog.show(getActivity(), "",
+                "Loading. Please wait...", true);
+
         mService.getShelters(filters.toMap())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<GenericResponse<List<Shelter>>>() {
                     @Override
                     public void onCompleted() {
-
+                        dialog.hide();
                     }
 
                     @Override
@@ -223,7 +228,7 @@ public class ShelterListFragment extends Fragment {
                 holder.name.setText(currentShelter.getName());
                 holder.description.setText(currentShelter.getDescription());
             } else {
-                holder.avator.setImageDrawable(mPlaceAvators[position % mPlaceAvators.length]);
+//                holder.avator.setImageDrawable(mPlaceAvators[position % mPlaceAvators.length]);
                 holder.name.setText(mPlaces[position % mPlaces.length]);
                 holder.description.setText(mPlaceDesc[position % mPlaceDesc.length]);
             }

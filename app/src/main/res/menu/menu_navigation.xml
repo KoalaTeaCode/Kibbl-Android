@@ -4,29 +4,29 @@
         <item
             android:icon="@drawable/ic_home_black_24dp"
             android:tint="@color/button_grey"
-            android:title="Find Pets" />
+            android:title="Home" />
         <item
             android:icon="@drawable/ic_favorite_black_24dp"
             android:tint="@color/button_grey"
             android:id="@+id/favorites"
             android:title="Favorites" />
 
-        <item
-            android:icon="@drawable/ic_favorite_black_24dp"
-            android:tint="@color/button_grey"
-            android:id="@+id/notifications"
-            android:title="Notifications" />
+        <!--<item-->
+            <!--android:icon="@drawable/bell"-->
+            <!--android:tint="@color/button_grey"-->
+            <!--android:id="@+id/notifications"-->
+            <!--android:title="Notifications" />-->
 
         <item
-            android:icon="@drawable/ic_favorite_black_24dp"
+            android:icon="@drawable/ic_action_envelope_icon"
             android:tint="@color/button_grey"
             android:id="@+id/feedback"
             android:title="Feedback" />
 
-        <item
-            android:icon="@drawable/ic_bookmark_border_black_24dp"
-            android:tint="@color/button_grey"
-            android:title="About Us" />
+        <!--<item-->
+            <!--android:icon="@drawable/ic_bookmark_border_black_24dp"-->
+            <!--android:tint="@color/button_grey"-->
+            <!--android:title="About Us" />-->
 
         <item
             android:icon="@drawable/ic_bookmark_border_black_24dp"

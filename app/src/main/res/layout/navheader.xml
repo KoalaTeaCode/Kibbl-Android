@@ -1,8 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/navheader_height"
-    android:background="?attr/colorPrimaryDark"
+    android:layout_height="40dp"
+    android:background="@color/white"
     android:orientation="vertical"
     android:padding="@dimen/md_keylines">
-</LinearLayout>
+
+    <!--<ImageView-->
+        <!--android:layout_width="100dp"-->
+        <!--android:layout_height="125dp"-->
+        <!--android:background="@drawable/logo_dog"-->
+        <!--android:layout_centerHorizontal="true"-->
+        <!--android:id="@+id/logo_dog"/>-->
+
+    <!--<ImageView-->
+        <!--android:layout_width="100dp"-->
+        <!--android:layout_height="25dp"-->
+        <!--android:background="@drawable/logo"-->
+        <!--android:layout_centerHorizontal="true"-->
+        <!--android:layout_marginTop="10dp" />-->
+
+</RelativeLayout>

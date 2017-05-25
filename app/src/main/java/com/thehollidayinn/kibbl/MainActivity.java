@@ -5,6 +5,8 @@ import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -29,6 +31,7 @@ import android.view.MenuItem;
 
 import com.thehollidayinn.kibbl.data.models.Favorite;
 import com.thehollidayinn.kibbl.data.models.GenericResponse;
+import com.thehollidayinn.kibbl.data.models.Notification;
 import com.thehollidayinn.kibbl.data.models.PetResponse;
 import com.thehollidayinn.kibbl.data.models.Shelter;
 import com.thehollidayinn.kibbl.data.models.UserLogin;
@@ -105,7 +108,7 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.action_settings) {
-            Intent filterIntent = new Intent(this, FiltersActivity.class);
+            Intent filterIntent = new Intent(this, NotificationsActivity.class);
             startActivity(filterIntent);
             return true;
         } else if (id == android.R.id.home) {
@@ -127,7 +130,7 @@ public class MainActivity extends AppCompatActivity
 
     private void setUpBottomBar() {
         // Initial fragment
-        ShelterListFragment fragment = ShelterListFragment.newInstance("");
+        EventListFragment fragment = EventListFragment.newInstance("");
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.fragment_container, fragment)
                 .commit();
@@ -140,33 +143,26 @@ public class MainActivity extends AppCompatActivity
                     @Override
                     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                         switch (item.getItemId()) {
-                            case R.id.action_favorites:
+                            case R.id.action_events:
                                 EventListFragment fragment = EventListFragment.newInstance("");
                                 getSupportFragmentManager().beginTransaction()
                                         .replace(R.id.fragment_container, fragment)
                                         .commit();
                                 break;
-                            case R.id.action_schedules:
-                                EventListFragment eventListFragment = EventListFragment.newInstance("");
-                                getSupportFragmentManager().beginTransaction()
-                                        .replace(R.id.fragment_container, eventListFragment)
-                                        .commit();
-                                break;
-                            case R.id.action_music:
+                            case R.id.action_pets:
                                 ListContentFragment listContentFragment = ListContentFragment.newInstance("");
                                 getSupportFragmentManager().beginTransaction()
                                         .replace(R.id.fragment_container, listContentFragment)
                                         .commit();
                                 break;
-
-//                            case R.id.action_shelters:
-//                                ShelterListFragment shelterListFragment = ShelterListFragment.newInstance("");
-//                                getSupportFragmentManager().beginTransaction()
-//                                        .replace(R.id.fragment_container, shelterListFragment)
-//                                        .commit();
-//                                break;
+                            case R.id.action_shelters:
+                                ShelterListFragment shelterListFragment = ShelterListFragment.newInstance("");
+                                getSupportFragmentManager().beginTransaction()
+                                        .replace(R.id.fragment_container, shelterListFragment)
+                                        .commit();
+                                break;
                         }
-                        return false;
+                        return true;
                     }
                 });
     }
@@ -178,10 +174,13 @@ public class MainActivity extends AppCompatActivity
 
         // Adding menu icon to Toolbar
         ActionBar supportActionBar = getSupportActionBar();
+//        supportActionBar.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.white)));
+//        supportActionBar.setElevation(0);
+
         if (supportActionBar != null) {
             VectorDrawableCompat indicator =
                     VectorDrawableCompat.create(getResources(), R.drawable.ic_menu, getTheme());
-            indicator.setTint(ResourcesCompat.getColor(getResources(),R.color.white,getTheme()));
+            indicator.setTint(ResourcesCompat.getColor(getResources(), R.color.button_grey, getTheme()));
             supportActionBar.setHomeAsUpIndicator(indicator);
             supportActionBar.setDisplayHomeAsUpEnabled(true);
         }
@@ -210,9 +209,6 @@ public class MainActivity extends AppCompatActivity
                         } else if (menuItem.getItemId() == R.id.favorites) {
                             Intent filterIntent = new Intent(context, FavoritesActivity.class);
                             startActivity(filterIntent);
-                        } else if (menuItem.getItemId() == R.id.notifications) {
-                            Intent filterIntent = new Intent(context, NotificationsActivity.class);
-                            startActivity(filterIntent);
                         } else if (menuItem.getItemId() == R.id.feedback) {
                             Intent filterIntent = new Intent(context, FeedbackActivity.class);
                             startActivity(filterIntent);
@@ -239,10 +235,11 @@ public class MainActivity extends AppCompatActivity
     private void setupViewPager(ViewPager viewPager) {
         MainTabsAdapter adapter = new MainTabsAdapter(getSupportFragmentManager());
 
-        adapter.addFragment(ListContentFragment.newInstance("All"), "Recommended");
+//        adapter.addFragment(ListContentFragment.newInstance("All"), "Recommended");
 //        adapter.addFragment(ListContentFragment.newInstance("Dog"), "Dogs");
 //        adapter.addFragment(ListContentFragment.newInstance("Cat"), "Cats");
         adapter.addFragment(EventListFragment.newInstance("Events"), "Events");
+        adapter.addFragment(EventListFragment.newInstance("Pets"), "Pets");
         adapter.addFragment(ShelterListFragment.newInstance("Shelters"), "Shelters");
         viewPager.setAdapter(adapter);
     }

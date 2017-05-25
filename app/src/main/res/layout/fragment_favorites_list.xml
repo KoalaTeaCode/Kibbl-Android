@@ -4,11 +4,29 @@
     android:layout_height="match_parent"
     tools:context="com.thehollidayinn.kibbl.ui.fragments.FavoritesListFragment">
 
-    <TextView
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/empty_view"
-        android:text="No Favorites! Try favoriting." />
+        android:padding="36dp">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/logo_dog"
+            android:layout_centerHorizontal="true"
+            android:id="@+id/logo_dog"
+            />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:textAlignment="center"
+            android:id="@+id/empty_view"
+            android:layout_below="@+id/logo_dog"
+            android:layout_centerHorizontal="true"
+            android:textSize="36dp"
+            android:text="Woops. Nothing here yet." />
+    </RelativeLayout>
+
 
     <android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"

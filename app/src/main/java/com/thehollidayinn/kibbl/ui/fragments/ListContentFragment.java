@@ -1,5 +1,6 @@
 package com.thehollidayinn.kibbl.ui.fragments;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -47,6 +48,7 @@ public class ListContentFragment extends Fragment {
     private static Context context;
     private String filter;
     private Filters filters;
+    private ProgressDialog dialog;
 
     private LinearLayoutManager mLayoutManager;
     private boolean loading = false;
@@ -139,13 +141,16 @@ public class ListContentFragment extends Fragment {
             filters.lastUpdatedBefore = lastUpdatedBefore;
         }
 
+        dialog = ProgressDialog.show(getActivity(), "",
+                "Loading. Please wait...", true);
+
         mService.getPets(filters.toMap())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<PetResponse>() {
                     @Override
                     public void onCompleted() {
-
+                        dialog.hide();
                     }
 
                     @Override
@@ -210,17 +215,19 @@ public class ListContentFragment extends Fragment {
             if (pets.size() > position) {
                 Pet currentPet = pets.get(position);
 
-                String petImageUrl = currentPet.getMedia().get(3);
-                Picasso.with(context)
-                        .load(petImageUrl)
-                        .resize(50, 50)
-                        .centerCrop()
-                        .into(holder.avator);
+                if (currentPet.getMedia() != null && currentPet.getMedia().size() > 0 && currentPet.getMedia().get(0).urlSecureThumbnail != null) {
+                    String petImageUrl = currentPet.getMedia().get(0).urlSecureThumbnail;
+                    Picasso.with(context)
+                            .load(petImageUrl)
+                            .resize(50, 50)
+                            .centerCrop()
+                            .into(holder.avator);
+                }
 
                 holder.name.setText(currentPet.getName());
                 holder.description.setText(currentPet.getDescription());
             } else {
-                holder.avator.setImageDrawable(mPlaceAvators[position % mPlaceAvators.length]);
+//                holder.avator.setImageDrawable(mPlaceAvators[position % mPlaceAvators.length]);
                 holder.name.setText(mPlaces[position % mPlaces.length]);
                 holder.description.setText(mPlaceDesc[position % mPlaceDesc.length]);
             }

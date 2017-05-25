@@ -1,14 +1,20 @@
 package com.thehollidayinn.kibbl.ui.activities;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.v4.view.GravityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
@@ -28,47 +34,73 @@ public class EventDetailActivity extends AppCompatActivity {
     private CollapsingToolbarLayout collapsingToolbar;
     private ImageView image;
     private TextView descriptionTextView;
+    private TextView titleTextView;
+    private TextView titleTextView2;
     private String petId;
     private Button favoriteButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_pet_detail);
+        setContentView(R.layout.activity_event_detail);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+
+        collapsingToolbar =
+                (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
+        collapsingToolbar.setTitle("");
+        image = (ImageView) findViewById(R.id.image);
+        descriptionTextView = (TextView) findViewById(R.id.description);
+        titleTextView = (TextView) findViewById(R.id.titleTextView);
+        titleTextView2 = (TextView) findViewById(R.id.titleTextView2);
 
         Bundle extras = getIntent().getExtras();
         petId = extras.getString("PET_ID");
         loadPet(petId);
+//
 
-        collapsingToolbar =
-                (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
-        image = (ImageView) findViewById(R.id.image);
-        descriptionTextView = (TextView) findViewById(R.id.description);
+//        favoriteButton = (Button) findViewById(R.id.favoriteButton);
+//        favoriteButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                favoritePet(petId);
+//            }
+//        });
+//
+//        Button shareButton = (Button) findViewById(R.id.shareButton);
+//        shareButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Intent sharingIntent = new Intent(Intent.ACTION_SEND);
+//                sharingIntent.setType("text/plain");
+//                String shareBody = "Here is the share content body";
+//                sharingIntent.putExtra(Intent.EXTRA_SUBJECT, "Subject Here");
+//                sharingIntent.putExtra(Intent.EXTRA_TEXT, shareBody);
+//                startActivity(Intent.createChooser(sharingIntent, "Share via"));
+//            }
+//        });
+    }
 
-        favoriteButton = (Button) findViewById(R.id.favoriteButton);
-        favoriteButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                favoritePet(petId);
-            }
-        });
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.detail_activity_menu, menu);
+        return true;
+    }
 
-        Button shareButton = (Button) findViewById(R.id.shareButton);
-        shareButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent sharingIntent = new Intent(Intent.ACTION_SEND);
-                sharingIntent.setType("text/plain");
-                String shareBody = "Here is the share content body";
-                sharingIntent.putExtra(Intent.EXTRA_SUBJECT, "Subject Here");
-                sharingIntent.putExtra(Intent.EXTRA_TEXT, shareBody);
-                startActivity(Intent.createChooser(sharingIntent, "Share via"));
-            }
-        });
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.action_share) {
+            Intent filterIntent = new Intent(this, FiltersActivity.class);
+            startActivity(filterIntent);
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     private void favoritePet(String petId) {
@@ -127,8 +159,16 @@ public class EventDetailActivity extends AppCompatActivity {
     }
 
     private void displayPetInfo(Event pet) {
-        collapsingToolbar.setTitle(pet.getName());
+        titleTextView.setText(pet.getName());
+        titleTextView2.setText(pet.getName());
         descriptionTextView.setText(pet.getDescription());
+
+        if (pet.getFacebook() != null && pet.getFacebook().getCover() != null) {
+            findViewById(R.id.details_top).setVisibility(View.INVISIBLE);
+        } else {
+            findViewById(R.id.detail_content2).setVisibility(View.INVISIBLE);
+            findViewById(R.id.detail_content2).setLayoutParams(new LinearLayout.LayoutParams(0, 0));
+        }
 
         Picasso.with(this)
                 .load(pet.getFacebook().getCover())

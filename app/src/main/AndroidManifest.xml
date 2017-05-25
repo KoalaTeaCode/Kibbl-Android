@@ -122,7 +122,12 @@
         <activity
             android:name=".ui.activities.FeedbackActivity"
             android:label="@string/title_activity_feedback"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar">
+            <!-- Parent activity meta-data to support 4.0 and lower -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.thehollidayinn.kibbl.MainActivity" />
+        </activity>
     </application>
 
 </manifest>

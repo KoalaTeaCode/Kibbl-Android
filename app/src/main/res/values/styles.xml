@@ -6,6 +6,10 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorControlNormal">@color/colorPrimaryDark</item>
+        <item name="android:actionBarStyle">@style/MyActionBarTheme</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:elevation">0dp</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
@@ -17,4 +21,8 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
+    <style name="MyActionBarTheme" parent="Theme.AppCompat.Light">
+        <item name="android:background">@color/white</item>
+        <item name="android:icon">@drawable/ic_bookmark_border_black_24dp</item>
+    </style>
 </resources>

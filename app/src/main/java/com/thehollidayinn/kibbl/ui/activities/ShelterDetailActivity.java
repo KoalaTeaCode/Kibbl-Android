@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
@@ -28,13 +29,14 @@ public class ShelterDetailActivity extends AppCompatActivity {
     private CollapsingToolbarLayout collapsingToolbar;
     private ImageView image;
     private TextView descriptionTextView;
+    private TextView titleTextView2;
     private String petId;
     private Button favoriteButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_pet_detail);
+        setContentView(R.layout.activity_event_detail);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -49,26 +51,26 @@ public class ShelterDetailActivity extends AppCompatActivity {
         image = (ImageView) findViewById(R.id.image);
         descriptionTextView = (TextView) findViewById(R.id.description);
 
-        favoriteButton = (Button) findViewById(R.id.favoriteButton);
-        favoriteButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                favoritePet(petId);
-            }
-        });
-
-        Button shareButton = (Button) findViewById(R.id.shareButton);
-        shareButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent sharingIntent = new Intent(Intent.ACTION_SEND);
-                sharingIntent.setType("text/plain");
-                String shareBody = "Here is the share content body";
-                sharingIntent.putExtra(Intent.EXTRA_SUBJECT, "Subject Here");
-                sharingIntent.putExtra(Intent.EXTRA_TEXT, shareBody);
-                startActivity(Intent.createChooser(sharingIntent, "Share via"));
-            }
-        });
+//        favoriteButton = (Button) findViewById(R.id.favoriteButton);
+//        favoriteButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                favoritePet(petId);
+//            }
+//        });
+//
+//        Button shareButton = (Button) findViewById(R.id.shareButton);
+//        shareButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Intent sharingIntent = new Intent(Intent.ACTION_SEND);
+//                sharingIntent.setType("text/plain");
+//                String shareBody = "Here is the share content body";
+//                sharingIntent.putExtra(Intent.EXTRA_SUBJECT, "Subject Here");
+//                sharingIntent.putExtra(Intent.EXTRA_TEXT, shareBody);
+//                startActivity(Intent.createChooser(sharingIntent, "Share via"));
+//            }
+//        });
     }
 
     private void favoritePet(String petId) {
@@ -127,8 +129,16 @@ public class ShelterDetailActivity extends AppCompatActivity {
     }
 
     private void displayPetInfo(Shelter pet) {
-        collapsingToolbar.setTitle(pet.getName());
+        collapsingToolbar.setTitle("");
+        titleTextView2.setText(pet.getName());
         descriptionTextView.setText(pet.getDescription());
+
+        if (pet.getFacebook() != null && pet.getFacebook().getCover() != null) {
+            findViewById(R.id.details_top).setVisibility(View.INVISIBLE);
+        } else {
+            findViewById(R.id.detail_content2).setVisibility(View.INVISIBLE);
+            findViewById(R.id.detail_content2).setLayoutParams(new LinearLayout.LayoutParams(0, 0));
+        }
 
         Picasso.with(this)
                 .load(pet.getFacebook().getCover())
