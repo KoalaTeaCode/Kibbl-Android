@@ -15,4 +15,12 @@ public class Favorite {
     @SerializedName("petID")
     @Expose
     public Pet pet;
+
+    @SerializedName("eventId")
+    @Expose
+    public Event event;
+
+    @SerializedName("shelterId")
+    @Expose
+    public Shelter shelter;
 }
