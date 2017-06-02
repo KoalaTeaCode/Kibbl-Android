@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 import com.thehollidayinn.kibbl.R;
+import com.thehollidayinn.kibbl.data.models.Event;
 import com.thehollidayinn.kibbl.data.models.Shelter;
 import com.thehollidayinn.kibbl.data.models.GenericResponse;
 import com.thehollidayinn.kibbl.data.models.Pet;
@@ -34,6 +35,8 @@ public class ShelterDetailActivity extends AppCompatActivity {
     private TextView titleTextView2;
     private String petId;
     private Button favoriteButton;
+    private Shelter pet;
+    private Menu optionsMenu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,18 +55,11 @@ public class ShelterDetailActivity extends AppCompatActivity {
                 (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
         image = (ImageView) findViewById(R.id.image);
         descriptionTextView = (TextView) findViewById(R.id.description);
-
-//        favoriteButton = (Button) findViewById(R.id.favoriteButton);
-//        favoriteButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                favoritePet(petId);
-//            }
-//        });
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.detail_activity_menu, menu);
+        optionsMenu = menu;
         return true;
     }
 
@@ -78,6 +74,15 @@ public class ShelterDetailActivity extends AppCompatActivity {
             sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Subject Here");
             sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
             startActivity(Intent.createChooser(sharingIntent, "Share via"));
+            return true;
+        } else if (id == R.id.action_favorite) {
+            favoritePet(petId);
+            pet.favorited = !pet.favorited;
+            if (pet.favorited) {
+                item.setIcon(R.drawable.ic_comment_icon);
+                return true;
+            }
+            item.setIcon(R.drawable.ic_action_favorite_icon);
             return true;
         }
 
@@ -133,7 +138,10 @@ public class ShelterDetailActivity extends AppCompatActivity {
 
                     @Override
                     public void onNext(GenericResponse<Shelter> petResponse) {
-                        Shelter pet = (Shelter) petResponse.data;
+                        pet = (Shelter) petResponse.data;
+                        if (pet.favorited) {
+                            optionsMenu.findItem(R.id.action_favorite).setIcon(R.drawable.ic_comment_icon);
+                        }
                         displayPetInfo(pet);
                     }
                 });

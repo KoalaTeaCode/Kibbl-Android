@@ -63,6 +63,9 @@ public class Shelter {
     @SerializedName("locationCoords")
     @Expose
     private LocationCoords locationCoords;
+    @SerializedName("favorited")
+    @Expose
+    public Boolean favorited;
 
     public String getId() {
         return id;

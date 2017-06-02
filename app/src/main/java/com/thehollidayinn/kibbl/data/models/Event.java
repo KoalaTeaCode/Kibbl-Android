@@ -43,6 +43,9 @@ public class Event {
     @SerializedName("facebook")
     @Expose
     private Facebook facebook;
+    @SerializedName("favorited")
+    @Expose
+    public Boolean favorited;
 
     public Facebook getFacebook() {
         return facebook;

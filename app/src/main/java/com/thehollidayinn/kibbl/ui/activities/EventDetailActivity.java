@@ -38,6 +38,8 @@ public class EventDetailActivity extends AppCompatActivity {
     private TextView titleTextView2;
     private String petId;
     private Button favoriteButton;
+    private Event pet;
+    private Menu optionsMenu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,33 +62,12 @@ public class EventDetailActivity extends AppCompatActivity {
         Bundle extras = getIntent().getExtras();
         petId = extras.getString("PET_ID");
         loadPet(petId);
-//
-
-//        favoriteButton = (Button) findViewById(R.id.favoriteButton);
-//        favoriteButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                favoritePet(petId);
-//            }
-//        });
-//
-//        Button shareButton = (Button) findViewById(R.id.shareButton);
-//        shareButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Intent sharingIntent = new Intent(Intent.ACTION_SEND);
-//                sharingIntent.setType("text/plain");
-//                String shareBody = "Here is the share content body";
-//                sharingIntent.putExtra(Intent.EXTRA_SUBJECT, "Subject Here");
-//                sharingIntent.putExtra(Intent.EXTRA_TEXT, shareBody);
-//                startActivity(Intent.createChooser(sharingIntent, "Share via"));
-//            }
-//        });
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.detail_activity_menu, menu);
+        optionsMenu = menu;
         return true;
     }
 
@@ -101,6 +82,15 @@ public class EventDetailActivity extends AppCompatActivity {
             sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Subject Here");
             sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
             startActivity(Intent.createChooser(sharingIntent, "Share via"));
+            return true;
+        } else if (id == R.id.action_favorite) {
+            favoritePet(petId);
+            pet.favorited = !pet.favorited;
+            if (pet.favorited) {
+                item.setIcon(R.drawable.ic_comment_icon);
+                return true;
+            }
+            item.setIcon(R.drawable.ic_action_favorite_icon);
             return true;
         }
 
@@ -156,7 +146,10 @@ public class EventDetailActivity extends AppCompatActivity {
 
                     @Override
                     public void onNext(GenericResponse<Event> petResponse) {
-                        Event pet = (Event) petResponse.data;
+                        pet = (Event) petResponse.data;
+                        if (pet.favorited) {
+                            optionsMenu.findItem(R.id.action_favorite).setIcon(R.drawable.ic_comment_icon);
+                        }
                         displayPetInfo(pet);
                     }
                 });
