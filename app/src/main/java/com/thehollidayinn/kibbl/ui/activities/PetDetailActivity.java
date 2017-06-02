@@ -1,5 +1,6 @@
 package com.thehollidayinn.kibbl.ui.activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -38,6 +39,7 @@ public class PetDetailActivity extends AppCompatActivity {
     private Button favoriteButton;
     private Pet pet;
     private Menu optionsMenu;
+    private Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +59,16 @@ public class PetDetailActivity extends AppCompatActivity {
         image = (ImageView) findViewById(R.id.image);
         descriptionTextView = (TextView) findViewById(R.id.description);
         titleTextView2 = (TextView) findViewById(R.id.titleTextView2);
+
+        context = this;
+
+        findViewById(R.id.comment_layout).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, CommentActivity.class);
+                context.startActivity(intent);
+            }
+        });
     }
 
     @Override

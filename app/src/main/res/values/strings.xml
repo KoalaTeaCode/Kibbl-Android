@@ -37,4 +37,5 @@
     <string name="text_pets">Pets</string>
     <string name="text_shelters">Shelters</string>
     <string name="title_activity_feedback">Feedback</string>
+    <string name="title_activity_comment">CommentActivity</string>
 </resources>
