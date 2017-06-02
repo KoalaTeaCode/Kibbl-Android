@@ -95,8 +95,12 @@ public class EventDetailActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == R.id.action_share) {
-            Intent filterIntent = new Intent(this, FiltersActivity.class);
-            startActivity(filterIntent);
+            Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+            sharingIntent.setType("text/plain");
+            String shareBody = "Here is the share content body";
+            sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Subject Here");
+            sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
+            startActivity(Intent.createChooser(sharingIntent, "Share via"));
             return true;
         }
 

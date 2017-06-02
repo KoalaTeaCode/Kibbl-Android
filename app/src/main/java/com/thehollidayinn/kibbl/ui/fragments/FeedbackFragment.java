@@ -11,6 +11,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
@@ -35,7 +37,7 @@ public class FeedbackFragment extends Fragment {
     private FeedbackFragment.ContentAdapter adapter;
     private static Context context;
     private static RecyclerView recyclerView;
-    private static TextView emptyTextView;
+    private static RelativeLayout emptyTextView;
 
     public FeedbackFragment() {
         // Required empty public constructor
@@ -59,7 +61,7 @@ public class FeedbackFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_favorites_list, container, false);
 
         recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
-        emptyTextView = (TextView) view.findViewById(R.id.empty_view);
+        emptyTextView = (RelativeLayout) view.findViewById(R.id.empty_view);
         recyclerView.setVisibility(View.INVISIBLE);
 
         adapter = new FeedbackFragment.ContentAdapter(recyclerView.getContext());
