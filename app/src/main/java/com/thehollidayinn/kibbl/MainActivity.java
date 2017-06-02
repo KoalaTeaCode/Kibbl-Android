@@ -28,6 +28,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.thehollidayinn.kibbl.data.models.Favorite;
 import com.thehollidayinn.kibbl.data.models.GenericResponse;
@@ -68,8 +69,8 @@ public class MainActivity extends AppCompatActivity
     private Context context;
     private UserLogin user;
     private NavigationView navigationView;
-
     private GoogleApiClient mGoogleApiClient;
+    private int activePage = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,6 +95,20 @@ public class MainActivity extends AppCompatActivity
                     .addOnConnectionFailedListener(this)
                     .addApi(LocationServices.API)
                     .build();
+        }
+
+        findViewById(R.id.filter_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent filterIntent = new Intent(MainActivity.this, FiltersActivity.class);
+                startActivity(filterIntent);
+            }
+        });
+
+        if (savedInstanceState != null) {
+            Log.v("keithtest", String.valueOf(savedInstanceState.getInt("active-page")));
+            activePage = savedInstanceState.getInt("active-page");
+            loadPage();
         }
     }
 
@@ -144,27 +159,38 @@ public class MainActivity extends AppCompatActivity
                     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                         switch (item.getItemId()) {
                             case R.id.action_events:
-                                EventListFragment fragment = EventListFragment.newInstance("");
-                                getSupportFragmentManager().beginTransaction()
-                                        .replace(R.id.fragment_container, fragment)
-                                        .commit();
+                                activePage = 0;
                                 break;
                             case R.id.action_pets:
-                                ListContentFragment listContentFragment = ListContentFragment.newInstance("");
-                                getSupportFragmentManager().beginTransaction()
-                                        .replace(R.id.fragment_container, listContentFragment)
-                                        .commit();
+                                activePage = 1;
                                 break;
                             case R.id.action_shelters:
-                                ShelterListFragment shelterListFragment = ShelterListFragment.newInstance("");
-                                getSupportFragmentManager().beginTransaction()
-                                        .replace(R.id.fragment_container, shelterListFragment)
-                                        .commit();
+                                activePage = 2;
                                 break;
                         }
+                        loadPage();
                         return true;
                     }
                 });
+    }
+
+    private void loadPage() {
+        if (this.activePage == 0) {
+            EventListFragment fragment = EventListFragment.newInstance("");
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_container, fragment)
+                    .commit();
+        } else if (this.activePage == 1) {
+            ListContentFragment listContentFragment = ListContentFragment.newInstance("");
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_container, listContentFragment)
+                    .commit();
+        } else if (this.activePage == 2) {
+            ShelterListFragment shelterListFragment = ShelterListFragment.newInstance("");
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_container, shelterListFragment)
+                    .commit();
+        }
     }
 
     private void setUpNavBar() {
