@@ -79,7 +79,7 @@ public class ShelterDetailActivity extends AppCompatActivity {
             favoritePet(petId);
             pet.favorited = !pet.favorited;
             if (pet.favorited) {
-                item.setIcon(R.drawable.ic_comment_icon);
+                item.setIcon(R.drawable.favorited_icon);
                 return true;
             }
             item.setIcon(R.drawable.ic_action_favorite_icon);
@@ -140,7 +140,7 @@ public class ShelterDetailActivity extends AppCompatActivity {
                     public void onNext(GenericResponse<Shelter> petResponse) {
                         pet = (Shelter) petResponse.data;
                         if (pet.favorited) {
-                            optionsMenu.findItem(R.id.action_favorite).setIcon(R.drawable.ic_comment_icon);
+                            optionsMenu.findItem(R.id.action_favorite).setIcon(R.drawable.favorited_icon);
                         }
                         displayPetInfo(pet);
                     }
