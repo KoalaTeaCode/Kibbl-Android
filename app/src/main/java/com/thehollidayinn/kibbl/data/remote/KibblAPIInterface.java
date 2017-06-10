@@ -6,7 +6,7 @@ import com.thehollidayinn.kibbl.data.models.Feedback;
 import com.thehollidayinn.kibbl.data.models.FeedbackResponse;
 import com.thehollidayinn.kibbl.data.models.GenericResponse;
 import com.thehollidayinn.kibbl.data.models.LatestResponse;
-import com.thehollidayinn.kibbl.data.models.Notification;
+import com.thehollidayinn.kibbl.data.models.Following;
 import com.thehollidayinn.kibbl.data.models.Pet;
 import com.thehollidayinn.kibbl.data.models.PetResponse;
 import com.thehollidayinn.kibbl.data.models.Shelter;
@@ -15,7 +15,6 @@ import com.thehollidayinn.kibbl.data.models.UserResponse;
 import java.util.List;
 import java.util.Map;
 
-import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
@@ -65,7 +64,7 @@ public interface KibblAPIInterface {
     Observable<GenericResponse<Shelter>> getShelterDetail(@Path("shelterId") String shelterId);
 
     @GET("notifications")
-    Observable<GenericResponse<List<Notification>>> getNotifications();
+    Observable<GenericResponse<List<Following>>> getNotifications();
 
     @GET("feedback")
     Observable<FeedbackResponse> getFeedbacks();

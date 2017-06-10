@@ -8,10 +8,9 @@ import android.support.v7.widget.Toolbar;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.thehollidayinn.kibbl.R;
-import com.thehollidayinn.kibbl.ui.fragments.FavoritesListFragment;
-import com.thehollidayinn.kibbl.ui.fragments.NotificationListFragment;
+import com.thehollidayinn.kibbl.ui.fragments.FollowingListFragment;
 
-public class NotificationsActivity extends AppCompatActivity {
+public class FollowingActivity extends AppCompatActivity {
 
     private FirebaseAnalytics mFirebaseAnalytics;
 
@@ -27,7 +26,6 @@ public class NotificationsActivity extends AppCompatActivity {
         upArrow.setColorFilter(getResources().getColor(R.color.colorPrimary), PorterDuff.Mode.SRC_ATOP);
         getSupportActionBar().setHomeAsUpIndicator(upArrow);
 
-
         logStat();
 
         setUpListFragment();
@@ -42,7 +40,7 @@ public class NotificationsActivity extends AppCompatActivity {
     }
 
     private void setUpListFragment() {
-        NotificationListFragment favoritesList = NotificationListFragment.newInstance();
+        FollowingListFragment favoritesList = FollowingListFragment.newInstance();
         getSupportFragmentManager().beginTransaction().replace(R.id.content_fragment, favoritesList).commit();
     }
 }

@@ -7,7 +7,7 @@ import com.google.gson.annotations.SerializedName;
  * Created by krh12 on 4/27/2017.
  */
 
-public class Shelter {
+public class Shelter extends CommonModel {
 
     @SerializedName("_id")
     @Expose
@@ -63,9 +63,6 @@ public class Shelter {
     @SerializedName("locationCoords")
     @Expose
     private LocationCoords locationCoords;
-    @SerializedName("favorited")
-    @Expose
-    public Boolean favorited;
 
     public String getId() {
         return id;

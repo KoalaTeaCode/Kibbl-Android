@@ -29,15 +29,9 @@ import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-public class PetDetailActivity extends AppCompatActivity {
+public class PetDetailActivity extends BaseView {
 
     private CollapsingToolbarLayout collapsingToolbar;
-    private ImageView image;
-    private TextView descriptionTextView;
-    private TextView titleTextView2;
-    private String petId;
-    private Button favoriteButton;
-    private Pet pet;
     private Menu optionsMenu;
     private Context context;
 
@@ -49,15 +43,17 @@ public class PetDetailActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
         Bundle extras = getIntent().getExtras();
         petId = extras.getString("PET_ID");
         loadPet(petId);
 
         collapsingToolbar =
                 (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
+        collapsingToolbar.setTitle("");
         image = (ImageView) findViewById(R.id.image);
         descriptionTextView = (TextView) findViewById(R.id.description);
+        titleTextView = (TextView) findViewById(R.id.titleTextView);
         titleTextView2 = (TextView) findViewById(R.id.titleTextView2);
 
         context = this;
@@ -104,37 +100,6 @@ public class PetDetailActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void favoritePet(String petId) {
-        KibblAPIInterface mService = ApiUtils.getKibbleService(this);
-        mService.favoritePet(petId)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<GenericResponse<Pet>>() {
-                    @Override
-                    public void onCompleted() {
-
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Log.v("test", e.toString());
-                    }
-
-                    @Override
-                    public void onNext(GenericResponse petResponse) {
-                        togglePetText();
-                    }
-                });
-    }
-
-    private void togglePetText() {
-        if (favoriteButton.getText().equals("Favorite")) {
-            favoriteButton.setText("Unfavorite");
-        } else {
-            favoriteButton.setText("Favorite");
-        }
-    }
-
     private void loadPet(String petId) {
         KibblAPIInterface mService = ApiUtils.getKibbleService(this);
         mService.getPetDetail(petId)
@@ -148,40 +113,23 @@ public class PetDetailActivity extends AppCompatActivity {
 
                     @Override
                     public void onError(Throwable e) {
-                        Log.v("test", e.toString());
+                        Log.v("keithtest", e.toString());
                     }
 
                     @Override
                     public void onNext(GenericResponse petResponse) {
                         pet = (Pet) petResponse.data;
+                        Pet pet = (Pet) petResponse.data;
                         if (pet.favorited) {
                             optionsMenu.findItem(R.id.action_favorite).setIcon(R.drawable.favorited_icon);
                         }
-                        displayPetInfo(pet);
+
+                        String img = "";
+                        if (pet.getMedia() != null && pet.getMedia().size() > 0  && pet.getMedia().get(0).urlSecureFullsize != null) {
+                            img = pet.getMedia().get(0).urlSecureFullsize;
+                        }
+                        displayPetInfo(pet.getName(), pet.getDescription(), img);
                     }
                 });
-    }
-
-    private void displayPetInfo(Pet pet) {
-        collapsingToolbar.setTitle("");
-        titleTextView2.setText(pet.getName());
-        descriptionTextView.setText(pet.getDescription());
-
-        if (pet.getMedia() != null && pet.getMedia().get(0).urlSecureThumbnail != null) {
-            findViewById(R.id.details_top).setVisibility(View.INVISIBLE);
-        } else {
-            findViewById(R.id.detail_content2).setVisibility(View.INVISIBLE);
-            findViewById(R.id.detail_content2).setLayoutParams(new LinearLayout.LayoutParams(0, 0));
-        }
-
-        Picasso.with(this)
-                .load(pet.getMedia().get(0).urlSecureFullsize)
-//                .resize(300, 300)
-//                .centerCrop()
-                .into(image);
-
-        if (pet.favorited) {
-            togglePetText();
-        }
     }
 }

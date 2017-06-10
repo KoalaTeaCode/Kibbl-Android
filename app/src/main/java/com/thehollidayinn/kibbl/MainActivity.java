@@ -1,12 +1,8 @@
 package com.thehollidayinn.kibbl;
 
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -15,7 +11,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.TabLayout;
 import android.support.graphics.drawable.VectorDrawableCompat;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.view.GravityCompat;
@@ -24,25 +19,18 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.thehollidayinn.kibbl.data.models.Favorite;
-import com.thehollidayinn.kibbl.data.models.GenericResponse;
-import com.thehollidayinn.kibbl.data.models.Notification;
-import com.thehollidayinn.kibbl.data.models.PetResponse;
-import com.thehollidayinn.kibbl.data.models.Shelter;
+import com.thehollidayinn.kibbl.data.models.Filters;
 import com.thehollidayinn.kibbl.data.models.UserLogin;
-import com.thehollidayinn.kibbl.data.remote.ApiUtils;
-import com.thehollidayinn.kibbl.data.remote.KibblAPIInterface;
 import com.thehollidayinn.kibbl.ui.activities.FavoritesActivity;
 import com.thehollidayinn.kibbl.ui.activities.FeedbackActivity;
 import com.thehollidayinn.kibbl.ui.activities.FiltersActivity;
 import com.thehollidayinn.kibbl.ui.activities.LoginRegisterActivity;
-import com.thehollidayinn.kibbl.ui.activities.NotificationsActivity;
+import com.thehollidayinn.kibbl.ui.activities.FollowingActivity;
 import com.thehollidayinn.kibbl.ui.adapters.MainTabsAdapter;
 import com.thehollidayinn.kibbl.ui.fragments.EventListFragment;
 import com.thehollidayinn.kibbl.ui.fragments.ListContentFragment;
@@ -56,12 +44,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import retrofit2.Call;
-import retrofit2.Response;
-import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
-
 public class MainActivity extends AppCompatActivity
         implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
@@ -71,6 +53,8 @@ public class MainActivity extends AppCompatActivity
     private NavigationView navigationView;
     private GoogleApiClient mGoogleApiClient;
     private int activePage = 0;
+    private Filters filters;
+    private BottomNavigationView bottomNavigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,7 +69,6 @@ public class MainActivity extends AppCompatActivity
         user = UserLogin.getInstance(this);
 
         setUpNavBar();
-//        setUpTabs();
         setUpBottomBar();
 
         // Create an instance of GoogleAPIClient.
@@ -105,9 +88,9 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-        if (savedInstanceState != null) {
-            Log.v("keithtest", String.valueOf(savedInstanceState.getInt("active-page")));
-            activePage = savedInstanceState.getInt("active-page");
+        filters = Filters.getSharedInstance();
+        activePage = filters.activeMainPage;
+        if (activePage != 0) {
             loadPage();
         }
     }
@@ -123,8 +106,7 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.action_settings) {
-            Intent filterIntent = new Intent(this, NotificationsActivity.class);
-            startActivity(filterIntent);
+
             return true;
         } else if (id == android.R.id.home) {
             mDrawerLayout.openDrawer(GravityCompat.START);
@@ -150,7 +132,7 @@ public class MainActivity extends AppCompatActivity
                 .add(R.id.fragment_container, fragment)
                 .commit();
 
-        BottomNavigationView bottomNavigationView = (BottomNavigationView)
+        bottomNavigationView = (BottomNavigationView)
                 findViewById(R.id.bottom_navigation);
 
         bottomNavigationView.setOnNavigationItemSelectedListener(
@@ -176,21 +158,25 @@ public class MainActivity extends AppCompatActivity
 
     private void loadPage() {
         if (this.activePage == 0) {
+            bottomNavigationView.getMenu().getItem(0).setChecked(true);
             EventListFragment fragment = EventListFragment.newInstance("");
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.fragment_container, fragment)
                     .commit();
         } else if (this.activePage == 1) {
+            bottomNavigationView.getMenu().getItem(1).setChecked(true);
             ListContentFragment listContentFragment = ListContentFragment.newInstance("");
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.fragment_container, listContentFragment)
                     .commit();
         } else if (this.activePage == 2) {
+            bottomNavigationView.getMenu().getItem(2).setChecked(true);
             ShelterListFragment shelterListFragment = ShelterListFragment.newInstance("");
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.fragment_container, shelterListFragment)
                     .commit();
         }
+        filters.activeMainPage = activePage;
     }
 
     private void setUpNavBar() {
@@ -200,8 +186,6 @@ public class MainActivity extends AppCompatActivity
 
         // Adding menu icon to Toolbar
         ActionBar supportActionBar = getSupportActionBar();
-//        supportActionBar.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.white)));
-//        supportActionBar.setElevation(0);
 
         if (supportActionBar != null) {
             VectorDrawableCompat indicator =
@@ -235,6 +219,9 @@ public class MainActivity extends AppCompatActivity
                         } else if (menuItem.getItemId() == R.id.favorites) {
                             Intent filterIntent = new Intent(context, FavoritesActivity.class);
                             startActivity(filterIntent);
+                        } else if (menuItem.getItemId() == R.id.following) {
+                            Intent filterIntent = new Intent(context, FollowingActivity.class);
+                            startActivity(filterIntent);
                         } else if (menuItem.getItemId() == R.id.feedback) {
                             Intent filterIntent = new Intent(context, FeedbackActivity.class);
                             startActivity(filterIntent);
@@ -250,29 +237,8 @@ public class MainActivity extends AppCompatActivity
                 });
     }
 
-    private void setUpTabs() {
-//        ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
-//        setupViewPager(viewPager);
-
-//        TabLayout tabs = (TabLayout) findViewById(R.id.tabs);
-//        tabs.setupWithViewPager(viewPager);
-    }
-
-    private void setupViewPager(ViewPager viewPager) {
-        MainTabsAdapter adapter = new MainTabsAdapter(getSupportFragmentManager());
-
-//        adapter.addFragment(ListContentFragment.newInstance("All"), "Recommended");
-//        adapter.addFragment(ListContentFragment.newInstance("Dog"), "Dogs");
-//        adapter.addFragment(ListContentFragment.newInstance("Cat"), "Cats");
-        adapter.addFragment(EventListFragment.newInstance("Events"), "Events");
-        adapter.addFragment(EventListFragment.newInstance("Pets"), "Pets");
-        adapter.addFragment(ShelterListFragment.newInstance("Shelters"), "Shelters");
-        viewPager.setAdapter(adapter);
-    }
-
     private boolean checkForLocationPermission()
     {
-
         String permission = "android.permission.ACCESS_COARSE_LOCATION";
         int res = this.checkCallingOrSelfPermission(permission);
         return (res == PackageManager.PERMISSION_GRANTED);

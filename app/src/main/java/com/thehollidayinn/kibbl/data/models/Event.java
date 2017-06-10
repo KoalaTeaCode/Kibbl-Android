@@ -8,7 +8,7 @@ import com.google.gson.annotations.SerializedName;
  */
 
 
-public class Event {
+public class Event extends CommonModel {
 
     @SerializedName("_id")
     @Expose
@@ -43,9 +43,6 @@ public class Event {
     @SerializedName("facebook")
     @Expose
     private Facebook facebook;
-    @SerializedName("favorited")
-    @Expose
-    public Boolean favorited;
 
     public Facebook getFacebook() {
         return facebook;

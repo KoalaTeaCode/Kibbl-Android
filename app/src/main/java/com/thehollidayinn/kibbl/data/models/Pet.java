@@ -5,7 +5,7 @@ import java.util.List;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Pet {
+public class Pet extends CommonModel {
 
     @SerializedName("_id")
     @Expose
@@ -50,10 +50,6 @@ public class Pet {
     @SerializedName("animal")
     @Expose
     private String animal;
-
-    @SerializedName("favorited")
-    @Expose
-    public Boolean favorited;
 
     public String getId() {
         return id;

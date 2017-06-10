@@ -10,6 +10,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -25,7 +27,11 @@ import com.thehollidayinn.kibbl.data.remote.ApiUtils;
 import com.thehollidayinn.kibbl.data.remote.KibblAPIInterface;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import rx.Observable;
 import rx.Subscriber;
@@ -38,6 +44,8 @@ public class FeedbackFragment extends Fragment {
     private static Context context;
     private static RecyclerView recyclerView;
     private static RelativeLayout emptyTextView;
+    private Button sendFeedback;
+    private EditText newFeedback;
 
     public FeedbackFragment() {
         // Required empty public constructor
@@ -58,7 +66,7 @@ public class FeedbackFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_favorites_list, container, false);
+        View view = inflater.inflate(R.layout.fragment_feedback, container, false);
 
         recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
         emptyTextView = (RelativeLayout) view.findViewById(R.id.empty_view);
@@ -70,9 +78,49 @@ public class FeedbackFragment extends Fragment {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
+        newFeedback = (EditText) view.findViewById(R.id.newFeedback);
+        sendFeedback = (Button) view.findViewById(R.id.send_feedback);
+        sendFeedback.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setSendFeedback(newFeedback.getText().toString());
+                newFeedback.setText("");
+                sendFeedback.setEnabled(false);
+            }
+        });
+
         loadFeedbacks();
 
         return view;
+    }
+
+    private void setSendFeedback(String message) {
+        KibblAPIInterface mService = ApiUtils.getKibbleService(getActivity());
+
+        Map<String, String> data = new HashMap<>();
+        data.put("text", message);
+
+        mService.postFeedback(data)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<Feedback>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.v("test", e.toString());
+                    }
+
+                    @Override
+                    public void onNext(Feedback genericResponse) {
+                        // @TODO: can we simply add without?
+                        sendFeedback.setEnabled(true);
+                        loadFeedbacks();
+                    }
+                });
     }
 
     private void loadFeedbacks() {
@@ -95,7 +143,15 @@ public class FeedbackFragment extends Fragment {
                     @Override
                     public void onNext(FeedbackResponse genericResponse) {
                         List<Feedback> favorties = genericResponse.feedback;
-                        Log.v("test", favorties.toString());
+
+                        Collections.sort(favorties, new Comparator<Feedback>() {
+                            @Override
+                            public int compare(Feedback fruit2, Feedback fruit1)
+                            {
+                                return  fruit1.createdAt.compareTo(fruit2.createdAt);
+                            }
+                        });
+
                         adapter.updatePets(favorties);
                     }
                 });

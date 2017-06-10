@@ -3,11 +3,13 @@ package com.thehollidayinn.kibbl.data.models;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.Date;
+
 /**
  * Created by krh12 on 4/30/2017.
  */
 
-public class Notification {
+public class Following {
     @SerializedName("_id")
     @Expose
     public String id;
@@ -22,7 +24,7 @@ public class Notification {
 
     @SerializedName("createdAt")
     @Expose
-    public Shelter createdAt;
+    public Date createdAt;
 
     @SerializedName("active")
     @Expose

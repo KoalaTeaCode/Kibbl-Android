@@ -27,15 +27,9 @@ import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-public class ShelterDetailActivity extends AppCompatActivity {
+public class ShelterDetailActivity extends BaseView {
 
     private CollapsingToolbarLayout collapsingToolbar;
-    private ImageView image;
-    private TextView descriptionTextView;
-    private TextView titleTextView2;
-    private String petId;
-    private Button favoriteButton;
-    private Shelter pet;
     private Menu optionsMenu;
 
     @Override
@@ -46,78 +40,31 @@ public class ShelterDetailActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
         Bundle extras = getIntent().getExtras();
         petId = extras.getString("PET_ID");
         loadPet(petId);
-
+        context = this;
         collapsingToolbar =
                 (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
+        collapsingToolbar.setTitle("");
         image = (ImageView) findViewById(R.id.image);
         descriptionTextView = (TextView) findViewById(R.id.description);
+        titleTextView = (TextView) findViewById(R.id.titleTextView);
+        titleTextView2 = (TextView) findViewById(R.id.titleTextView2);
+        findViewById(R.id.comment_layout).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, CommentActivity.class);
+                context.startActivity(intent);
+            }
+        });
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.detail_activity_menu, menu);
         optionsMenu = menu;
         return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
-        if (id == R.id.action_share) {
-            Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
-            sharingIntent.setType("text/plain");
-            String shareBody = "Here is the share content body";
-            sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Subject Here");
-            sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
-            startActivity(Intent.createChooser(sharingIntent, "Share via"));
-            return true;
-        } else if (id == R.id.action_favorite) {
-            favoritePet(petId);
-            pet.favorited = !pet.favorited;
-            if (pet.favorited) {
-                item.setIcon(R.drawable.favorited_icon);
-                return true;
-            }
-            item.setIcon(R.drawable.ic_action_favorite_icon);
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    private void favoritePet(String petId) {
-        KibblAPIInterface mService = ApiUtils.getKibbleService(this);
-        mService.favoritePet(petId)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<GenericResponse<Pet>>() {
-                    @Override
-                    public void onCompleted() {
-
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Log.v("test", e.toString());
-                    }
-
-                    @Override
-                    public void onNext(GenericResponse petResponse) {
-                        togglePetText();
-                    }
-                });
-    }
-
-    private void togglePetText() {
-        if (favoriteButton.getText().equals("Favorite")) {
-            favoriteButton.setText("Unfavorite");
-        } else {
-            favoriteButton.setText("Favorite");
-        }
     }
 
     private void loadPet(String petId) {
@@ -133,40 +80,23 @@ public class ShelterDetailActivity extends AppCompatActivity {
 
                     @Override
                     public void onError(Throwable e) {
-                        Log.v("test", e.toString());
+                        Log.v("keithtest", e.toString());
                     }
 
                     @Override
                     public void onNext(GenericResponse<Shelter> petResponse) {
-                        pet = (Shelter) petResponse.data;
-                        if (pet.favorited) {
+                        pet = petResponse.data;
+                        Shelter pet = (Shelter) petResponse.data;
+                        if (pet.favorited != null && pet.favorited) {
                             optionsMenu.findItem(R.id.action_favorite).setIcon(R.drawable.favorited_icon);
                         }
-                        displayPetInfo(pet);
+
+                        String img = "";
+                        if (pet.getFacebook() != null && pet.getFacebook().getCover() != null) {
+                            img = pet.getFacebook().getCover();
+                        }
+                        displayPetInfo(pet.getName(), pet.getDescription(),  img);
                     }
                 });
-    }
-
-    private void displayPetInfo(Shelter pet) {
-        collapsingToolbar.setTitle("");
-        titleTextView2.setText(pet.getName());
-        descriptionTextView.setText(pet.getDescription());
-
-        if (pet.getFacebook() != null && pet.getFacebook().getCover() != null) {
-            findViewById(R.id.details_top).setVisibility(View.INVISIBLE);
-        } else {
-            findViewById(R.id.detail_content2).setVisibility(View.INVISIBLE);
-            findViewById(R.id.detail_content2).setLayoutParams(new LinearLayout.LayoutParams(0, 0));
-        }
-
-        Picasso.with(this)
-                .load(pet.getFacebook().getCover())
-//                .resize(300, 300)
-//                .centerCrop()
-                .into(image);
-
-//        if (pet.favorited) {
-//            togglePetText();
-//        }
     }
 }

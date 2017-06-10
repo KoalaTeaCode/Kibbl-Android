@@ -97,8 +97,8 @@
                 android:value="com.thehollidayinn.kibbl.MainActivity" />
         </activity>
         <activity
-            android:name=".ui.activities.NotificationsActivity"
-            android:label="@string/title_activity_fragment"
+            android:name=".ui.activities.FollowingActivity"
+            android:label="Notifications"
             android:parentActivityName=".MainActivity"
             android:theme="@style/AppTheme.NoActionBar">
 

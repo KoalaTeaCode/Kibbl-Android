@@ -9,20 +9,25 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 import com.thehollidayinn.kibbl.R;
+import com.thehollidayinn.kibbl.data.models.Feedback;
 import com.thehollidayinn.kibbl.data.models.GenericResponse;
-import com.thehollidayinn.kibbl.data.models.Notification;
+import com.thehollidayinn.kibbl.data.models.Following;
 import com.thehollidayinn.kibbl.data.models.Shelter;
 import com.thehollidayinn.kibbl.data.remote.ApiUtils;
 import com.thehollidayinn.kibbl.data.remote.KibblAPIInterface;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import rx.Observable;
 import rx.Subscriber;
@@ -39,6 +44,8 @@ public class CommentListFragment extends Fragment {
     private static Context context;
     private static RecyclerView recyclerView;
     private static RelativeLayout emptyTextView;
+    private Button sendFeedback;
+    private EditText newFeedback;
 
     public CommentListFragment() {
         // Required empty public constructor
@@ -71,18 +78,32 @@ public class CommentListFragment extends Fragment {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        loadNotifications();
+        loadComments();
+
+        newFeedback = (EditText) view.findViewById(R.id.newFeedback);
+        sendFeedback = (Button) view.findViewById(R.id.send_feedback);
+        sendFeedback.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendComments(newFeedback.getText().toString());
+                newFeedback.setText("");
+                sendFeedback.setEnabled(false);
+            }
+        });
 
         return view;
     }
 
-    private void loadNotifications() {
+    private void sendComments(String message) {
         KibblAPIInterface mService = ApiUtils.getKibbleService(getActivity());
 
-        mService.getNotifications()
+        Map<String, String> data = new HashMap<>();
+        data.put("text", message);
+
+        mService.postFeedback(data)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<GenericResponse<List<Notification>>>() {
+                .subscribe(new Subscriber<Feedback>() {
                     @Override
                     public void onCompleted() {
 
@@ -94,8 +115,34 @@ public class CommentListFragment extends Fragment {
                     }
 
                     @Override
-                    public void onNext(GenericResponse<List<Notification>> genericResponse) {
-                        List<Notification> favorties = genericResponse.data;
+                    public void onNext(Feedback genericResponse) {
+                        // @TODO: can we simply add without?
+                        sendFeedback.setEnabled(true);
+                        loadComments();
+                    }
+                });
+    }
+
+    private void loadComments() {
+        KibblAPIInterface mService = ApiUtils.getKibbleService(getActivity());
+
+        mService.getNotifications()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<GenericResponse<List<Following>>>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.v("test", e.toString());
+                    }
+
+                    @Override
+                    public void onNext(GenericResponse<List<Following>> genericResponse) {
+                        List<Following> favorties = genericResponse.data;
                         adapter.updatePets(favorties);
                     }
                 });
@@ -123,7 +170,7 @@ public class CommentListFragment extends Fragment {
 
         private final PublishSubject<String> onClickSubject = PublishSubject.create();
 
-        private List<Notification> favorites = new ArrayList<>();
+        private List<Following> favorites = new ArrayList<>();
 
         public ContentAdapter(Context context) {
         }
@@ -136,15 +183,15 @@ public class CommentListFragment extends Fragment {
         @Override
         public void onBindViewHolder(CommentListFragment.ViewHolder holder, final int position) {
             if (favorites != null && favorites.size() > position) {
-                Notification favorite = favorites.get(position);
+                Following favorite = favorites.get(position);
                 Shelter currentPet = favorite.shelterId;
 
-                String petImageUrl = currentPet.getFacebook().getCover();
-                Picasso.with(context)
-                        .load(petImageUrl)
-                        .resize(50, 50)
-                        .centerCrop()
-                        .into(holder.avator);
+//                String petImageUrl = currentPet.getFacebook().getCover();
+//                Picasso.with(context)
+//                        .load(petImageUrl)
+//                        .resize(50, 50)
+//                        .centerCrop()
+//                        .into(holder.avator);
 
                 holder.name.setText(currentPet.getName());
                 holder.description.setText(currentPet.getDescription());
@@ -168,7 +215,7 @@ public class CommentListFragment extends Fragment {
             return onClickSubject.asObservable();
         }
 
-        public void updatePets(List<Notification> favorites) {
+        public void updatePets(List<Following> favorites) {
             this.favorites = favorites;
             if (favorites.size() != 0) {
                 emptyTextView.setVisibility(View.INVISIBLE);

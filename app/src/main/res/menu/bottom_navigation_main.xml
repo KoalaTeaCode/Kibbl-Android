@@ -4,7 +4,7 @@
     <item
         android:id="@+id/action_events"
         android:enabled="true"
-        android:icon="@drawable/events_icon"
+        android:icon="@drawable/event_icon"
         android:title="@string/text_events"
         app:showAsAction="ifRoom" />
     <item
@@ -16,7 +16,7 @@
     <item
         android:id="@+id/action_shelters"
         android:enabled="true"
-        android:icon="@drawable/shelters_icon"
+        android:icon="@drawable/shelter_icon"
         android:title="@string/text_shelters"
         app:showAsAction="ifRoom" />
     <!--<item-->

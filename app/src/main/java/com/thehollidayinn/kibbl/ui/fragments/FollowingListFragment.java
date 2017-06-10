@@ -1,7 +1,6 @@
 package com.thehollidayinn.kibbl.ui.fragments;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -16,10 +15,8 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 import com.thehollidayinn.kibbl.R;
-import com.thehollidayinn.kibbl.data.models.Notification;
+import com.thehollidayinn.kibbl.data.models.Following;
 import com.thehollidayinn.kibbl.data.models.GenericResponse;
-import com.thehollidayinn.kibbl.data.models.Notification;
-import com.thehollidayinn.kibbl.data.models.Pet;
 import com.thehollidayinn.kibbl.data.models.Shelter;
 import com.thehollidayinn.kibbl.data.remote.ApiUtils;
 import com.thehollidayinn.kibbl.data.remote.KibblAPIInterface;
@@ -37,18 +34,18 @@ import rx.subjects.PublishSubject;
  * Created by krh12 on 4/30/2017.
  */
 
-public class NotificationListFragment extends Fragment {
-    private NotificationListFragment.ContentAdapter adapter;
+public class FollowingListFragment extends Fragment {
+    private FollowingListFragment.ContentAdapter adapter;
     private static Context context;
     private static RecyclerView recyclerView;
     private static RelativeLayout emptyTextView;
 
-    public NotificationListFragment() {
+    public FollowingListFragment() {
         // Required empty public constructor
     }
 
-    public static NotificationListFragment newInstance() {
-        NotificationListFragment fragment = new NotificationListFragment();
+    public static FollowingListFragment newInstance() {
+        FollowingListFragment fragment = new FollowingListFragment();
         Bundle args = new Bundle();
         fragment.setArguments(args);
         return fragment;
@@ -57,6 +54,7 @@ public class NotificationListFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        context = this.getContext();
     }
 
     @Override
@@ -68,7 +66,7 @@ public class NotificationListFragment extends Fragment {
         emptyTextView = (RelativeLayout) view.findViewById(R.id.empty_view);
         recyclerView.setVisibility(View.INVISIBLE);
 
-        adapter = new NotificationListFragment.ContentAdapter(recyclerView.getContext());
+        adapter = new FollowingListFragment.ContentAdapter(recyclerView.getContext());
 
         recyclerView.setAdapter(adapter);
         recyclerView.setHasFixedSize(true);
@@ -85,7 +83,7 @@ public class NotificationListFragment extends Fragment {
         mService.getNotifications()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<GenericResponse<List<Notification>>>() {
+                .subscribe(new Subscriber<GenericResponse<List<Following>>>() {
                     @Override
                     public void onCompleted() {
 
@@ -93,12 +91,12 @@ public class NotificationListFragment extends Fragment {
 
                     @Override
                     public void onError(Throwable e) {
-                        Log.v("test", e.toString());
+                        Log.v("keithtest", e.toString());
                     }
 
                     @Override
-                    public void onNext(GenericResponse<List<Notification>> genericResponse) {
-                        List<Notification> favorties = genericResponse.data;
+                    public void onNext(GenericResponse<List<Following>> genericResponse) {
+                        List<Following> favorties = genericResponse.data;
                         adapter.updatePets(favorties);
                     }
                 });
@@ -117,37 +115,33 @@ public class NotificationListFragment extends Fragment {
         }
     }
 
-    /**
-     * Adapter to display recycler view.
-     */
-    public static class ContentAdapter extends RecyclerView.Adapter<NotificationListFragment.ViewHolder> {
-        // Set numbers of List in RecyclerView.
-        private static final int LENGTH = 18;
-
+    public static class ContentAdapter extends RecyclerView.Adapter<FollowingListFragment.ViewHolder> {
         private final PublishSubject<String> onClickSubject = PublishSubject.create();
 
-        private List<Notification> favorites = new ArrayList<>();
+        private List<Following> favorites = new ArrayList<>();
 
         public ContentAdapter(Context context) {
         }
 
         @Override
-        public NotificationListFragment.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            return new NotificationListFragment.ViewHolder(LayoutInflater.from(parent.getContext()), parent);
+        public FollowingListFragment.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            return new FollowingListFragment.ViewHolder(LayoutInflater.from(parent.getContext()), parent);
         }
 
         @Override
-        public void onBindViewHolder(NotificationListFragment.ViewHolder holder, final int position) {
+        public void onBindViewHolder(FollowingListFragment.ViewHolder holder, final int position) {
             if (favorites != null && favorites.size() > position) {
-                Notification favorite = favorites.get(position);
+                Following favorite = favorites.get(position);
                 Shelter currentPet = favorite.shelterId;
 
-                String petImageUrl = currentPet.getFacebook().getCover();
-                Picasso.with(context)
-                        .load(petImageUrl)
-                        .resize(50, 50)
-                        .centerCrop()
-                        .into(holder.avator);
+                if (currentPet.getFacebook() != null) {
+                    String petImageUrl = currentPet.getFacebook().getCover();
+                    Picasso.with(context)
+                            .load(petImageUrl)
+                            .resize(50, 50)
+                            .centerCrop()
+                            .into(holder.avator);
+                }
 
                 holder.name.setText(currentPet.getName());
                 holder.description.setText(currentPet.getDescription());
@@ -171,7 +165,7 @@ public class NotificationListFragment extends Fragment {
             return onClickSubject.asObservable();
         }
 
-        public void updatePets(List<Notification> favorites) {
+        public void updatePets(List<Following> favorites) {
             this.favorites = favorites;
             if (favorites.size() != 0) {
                 emptyTextView.setVisibility(View.INVISIBLE);

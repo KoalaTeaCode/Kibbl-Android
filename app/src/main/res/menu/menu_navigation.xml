@@ -11,11 +11,11 @@
             android:id="@+id/favorites"
             android:title="Favorites" />
 
-        <!--<item-->
-            <!--android:icon="@drawable/bell"-->
-            <!--android:tint="@color/button_grey"-->
-            <!--android:id="@+id/notifications"-->
-            <!--android:title="Notifications" />-->
+        <item
+            android:icon="@drawable/bell"
+            android:tint="@color/button_grey"
+            android:id="@+id/following"
+            android:title="Following" />
 
         <item
             android:icon="@drawable/ic_action_envelope_icon"
