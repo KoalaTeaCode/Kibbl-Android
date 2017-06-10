@@ -33,7 +33,6 @@ public class PetDetailActivity extends BaseView {
 
     private CollapsingToolbarLayout collapsingToolbar;
     private Menu optionsMenu;
-    private Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +44,7 @@ public class PetDetailActivity extends BaseView {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         Bundle extras = getIntent().getExtras();
+        context = this;
         petId = extras.getString("PET_ID");
         loadPet(petId);
 
@@ -56,12 +56,13 @@ public class PetDetailActivity extends BaseView {
         titleTextView = (TextView) findViewById(R.id.titleTextView);
         titleTextView2 = (TextView) findViewById(R.id.titleTextView2);
 
-        context = this;
-
         findViewById(R.id.comment_layout).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(context, CommentActivity.class);
+                Bundle b = new Bundle();
+                b.putString("itemId", petId);
+                intent.putExtras(b);
                 context.startActivity(intent);
             }
         });
@@ -72,32 +73,6 @@ public class PetDetailActivity extends BaseView {
         getMenuInflater().inflate(R.menu.detail_activity_menu, menu);
         optionsMenu = menu;
         return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
-        if (id == R.id.action_share) {
-            Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
-            sharingIntent.setType("text/plain");
-            String shareBody = "Here is the share content body";
-            sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Subject Here");
-            sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
-            startActivity(Intent.createChooser(sharingIntent, "Share via"));
-            return true;
-        } else if (id == R.id.action_favorite) {
-            favoritePet(petId);
-            pet.favorited = !pet.favorited;
-            if (pet.favorited) {
-                item.setIcon(R.drawable.favorited_icon);
-                return true;
-            }
-            item.setIcon(R.drawable.ic_action_favorite_icon);
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 
     private void loadPet(String petId) {

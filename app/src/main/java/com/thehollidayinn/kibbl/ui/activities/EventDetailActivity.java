@@ -60,6 +60,9 @@ public class EventDetailActivity extends BaseView {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(context, CommentActivity.class);
+                Bundle b = new Bundle();
+                b.putString("itemId", petId);
+                intent.putExtras(b);
                 context.startActivity(intent);
             }
         });

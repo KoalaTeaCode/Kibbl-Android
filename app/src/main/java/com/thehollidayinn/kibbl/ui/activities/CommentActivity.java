@@ -30,7 +30,13 @@ public class CommentActivity extends AppCompatActivity {
     }
 
     private void setUpListFragment() {
-        CommentListFragment favoritesList = CommentListFragment.newInstance();
+        String itemId = "";
+        Bundle b = getIntent().getExtras();
+        if(b != null) {
+            itemId = b.getString("itemId");
+        }
+
+        CommentListFragment favoritesList = CommentListFragment.newInstance(itemId);
         getSupportFragmentManager().beginTransaction().replace(R.id.content_fragment, favoritesList).commit();
     }
 

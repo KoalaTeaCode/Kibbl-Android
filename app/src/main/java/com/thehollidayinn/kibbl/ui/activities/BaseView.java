@@ -3,6 +3,7 @@ package com.thehollidayinn.kibbl.ui.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
@@ -61,6 +62,9 @@ public class BaseView extends AppCompatActivity {
             return true;
         } else if (id == R.id.action_comments) {
             Intent intent = new Intent(context, CommentActivity.class);
+            Bundle b = new Bundle();
+            b.putString("itemId", petId);
+            intent.putExtras(b);
             context.startActivity(intent);
             return true;
         }

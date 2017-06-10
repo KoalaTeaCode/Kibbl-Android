@@ -1,5 +1,8 @@
 package com.thehollidayinn.kibbl.data.remote;
 
+import com.thehollidayinn.kibbl.data.models.Comment;
+import com.thehollidayinn.kibbl.data.models.CommentResponse;
+import com.thehollidayinn.kibbl.data.models.CommonModel;
 import com.thehollidayinn.kibbl.data.models.Event;
 import com.thehollidayinn.kibbl.data.models.Favorite;
 import com.thehollidayinn.kibbl.data.models.Feedback;
@@ -75,4 +78,10 @@ public interface KibblAPIInterface {
 
     @POST("feedback")
     Observable<Feedback> postFeedback(@Body Map<String, String> feedback);
+
+    @GET("comments")
+    Observable<CommentResponse> getComments(@QueryMap Map<String, String> options);
+
+    @POST("comments")
+    Observable<Comment> postComment(@Body Map<String, String> options);
 }
