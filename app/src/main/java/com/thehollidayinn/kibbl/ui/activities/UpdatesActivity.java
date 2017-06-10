@@ -9,8 +9,13 @@ import android.support.v7.widget.Toolbar;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.thehollidayinn.kibbl.R;
 import com.thehollidayinn.kibbl.ui.fragments.FollowingListFragment;
+import com.thehollidayinn.kibbl.ui.fragments.UpdatesListFragment;
 
-public class FollowingActivity extends AppCompatActivity {
+/**
+ * Created by krh12 on 6/10/2017.
+ */
+
+public class UpdatesActivity extends AppCompatActivity {
 
     private FirebaseAnalytics mFirebaseAnalytics;
 
@@ -34,13 +39,14 @@ public class FollowingActivity extends AppCompatActivity {
     private void logStat() {
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         Bundle bundle = new Bundle();
-        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, "following activity");
+        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, "updates activity");
         bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "page");
         mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
     }
 
     private void setUpListFragment() {
-        FollowingListFragment favoritesList = FollowingListFragment.newInstance();
+        UpdatesListFragment favoritesList = UpdatesListFragment.newInstance();
         getSupportFragmentManager().beginTransaction().replace(R.id.content_fragment, favoritesList).commit();
     }
 }
+

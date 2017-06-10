@@ -31,6 +31,7 @@ import com.thehollidayinn.kibbl.ui.activities.FeedbackActivity;
 import com.thehollidayinn.kibbl.ui.activities.FiltersActivity;
 import com.thehollidayinn.kibbl.ui.activities.LoginRegisterActivity;
 import com.thehollidayinn.kibbl.ui.activities.FollowingActivity;
+import com.thehollidayinn.kibbl.ui.activities.UpdatesActivity;
 import com.thehollidayinn.kibbl.ui.adapters.MainTabsAdapter;
 import com.thehollidayinn.kibbl.ui.fragments.EventListFragment;
 import com.thehollidayinn.kibbl.ui.fragments.ListContentFragment;
@@ -106,7 +107,8 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.action_settings) {
-
+            Intent intent = new Intent(this, UpdatesActivity.class);
+            startActivity(intent);
             return true;
         } else if (id == android.R.id.home) {
             mDrawerLayout.openDrawer(GravityCompat.START);

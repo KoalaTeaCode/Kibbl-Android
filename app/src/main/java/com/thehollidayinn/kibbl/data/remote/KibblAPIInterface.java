@@ -10,6 +10,7 @@ import com.thehollidayinn.kibbl.data.models.Following;
 import com.thehollidayinn.kibbl.data.models.Pet;
 import com.thehollidayinn.kibbl.data.models.PetResponse;
 import com.thehollidayinn.kibbl.data.models.Shelter;
+import com.thehollidayinn.kibbl.data.models.Updates;
 import com.thehollidayinn.kibbl.data.models.UserResponse;
 
 import java.util.List;
@@ -65,6 +66,9 @@ public interface KibblAPIInterface {
 
     @GET("notifications")
     Observable<GenericResponse<List<Following>>> getNotifications();
+
+    @GET("notifications/user-notifications")
+    Observable<GenericResponse<List<Updates>>> getUpdates();
 
     @GET("feedback")
     Observable<FeedbackResponse> getFeedbacks();
