@@ -85,6 +85,9 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View v) {
                 Intent filterIntent = new Intent(MainActivity.this, FiltersActivity.class);
+                Bundle b = new Bundle();
+                b.putInt("activePage", activePage);
+                filterIntent.putExtras(b);
                 startActivity(filterIntent);
             }
         });

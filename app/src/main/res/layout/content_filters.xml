@@ -23,7 +23,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/locationText"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="52dp"
             android:layout_centerHorizontal="true" />
 
         <fragment
@@ -34,15 +34,6 @@
             android:layout_centerHorizontal="true"
             android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
             />
-
-        <!--<EditText-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:inputType="textPersonName"-->
-        <!--android:hint=""-->
-        <!--android:id="@+id/locationEditText"-->
-        <!--android:layout_below="@+id/locationText"-->
-        <!--android:layout_centerHorizontal="true"  />-->
 
         <TextView
             android:text="Breed"
@@ -62,13 +53,6 @@
             android:layout_below="@+id/breedText"
             android:layout_marginTop="12dp"
             android:layout_centerHorizontal="true"/>
-
-        <!--<Spinner-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:id="@+id/breedSpinner"-->
-        <!--android:layout_below="@+id/breedText"-->
-        <!--android:layout_centerHorizontal="true" />-->
 
         <TextView
             android:text="Age"
@@ -149,7 +133,8 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/endDatePicker"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="42dp"
+            android:layout_marginTop="32dp"
+            android:textSize="28dp"
             android:id="@+id/findButton"
             style="@style/Widget.AppCompat.Button.Colored" />
     </RelativeLayout>

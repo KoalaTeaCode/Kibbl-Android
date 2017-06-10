@@ -18,6 +18,7 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -30,6 +31,8 @@ import com.thehollidayinn.kibbl.R;
 import com.thehollidayinn.kibbl.data.models.Filters;
 import com.thehollidayinn.kibbl.data.models.UserLogin;
 
+import org.w3c.dom.Text;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -41,6 +44,11 @@ public class FiltersActivity extends AppCompatActivity implements DatePickerDial
     private Filters filters;
     private UserLogin userLogin;
     private DatePickerDialog datePickerDialog;
+    private AutoCompleteTextView autocompleteTextView;
+    private Spinner ageSpinner;
+    private Spinner genderSpinner;
+    private DatePicker startDatePicker;
+    private DatePicker endDatePicker;
 
     private AdapterView.OnItemSelectedListener onItemSelectedListener = new AdapterView.OnItemSelectedListener() {
         @Override
@@ -88,7 +96,15 @@ public class FiltersActivity extends AppCompatActivity implements DatePickerDial
         filters.locale = getCurrentLocale();
         userLogin = UserLogin.getInstance(this);
 
+        // Check which page we are filtering
+        int activePage = 0;
+        Bundle b = getIntent().getExtras();
+        if(b != null) {
+            activePage = b.getInt("activePage");
+        }
+
         setUpView();
+        hideFilters(activePage);
 
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
@@ -174,7 +190,7 @@ public class FiltersActivity extends AppCompatActivity implements DatePickerDial
             }
         });
 
-        final AutoCompleteTextView autocompleteTextView = (AutoCompleteTextView) findViewById(R.id.breedAutoComplete);
+        autocompleteTextView = (AutoCompleteTextView) findViewById(R.id.breedAutoComplete);
         String[] countries = getResources().getStringArray(R.array.breeds);
         ArrayAdapter<String> adapter =
                 new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, countries);
@@ -187,7 +203,7 @@ public class FiltersActivity extends AppCompatActivity implements DatePickerDial
             }
         });
 
-        Spinner ageSpinner = (Spinner) findViewById(R.id.ageSpinner);
+        ageSpinner = (Spinner) findViewById(R.id.ageSpinner);
         ArrayAdapter<CharSequence> ageAdpater = ArrayAdapter.createFromResource(this,
                 R.array.age, android.R.layout.simple_spinner_item);
         ageAdpater.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -195,7 +211,7 @@ public class FiltersActivity extends AppCompatActivity implements DatePickerDial
         ageSpinner.setOnItemSelectedListener(onItemSelectedListener);
         ageSpinner.setSelection(filters.ageIndex);
 
-        Spinner genderSpinner = (Spinner) findViewById(R.id.genderSpinner);
+        genderSpinner = (Spinner) findViewById(R.id.genderSpinner);
         ArrayAdapter<CharSequence> genderAdapter = ArrayAdapter.createFromResource(this,
                 R.array.gender, android.R.layout.simple_spinner_item);
         genderAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -203,7 +219,7 @@ public class FiltersActivity extends AppCompatActivity implements DatePickerDial
         genderSpinner.setOnItemSelectedListener(onItemSelectedListener);
         genderSpinner.setSelection(filters.genderIndex);
 
-        DatePicker startDatePicker = (DatePicker) findViewById(R.id.startDatePicker);
+        startDatePicker = (DatePicker) findViewById(R.id.startDatePicker);
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
         if (filters.startDate != null) {
@@ -220,7 +236,7 @@ public class FiltersActivity extends AppCompatActivity implements DatePickerDial
             }
         });
 
-        DatePicker endDatePicker = (DatePicker) findViewById(R.id.endDatePicker);
+        endDatePicker = (DatePicker) findViewById(R.id.endDatePicker);
         Calendar calendar2 = Calendar.getInstance();
         calendar2.setTimeInMillis(System.currentTimeMillis());
         if (filters.endDate != null) {
@@ -236,6 +252,88 @@ public class FiltersActivity extends AppCompatActivity implements DatePickerDial
                 filters.endDate = calendar;
             }
         });
+    }
+
+    private void hideFilters(int activePage) {
+        if (activePage == 0) {
+            hidePetFilters();
+        } else if (activePage == 1) {
+            hideEventFilters();
+        } else if (activePage == 2) {
+            hidePetFilters();
+            hideEventFilters();
+        }
+    }
+
+    public void hidePetFilters() {
+        TextView breedView = (TextView) findViewById(R.id.breedText);
+        TextView ageTextView = (TextView) findViewById(R.id.ageTextView);
+        TextView genderTextView = (TextView) findViewById(R.id.genderTextView);
+
+        breedView.setVisibility(View.INVISIBLE);
+        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) breedView.getLayoutParams();
+        params.height = 0;
+        params.topMargin = 0;
+        breedView.setLayoutParams(params);
+
+        autocompleteTextView.setVisibility(View.INVISIBLE);
+        RelativeLayout.LayoutParams params1 = (RelativeLayout.LayoutParams) autocompleteTextView.getLayoutParams();
+        params1.height = 0;
+        params1.topMargin = 0;
+        autocompleteTextView.setLayoutParams(params1);
+
+        ageTextView.setVisibility(View.INVISIBLE);
+        RelativeLayout.LayoutParams params2 = (RelativeLayout.LayoutParams) ageTextView.getLayoutParams();
+        params2.height = 0;
+        params2.topMargin = 0;
+        ageTextView.setLayoutParams(params2);
+
+        ageSpinner.setVisibility(View.INVISIBLE);
+        RelativeLayout.LayoutParams params3 = (RelativeLayout.LayoutParams) ageSpinner.getLayoutParams();
+        params3.height = 0;
+        params3.topMargin = 0;
+        ageSpinner.setLayoutParams(params3);
+
+        genderTextView.setVisibility(View.INVISIBLE);
+        RelativeLayout.LayoutParams params4 = (RelativeLayout.LayoutParams) genderTextView.getLayoutParams();
+        params4.height = 0;
+        params4.topMargin = 0;
+        genderTextView.setLayoutParams(params4);
+
+        genderSpinner.setVisibility(View.INVISIBLE);
+        RelativeLayout.LayoutParams params5 = (RelativeLayout.LayoutParams) genderSpinner.getLayoutParams();
+        params5.height = 0;
+        params5.topMargin = 0;
+        genderSpinner.setLayoutParams(params5);
+    }
+
+    public void hideEventFilters() {
+        TextView startDateTextView = (TextView) findViewById(R.id.startDateTextView);
+        TextView endDateTextView = (TextView) findViewById(R.id.endDateTextView);
+
+        startDateTextView.setVisibility(View.INVISIBLE);
+        RelativeLayout.LayoutParams params3 = (RelativeLayout.LayoutParams) startDateTextView.getLayoutParams();
+        params3.height = 0;
+        params3.topMargin = 0;
+        startDateTextView.setLayoutParams(params3);
+
+        startDatePicker.setVisibility(View.INVISIBLE);
+        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) startDatePicker.getLayoutParams();
+        params.height = 0;
+        params.topMargin = 0;
+        startDatePicker.setLayoutParams(params);
+
+        endDateTextView.setVisibility(View.INVISIBLE);
+        RelativeLayout.LayoutParams params4 = (RelativeLayout.LayoutParams) endDateTextView.getLayoutParams();
+        params4.height = 0;
+        params4.topMargin = 0;
+        endDateTextView.setLayoutParams(params4);
+
+        endDatePicker.setVisibility(View.INVISIBLE);
+        RelativeLayout.LayoutParams params2 = (RelativeLayout.LayoutParams) endDatePicker.getLayoutParams();
+        params2.height = 0;
+        params2.topMargin = 0;
+        endDatePicker.setLayoutParams(params2);
     }
 
     @Override
