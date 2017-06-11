@@ -70,6 +70,9 @@ public interface KibblAPIInterface {
     @GET("notifications")
     Observable<GenericResponse<List<Following>>> getNotifications();
 
+    @POST("notifications")
+    Observable<Following> subscribe(@Body Map<String, String> options);
+
     @GET("notifications/user-notifications")
     Observable<GenericResponse<List<Updates>>> getUpdates();
 
