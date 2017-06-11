@@ -94,7 +94,6 @@ public class FavoritesListFragment extends Fragment {
                     detailViewIntent.putExtra("PET_ID", favorite.event.getId());
                     FavoritesListFragment.this.getActivity().startActivity(detailViewIntent);
                 }
-
             }
         });
 

@@ -2,6 +2,7 @@ package com.thehollidayinn.kibbl.ui.fragments;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
@@ -26,6 +27,9 @@ import com.thehollidayinn.kibbl.data.models.Pet;
 import com.thehollidayinn.kibbl.data.models.Shelter;
 import com.thehollidayinn.kibbl.data.remote.ApiUtils;
 import com.thehollidayinn.kibbl.data.remote.KibblAPIInterface;
+import com.thehollidayinn.kibbl.ui.activities.EventDetailActivity;
+import com.thehollidayinn.kibbl.ui.activities.PetDetailActivity;
+import com.thehollidayinn.kibbl.ui.activities.ShelterDetailActivity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -76,6 +80,16 @@ public class FollowingListFragment extends Fragment {
         recyclerView.setVisibility(View.INVISIBLE);
 
         adapter = new FollowingListFragment.ContentAdapter(recyclerView.getContext());
+        adapter.getPositionClicks().subscribe(new Action1<Following>() {
+            @Override
+            public void call(Following favorite) {
+               if (favorite.shelterId != null) {
+                    Intent detailViewIntent = new Intent(getContext(), ShelterDetailActivity.class);
+                    detailViewIntent.putExtra("PET_ID", String.valueOf(favorite.shelterId.getId()));
+                    getActivity().startActivity(detailViewIntent);
+                }
+            }
+        });
         adapter. getUnfollowClicks().subscribe(new Action1<Following>() {
             @Override
             public void call(Following favorite) {
@@ -161,7 +175,7 @@ public class FollowingListFragment extends Fragment {
     }
 
     public static class ContentAdapter extends RecyclerView.Adapter<FollowingListFragment.ViewHolder> {
-        private final PublishSubject<String> onClickSubject = PublishSubject.create();
+        private final PublishSubject<Following> onClickSubject = PublishSubject.create();
         private final PublishSubject<Following> onFollowlickSubject = PublishSubject.create();
 
         private List<Following> favorites = new ArrayList<>();
@@ -214,8 +228,8 @@ public class FollowingListFragment extends Fragment {
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-//                    Pet currentPet = pets.get(position);
-//                    onClickSubject.onNext(String.valueOf(currentPet.getId()));
+                    Following currentPet = favorites.get(position);
+                    onClickSubject.onNext(currentPet);
                 }
             });
         }
@@ -225,7 +239,7 @@ public class FollowingListFragment extends Fragment {
             return favorites.size();
         }
 
-        public Observable<String> getPositionClicks(){
+        public Observable<Following> getPositionClicks(){
             return onClickSubject.asObservable();
         }
         public Observable<Following> getUnfollowClicks(){
