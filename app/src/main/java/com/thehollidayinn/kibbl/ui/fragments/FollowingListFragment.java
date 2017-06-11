@@ -13,8 +13,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,6 +29,7 @@ import com.thehollidayinn.kibbl.data.models.Pet;
 import com.thehollidayinn.kibbl.data.models.Shelter;
 import com.thehollidayinn.kibbl.data.remote.ApiUtils;
 import com.thehollidayinn.kibbl.data.remote.KibblAPIInterface;
+import com.thehollidayinn.kibbl.data.repositories.UserRepository;
 import com.thehollidayinn.kibbl.ui.activities.EventDetailActivity;
 import com.thehollidayinn.kibbl.ui.activities.PetDetailActivity;
 import com.thehollidayinn.kibbl.ui.activities.ShelterDetailActivity;
@@ -52,6 +55,7 @@ public class FollowingListFragment extends Fragment {
     private static Context context;
     private static RecyclerView recyclerView;
     private static RelativeLayout emptyTextView;
+    private UserRepository userRepository;
 
     public FollowingListFragment() {
         // Required empty public constructor
@@ -68,12 +72,13 @@ public class FollowingListFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         context = this.getContext();
+        userRepository = UserRepository.getInstance(context);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_favorites_list, container, false);
+        View view = inflater.inflate(R.layout.fragment_following, container, false);
 
         recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
         emptyTextView = (RelativeLayout) view.findViewById(R.id.empty_view);
@@ -95,6 +100,24 @@ public class FollowingListFragment extends Fragment {
             public void call(Following favorite) {
                 Shelter currentPet = favorite.shelterId;
                 unfollow(currentPet.getId());
+            }
+        });
+
+        Switch enableNotificaitonSwitch = (Switch) view.findViewById(R.id.enablePushSwitch);
+        if (userRepository.getSubscribed()) {
+            enableNotificaitonSwitch.setChecked(true);
+        }
+        enableNotificaitonSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                String token = userRepository.getToken();
+                if (isChecked) {
+                    Log.v("keithtest", "sendyes");
+                    userRepository.setSubscribed(true);
+                } else {
+                    Log.v("keithtest", "sendno");
+                    userRepository.setSubscribed(false);
+                }
             }
         });
 
