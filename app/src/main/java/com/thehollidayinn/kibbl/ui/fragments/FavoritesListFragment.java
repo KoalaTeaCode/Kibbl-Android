@@ -98,6 +98,14 @@ public class FavoritesListFragment extends Fragment {
             }
         });
 
+        adapter. getFavoriteClicks().subscribe(new Action1<Favorite>() {
+            @Override
+            public void call(Favorite favorite) {
+                loadFavorites();
+            }
+        });
+
+
         recyclerView.setAdapter(adapter);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -107,7 +115,7 @@ public class FavoritesListFragment extends Fragment {
         return view;
     }
 
-    private void loadFavorites() {
+    public void loadFavorites() {
         KibblAPIInterface mService = ApiUtils.getKibbleService(getActivity());
 
         dialog = ProgressDialog.show(getActivity(), "",
@@ -139,12 +147,14 @@ public class FavoritesListFragment extends Fragment {
         public ImageView avator;
         public TextView name;
         public TextView description;
+        public ImageView favoriteButton;
 
         public ViewHolder(LayoutInflater inflater, ViewGroup parent) {
-            super(inflater.inflate(R.layout.item_list, parent, false));
+            super(inflater.inflate(R.layout.list_item_favorite, parent, false));
             avator = (ImageView) itemView.findViewById(R.id.list_avatar);
             name = (TextView) itemView.findViewById(R.id.list_title);
             description = (TextView) itemView.findViewById(R.id.list_desc);
+            favoriteButton = (ImageView) itemView.findViewById(R.id.favoriteButton);
         }
     }
 
@@ -156,8 +166,10 @@ public class FavoritesListFragment extends Fragment {
         private static final int LENGTH = 18;
 
         private final PublishSubject<Favorite> onClickSubject = PublishSubject.create();
+        private final PublishSubject<Favorite> onFavoriteClickSubject = PublishSubject.create();
 
         private List<Favorite> favorites = new ArrayList<>();
+
 
         public ContentAdapter(Context context) {
         }
@@ -213,6 +225,20 @@ public class FavoritesListFragment extends Fragment {
                     holder.description.setText(currentPet.getDescription());
                 }
 
+                holder.favoriteButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Favorite currentPet = favorites.get(position);
+                        if (currentPet.event != null) {
+                            favoritePet(currentPet.event.getId());
+                        } else if (currentPet.pet != null) {
+                            favoritePet(currentPet.pet.getId());
+                        } else if (currentPet.shelter != null) {
+                            favoritePet(currentPet.shelter.getId());
+                        }
+                        onFavoriteClickSubject.onNext(currentPet);
+                    }
+                });
 
             }
 
@@ -234,6 +260,10 @@ public class FavoritesListFragment extends Fragment {
             return onClickSubject.asObservable();
         }
 
+        public Observable<Favorite> getFavoriteClicks(){
+            return onFavoriteClickSubject.asObservable();
+        }
+
         public void updatePets(List<Favorite> favorites) {
             this.favorites = favorites;
             if (favorites.size() != 0) {
@@ -241,6 +271,28 @@ public class FavoritesListFragment extends Fragment {
                 recyclerView.setVisibility(View.VISIBLE);
             }
             notifyDataSetChanged();
+        }
+
+        protected void favoritePet(String petId) {
+            KibblAPIInterface mService = ApiUtils.getKibbleService(context);
+            mService.favoritePet(petId)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Subscriber<GenericResponse<Pet>>() {
+                        @Override
+                        public void onCompleted() {
+
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                            Log.v("test", e.toString());
+                        }
+
+                        @Override
+                        public void onNext(GenericResponse petResponse) {
+                        }
+                    });
         }
     }
 }
