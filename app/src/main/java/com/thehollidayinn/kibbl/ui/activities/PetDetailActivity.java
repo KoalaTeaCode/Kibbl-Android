@@ -66,6 +66,8 @@ public class PetDetailActivity extends BaseView {
                 context.startActivity(intent);
             }
         });
+
+        type = "pet";
     }
 
     @Override

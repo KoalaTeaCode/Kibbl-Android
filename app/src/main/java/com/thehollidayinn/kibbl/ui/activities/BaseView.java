@@ -21,6 +21,9 @@ import com.thehollidayinn.kibbl.data.models.Pet;
 import com.thehollidayinn.kibbl.data.remote.ApiUtils;
 import com.thehollidayinn.kibbl.data.remote.KibblAPIInterface;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import jp.wasabeef.picasso.transformations.ColorFilterTransformation;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
@@ -38,6 +41,7 @@ public class BaseView extends AppCompatActivity {
     protected Context context;
     protected CommonModel pet;
     protected String petId;
+    protected String type;
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -93,7 +97,14 @@ public class BaseView extends AppCompatActivity {
 
     protected void favoritePet(String petId) {
         KibblAPIInterface mService = ApiUtils.getKibbleService(this);
-        mService.favoritePet(petId)
+
+        Map<String, String> options = new HashMap<>();
+        options.put("type", type);
+        options.put("itemId", petId);
+
+        Log.v("keithtest", type);
+
+        mService.favorite(options)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<GenericResponse<Pet>>() {

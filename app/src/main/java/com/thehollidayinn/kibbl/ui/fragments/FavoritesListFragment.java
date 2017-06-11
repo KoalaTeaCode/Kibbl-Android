@@ -101,7 +101,13 @@ public class FavoritesListFragment extends Fragment {
         adapter. getFavoriteClicks().subscribe(new Action1<Favorite>() {
             @Override
             public void call(Favorite favorite) {
-                loadFavorites();
+                if (favorite.event != null) {
+                    favoritePet(favorite.event.getId(), "event");
+                } else if (favorite.pet != null) {
+                    favoritePet(favorite.pet.getId(), "pet");
+                } else if (favorite.shelter != null) {
+                    favoritePet(favorite.shelter.getId(), "shelter");
+                }
             }
         });
 
@@ -113,6 +119,34 @@ public class FavoritesListFragment extends Fragment {
         loadFavorites();
 
         return view;
+    }
+
+    protected void favoritePet(String petId, String type) {
+        KibblAPIInterface mService = ApiUtils.getKibbleService(context);
+
+        Map<String, String> options = new HashMap<>();
+        options.put("type", type);
+        options.put("itemId", petId);
+
+        mService.favorite(options)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<GenericResponse<Pet>>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.v("test", e.toString());
+                    }
+
+                    @Override
+                    public void onNext(GenericResponse petResponse) {
+                        loadFavorites();
+                    }
+                });
     }
 
     public void loadFavorites() {
@@ -229,13 +263,6 @@ public class FavoritesListFragment extends Fragment {
                     @Override
                     public void onClick(View v) {
                         Favorite currentPet = favorites.get(position);
-                        if (currentPet.event != null) {
-                            favoritePet(currentPet.event.getId());
-                        } else if (currentPet.pet != null) {
-                            favoritePet(currentPet.pet.getId());
-                        } else if (currentPet.shelter != null) {
-                            favoritePet(currentPet.shelter.getId());
-                        }
                         onFavoriteClickSubject.onNext(currentPet);
                     }
                 });
@@ -271,28 +298,6 @@ public class FavoritesListFragment extends Fragment {
                 recyclerView.setVisibility(View.VISIBLE);
             }
             notifyDataSetChanged();
-        }
-
-        protected void favoritePet(String petId) {
-            KibblAPIInterface mService = ApiUtils.getKibbleService(context);
-            mService.favoritePet(petId)
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new Subscriber<GenericResponse<Pet>>() {
-                        @Override
-                        public void onCompleted() {
-
-                        }
-
-                        @Override
-                        public void onError(Throwable e) {
-                            Log.v("test", e.toString());
-                        }
-
-                        @Override
-                        public void onNext(GenericResponse petResponse) {
-                        }
-                    });
         }
     }
 }

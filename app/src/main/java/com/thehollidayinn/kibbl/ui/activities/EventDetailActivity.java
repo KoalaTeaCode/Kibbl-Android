@@ -66,6 +66,8 @@ public class EventDetailActivity extends BaseView {
                 context.startActivity(intent);
             }
         });
+
+        type = "event";
     }
 
     @Override

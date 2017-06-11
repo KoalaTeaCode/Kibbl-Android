@@ -2,6 +2,7 @@ package com.thehollidayinn.kibbl.ui.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -59,6 +60,8 @@ public class ShelterDetailActivity extends BaseView {
                 context.startActivity(intent);
             }
         });
+
+        type = "shelter";
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
