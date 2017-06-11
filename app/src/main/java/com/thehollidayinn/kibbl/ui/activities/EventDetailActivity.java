@@ -40,6 +40,8 @@ public class EventDetailActivity extends BaseView {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_detail);
 
+        setUp(this);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -55,7 +57,6 @@ public class EventDetailActivity extends BaseView {
 
         Bundle extras = getIntent().getExtras();
         petId = extras.getString("PET_ID");
-        loadPet(petId);
         findViewById(R.id.comment_layout).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -68,6 +69,7 @@ public class EventDetailActivity extends BaseView {
         });
 
         type = "event";
+        loadPet(petId);
     }
 
     @Override
@@ -90,7 +92,7 @@ public class EventDetailActivity extends BaseView {
 
                     @Override
                     public void onError(Throwable e) {
-                        Log.v("test", e.toString());
+                        Log.v("keithtest", e.toString());
                     }
 
                     @Override

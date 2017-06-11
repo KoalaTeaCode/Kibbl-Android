@@ -114,9 +114,7 @@ public class EventListFragment extends Fragment {
                 {
                     loading = true;
                     Event lastEvent = adapter.pets.get(adapter.pets.size() - 1);
-                    Log.v("testlast", lastEvent.getStartTime());
-
-                    loadEvents(lastEvent.getStartTime());
+                    loadEvents(lastEvent.getStartTime().toString());
                 }
             }
 

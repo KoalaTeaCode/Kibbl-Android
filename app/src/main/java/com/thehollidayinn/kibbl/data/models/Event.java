@@ -3,6 +3,8 @@ package com.thehollidayinn.kibbl.data.models;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.Date;
+
 /**
  * Created by krh12 on 4/27/2017.
  */
@@ -18,14 +20,14 @@ public class Event extends CommonModel {
     private String description;
     @SerializedName("end_time")
     @Expose
-    private String endTime;
+    private Date endTime;
     @SerializedName("name")
     @Expose
     private String name;
     @SerializedName("start_time")
     @Expose
-    private String startTime;
-    @SerializedName("facebookid")
+    private Date startTime;
+    @SerializedName("id")
     @Expose
     private String facebookid;
     @SerializedName("updatedAt")
@@ -68,11 +70,11 @@ public class Event extends CommonModel {
         this.description = description;
     }
 
-    public String getEndTime() {
+    public Date getEndTime() {
         return endTime;
     }
 
-    public void setEndTime(String endTime) {
+    public void setEndTime(Date endTime) {
         this.endTime = endTime;
     }
 
@@ -84,11 +86,11 @@ public class Event extends CommonModel {
         this.name = name;
     }
 
-    public String getStartTime() {
+    public Date getStartTime() {
         return startTime;
     }
 
-    public void setStartTime(String startTime) {
+    public void setStartTime(Date startTime) {
         this.startTime = startTime;
     }
 

@@ -1,10 +1,13 @@
 package com.thehollidayinn.kibbl.ui.activities;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Html;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,9 +21,16 @@ import com.thehollidayinn.kibbl.data.models.CommonModel;
 import com.thehollidayinn.kibbl.data.models.Event;
 import com.thehollidayinn.kibbl.data.models.GenericResponse;
 import com.thehollidayinn.kibbl.data.models.Pet;
+import com.thehollidayinn.kibbl.data.models.Shelter;
 import com.thehollidayinn.kibbl.data.remote.ApiUtils;
 import com.thehollidayinn.kibbl.data.remote.KibblAPIInterface;
 
+import org.w3c.dom.Text;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -42,6 +52,13 @@ public class BaseView extends AppCompatActivity {
     protected CommonModel pet;
     protected String petId;
     protected String type;
+    protected TextView secondayTitle;
+    protected TextView turnaryTitle;
+
+    protected void setUp(Activity context) {
+        secondayTitle = (TextView) context.findViewById(R.id.secondayTextView);
+        turnaryTitle = (TextView) context.findViewById(R.id.turnaryTextView);
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -80,10 +97,62 @@ public class BaseView extends AppCompatActivity {
     protected void displayPetInfo(String name, String description, String imageSrc) {
         titleTextView.setText(name);
         titleTextView2.setText(name);
-        descriptionTextView.setText(description);
+        descriptionTextView.setText(Html.fromHtml(description));
 
         findViewById(R.id.detail_content2).setVisibility(View.INVISIBLE);
         findViewById(R.id.detail_content2).setLayoutParams(new LinearLayout.LayoutParams(0, 0));
+
+        if (type.equals("event")) {
+            final Event event = (Event) pet;
+
+            Calendar startDateCalendar = Calendar.getInstance();
+            startDateCalendar.setTimeInMillis(event.getStartTime().getTime());
+            String dayString = startDateCalendar.get(Calendar.MONTH) + "/" + startDateCalendar.get(Calendar.DAY_OF_MONTH) + "/" + startDateCalendar.get(Calendar.YEAR);
+
+            String amPm = "AM";
+            // @TOOD: Fix
+            String startTimeString = startDateCalendar.get(Calendar.HOUR) + ":" + startDateCalendar.get(Calendar.MINUTE) + " " + amPm;
+
+            Calendar endDateCalendar = Calendar.getInstance();
+            endDateCalendar.setTimeInMillis(event.getEndTime().getTime());
+            String dayEndString = endDateCalendar.get(Calendar.MONTH) + "/" + endDateCalendar.get(Calendar.DAY_OF_MONTH) + "/" + endDateCalendar.get(Calendar.YEAR);
+            String endTimeString = endDateCalendar.get(Calendar.HOUR) + ":" + endDateCalendar.get(Calendar.MINUTE) + " " + endDateCalendar.get(Calendar.AM_PM);
+
+            secondayTitle.setText(dayString + " - " + dayEndString);
+            turnaryTitle.setText(startTimeString + " - " + endTimeString);
+
+            findViewById(R.id.contact_button).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String facebookUrl = "https://www.facebook.com/events/" + event.getFacebookid();
+                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(facebookUrl));
+                    startActivity(browserIntent);
+                }
+            });
+        }
+
+        if (type.equals("pet")) {
+            Pet petModel = (Pet) pet;
+
+            secondayTitle.setText(petModel.getContact().getEmail());
+            turnaryTitle.setText(petModel.getContact().getPhone().toString());
+        }
+
+        if (type.equals("shelter")) {
+            final Shelter shelter = (Shelter) pet;
+
+            secondayTitle.setText(shelter.getEmail());
+            turnaryTitle.setText(shelter.getPhone().toString());
+
+            findViewById(R.id.contact_button).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String facebookUrl = "https://www.facebook.com/" + shelter.getFacebook().getId();
+                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(facebookUrl));
+                    startActivity(browserIntent);
+                }
+            });
+        }
 
         if (imageSrc.isEmpty()) {
             return;
@@ -101,8 +170,6 @@ public class BaseView extends AppCompatActivity {
         Map<String, String> options = new HashMap<>();
         options.put("type", type);
         options.put("itemId", petId);
-
-        Log.v("keithtest", type);
 
         mService.favorite(options)
                 .subscribeOn(Schedulers.io())

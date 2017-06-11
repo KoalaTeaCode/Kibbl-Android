@@ -39,6 +39,8 @@ public class PetDetailActivity extends BaseView {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_detail);
 
+        setUp(this);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);

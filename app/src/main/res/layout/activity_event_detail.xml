@@ -31,30 +31,30 @@
                     android:id="@+id/titleTextView2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignBottom="@+id/dateTextView2"
-                    android:layout_alignStart="@+id/dateTextView2"
+                    android:layout_alignBottom="@+id/secondayTextView2"
+                    android:layout_alignStart="@+id/secondayTextView2"
                     android:layout_marginBottom="35dp"
                     android:text="Pets n More Adoption Drive"
                     android:textSize="24sp" />
 
                 <TextView
-                    android:id="@+id/dateTextView2"
+                    android:id="@+id/secondayTextView2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentStart="true"
                     android:layout_alignParentTop="true"
                     android:layout_marginStart="27dp"
                     android:layout_marginTop="77dp"
-                    android:text="March 28—31 "
+                    tools:text="March 28—31 "
                     android:textSize="14sp"
                     android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/timeTextView2"
+                    android:id="@+id/turnaryTextView2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignStart="@+id/dateTextView2"
-                    android:layout_below="@+id/dateTextView2"
+                    android:layout_alignStart="@+id/secondayTextView2"
+                    android:layout_below="@+id/secondayTextView2"
                     android:layout_marginTop="10dp"
                     android:text="10:00 AM—5:00 PM" />
             </RelativeLayout>
@@ -73,7 +73,7 @@
                 android:layout_marginTop="24dp"
                 android:background="#E9E9e9"
                 style="?android:attr/borderlessButtonStyle"
-                android:text="Contact"
+                android:text="Visit Website"
                 android:textColor="#C0BFBF" />
 
             <LinearLayout
@@ -181,14 +181,14 @@
                     android:id="@+id/titleTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignBottom="@+id/dateTextView"
-                    android:layout_alignStart="@+id/dateTextView"
+                    android:layout_alignBottom="@+id/secondayTextView"
+                    android:layout_alignStart="@+id/secondayTextView"
                     android:layout_marginBottom="35dp"
                     android:text="Pets n More Adoption Drive"
                     android:textSize="24sp" />
 
                 <TextView
-                    android:id="@+id/dateTextView"
+                    android:id="@+id/secondayTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentStart="true"
@@ -200,11 +200,11 @@
                     android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/timeTextView"
+                    android:id="@+id/turnaryTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignStart="@+id/dateTextView"
-                    android:layout_below="@+id/dateTextView"
+                    android:layout_alignStart="@+id/secondayTextView"
+                    android:layout_below="@+id/secondayTextView"
                     android:layout_marginTop="10dp"
                     android:text="10:00 AM—5:00 PM" />
             </RelativeLayout>

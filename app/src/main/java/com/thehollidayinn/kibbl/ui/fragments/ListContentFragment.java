@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -225,7 +226,7 @@ public class ListContentFragment extends Fragment {
                 }
 
                 holder.name.setText(currentPet.getName());
-                holder.description.setText(currentPet.getDescription());
+                holder.description.setText(Html.fromHtml(currentPet.getDescription()));
             } else {
 //                holder.avator.setImageDrawable(mPlaceAvators[position % mPlaceAvators.length]);
                 holder.name.setText(mPlaces[position % mPlaces.length]);
