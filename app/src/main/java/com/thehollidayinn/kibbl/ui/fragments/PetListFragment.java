@@ -29,9 +29,7 @@ import com.squareup.picasso.Picasso;
 
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import rx.Observable;
 import rx.Subscriber;
@@ -44,28 +42,35 @@ import rx.subjects.PublishSubject;
  * Created by krh12 on 1/3/2017.
  */
 
-public class ListContentFragment extends Fragment {
+public class PetListFragment extends Fragment {
     private ContentAdapter adapter;
     private static Context context;
     private String filter;
     private Filters filters;
     private ProgressDialog dialog;
+    private Boolean dataSetManually = false;
+    private List<Pet> pets;
 
     private LinearLayoutManager mLayoutManager;
     private boolean loading = false;
     int pastVisiblesItems, visibleItemCount, totalItemCount;
 
-    public ListContentFragment() {
+    public PetListFragment() {
     }
 
-    public static ListContentFragment newInstance(String filter) {
-        ListContentFragment f = new ListContentFragment();
+    public static PetListFragment newInstance(String filter, List<Pet> pets) {
+        PetListFragment f = new PetListFragment();
 
         // Supply index input as an argument.
         Bundle args = new Bundle();
         args.putString("FILTER", filter);
         f.setArguments(args);
         f.filters = Filters.getSharedInstance();
+
+        if (pets != null) {
+            f.pets = pets;
+            f.dataSetManually = true;
+        }
 
         return f;
     }
@@ -82,9 +87,9 @@ public class ListContentFragment extends Fragment {
         adapter.getPositionClicks().subscribe(new Action1<String>() {
             @Override
             public void call(String petId) {
-                Intent detailViewIntent = new Intent(ListContentFragment.this.getContext(), PetDetailActivity.class);
+                Intent detailViewIntent = new Intent(PetListFragment.this.getContext(), PetDetailActivity.class);
                 detailViewIntent.putExtra("PET_ID", petId);
-                ListContentFragment.this.getActivity().startActivity(detailViewIntent);
+                PetListFragment.this.getActivity().startActivity(detailViewIntent);
             }
         });
 
@@ -125,7 +130,12 @@ public class ListContentFragment extends Fragment {
         });
 
         this.filter = getArguments().getString("FILTER");
-        loadPets("");
+
+        if (!dataSetManually) {
+            loadPets("");
+        } else {
+            adapter.updatePets(this.pets);
+        }
 
         return recyclerView;
     }

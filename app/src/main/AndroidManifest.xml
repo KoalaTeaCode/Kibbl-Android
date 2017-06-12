@@ -129,7 +129,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.thehollidayinn.kibbl.MainActivity" />
         </activity>
-
         <activity
             android:name=".ui.activities.UpdatesActivity"
             android:label="Updates"
@@ -140,36 +139,45 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.thehollidayinn.kibbl.MainActivity" />
         </activity>
-
         <activity
             android:name=".ui.activities.CommentActivity"
             android:label="@string/title_activity_comment"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
 
-        <service
-            android:name=".serivces.KibblFirebaseMessagingService">
+        <service android:name=".serivces.KibblFirebaseMessagingService">
             <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+        <service android:name=".services.FirebaseInstanceIDService">
+            <intent-filter>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
         </service>
 
-        <service
-            android:name=".services.FirebaseInstanceIDService">
-            <intent-filter>
-                <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
-            </intent-filter>
-        </service>
-
-        <!-- Set custom default icon. This is used when no icon is set for incoming notification messages.
-     See README(https://goo.gl/l4GJaQ) for more. -->
+        <!--
+     Set custom default icon. This is used when no icon is set for incoming notification messages.
+     See README(https://goo.gl/l4GJaQ) for more.
+        -->
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
             android:resource="@drawable/logo_dog" />
-        <!-- Set color used with incoming notification messages. This is used when no color is set for the incoming
-             notification message. See README(https://goo.gl/6BKBk7) for more. -->
+        <!--
+             Set color used with incoming notification messages. This is used when no color is set for the incoming
+             notification message. See README(https://goo.gl/6BKBk7) for more.
+        -->
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_color"
             android:resource="@color/colorAccent" />
+
+        <activity android:name=".ui.activities.UpdateDetailActivity"
+            android:label="Updates"
+            android:theme="@style/AppTheme.NoActionBar">
+            <!-- Parent activity meta-data to support 4.0 and lower -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.thehollidayinn.kibbl.MainActivity" />
+        </activity>
     </application>
 
 </manifest>

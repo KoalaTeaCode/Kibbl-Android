@@ -14,7 +14,6 @@ import android.support.design.widget.NavigationView;
 import android.support.graphics.drawable.VectorDrawableCompat;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.view.GravityCompat;
-import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -32,9 +31,8 @@ import com.thehollidayinn.kibbl.ui.activities.FiltersActivity;
 import com.thehollidayinn.kibbl.ui.activities.LoginRegisterActivity;
 import com.thehollidayinn.kibbl.ui.activities.FollowingActivity;
 import com.thehollidayinn.kibbl.ui.activities.UpdatesActivity;
-import com.thehollidayinn.kibbl.ui.adapters.MainTabsAdapter;
 import com.thehollidayinn.kibbl.ui.fragments.EventListFragment;
-import com.thehollidayinn.kibbl.ui.fragments.ListContentFragment;
+import com.thehollidayinn.kibbl.ui.fragments.PetListFragment;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
@@ -132,7 +130,7 @@ public class MainActivity extends AppCompatActivity
 
     private void setUpBottomBar() {
         // Initial fragment
-        EventListFragment fragment = EventListFragment.newInstance("");
+        EventListFragment fragment = EventListFragment.newInstance("", null);
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.fragment_container, fragment)
                 .commit();
@@ -164,13 +162,13 @@ public class MainActivity extends AppCompatActivity
     private void loadPage() {
         if (this.activePage == 0) {
             bottomNavigationView.getMenu().getItem(0).setChecked(true);
-            EventListFragment fragment = EventListFragment.newInstance("");
+            EventListFragment fragment = EventListFragment.newInstance("", null);
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.fragment_container, fragment)
                     .commit();
         } else if (this.activePage == 1) {
             bottomNavigationView.getMenu().getItem(1).setChecked(true);
-            ListContentFragment listContentFragment = ListContentFragment.newInstance("");
+            PetListFragment listContentFragment = PetListFragment.newInstance("", null);
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.fragment_container, listContentFragment)
                     .commit();

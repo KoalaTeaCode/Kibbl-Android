@@ -8,7 +8,7 @@ import java.util.List;
  */
 
 public class Updates {
-
+    public String _id;
     public Date checkDate;
     public List<Event> newEvents;
     public List<Event> updatedEvents;

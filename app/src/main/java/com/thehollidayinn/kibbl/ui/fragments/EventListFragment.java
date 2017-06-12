@@ -48,6 +48,8 @@ public class EventListFragment extends Fragment {
     private String filter;
     private Filters filters;
     private ProgressDialog dialog;
+    private Boolean dataSetManually = false;
+    private List<Event> events;
 
     private LinearLayoutManager mLayoutManager;
     private boolean loading = false;
@@ -56,7 +58,7 @@ public class EventListFragment extends Fragment {
     public EventListFragment() {
     }
 
-    public static EventListFragment newInstance(String filter) {
+    public static EventListFragment newInstance(String filter, List<Event> events) {
         EventListFragment f = new EventListFragment();
 
         // Supply index input as an argument.
@@ -64,6 +66,11 @@ public class EventListFragment extends Fragment {
         args.putString("FILTER", filter);
         f.setArguments(args);
         f.filters = Filters.getSharedInstance();
+
+        if (events != null) {
+            f.events = events;
+            f.dataSetManually = true;
+        }
 
         return f;
     }
@@ -121,7 +128,12 @@ public class EventListFragment extends Fragment {
         });
 
 //        this.filter = getArguments().getString("FILTER");
-        loadEvents("");
+        if (!dataSetManually) {
+            loadEvents("");
+        } else {
+            adapter.updateEvents(this.events);
+        }
+
 
         return recyclerView;
     }

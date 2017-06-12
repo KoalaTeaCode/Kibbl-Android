@@ -1,6 +1,8 @@
 package com.thehollidayinn.kibbl.ui.fragments;
 
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -21,6 +23,9 @@ import com.thehollidayinn.kibbl.data.models.Shelter;
 import com.thehollidayinn.kibbl.data.models.Updates;
 import com.thehollidayinn.kibbl.data.remote.ApiUtils;
 import com.thehollidayinn.kibbl.data.remote.KibblAPIInterface;
+import com.thehollidayinn.kibbl.data.repositories.UpdatesRepository;
+import com.thehollidayinn.kibbl.ui.activities.ShelterDetailActivity;
+import com.thehollidayinn.kibbl.ui.activities.UpdateDetailActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +33,7 @@ import java.util.List;
 import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
 
@@ -40,6 +46,8 @@ public class UpdatesListFragment extends Fragment {
     private static Context context;
     private static RecyclerView recyclerView;
     private static RelativeLayout emptyTextView;
+    private ProgressDialog dialog;
+    private UpdatesRepository updatesRepository;
 
     public UpdatesListFragment() {
         // Required empty public constructor
@@ -56,6 +64,7 @@ public class UpdatesListFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         context = this.getContext();
+        updatesRepository = UpdatesRepository.getInstance();
     }
 
     @Override
@@ -68,6 +77,14 @@ public class UpdatesListFragment extends Fragment {
         recyclerView.setVisibility(View.INVISIBLE);
 
         adapter = new UpdatesListFragment.ContentAdapter(recyclerView.getContext());
+        adapter.getPositionClicks().subscribe(new Action1<Updates>() {
+            @Override
+            public void call(Updates favorite) {
+                Intent detailViewIntent = new Intent(getContext(), UpdateDetailActivity.class);
+                detailViewIntent.putExtra("UPDATE_ID", favorite._id);
+                getActivity().startActivity(detailViewIntent);
+            }
+        });
 
         recyclerView.setAdapter(adapter);
         recyclerView.setHasFixedSize(true);
@@ -81,13 +98,16 @@ public class UpdatesListFragment extends Fragment {
     private void lodaUpdates() {
         KibblAPIInterface mService = ApiUtils.getKibbleService(getActivity());
 
+        dialog = ProgressDialog.show(getActivity(), "",
+                "Loading. Please wait...", true);
+
         mService.getUpdates()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<GenericResponse<List<Updates>>>() {
                     @Override
                     public void onCompleted() {
-
+                        dialog.hide();
                     }
 
                     @Override
@@ -99,6 +119,7 @@ public class UpdatesListFragment extends Fragment {
                     public void onNext(GenericResponse<List<Updates>> genericResponse) {
                         List<Updates> favorties = genericResponse.data;
                         adapter.updatePets(favorties);
+                        updatesRepository.setUpdates(favorties);
                     }
                 });
     }
@@ -117,7 +138,7 @@ public class UpdatesListFragment extends Fragment {
     }
 
     public static class ContentAdapter extends RecyclerView.Adapter<UpdatesListFragment.ViewHolder> {
-        private final PublishSubject<String> onClickSubject = PublishSubject.create();
+        private final PublishSubject<Updates> onClickSubject = PublishSubject.create();
 
         private List<Updates> favorites = new ArrayList<>();
 
@@ -144,15 +165,16 @@ public class UpdatesListFragment extends Fragment {
                             .into(holder.avator);
                 }
 
-                holder.name.setText(currentPet.getName());
+
+                holder.name.setText(favorite.checkDate.toString() + currentPet.getName());
                 holder.description.setText(currentPet.getDescription());
             }
 
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-//                    Pet currentPet = pets.get(position);
-//                    onClickSubject.onNext(String.valueOf(currentPet.getId()));
+                    Updates currentPet = favorites.get(position);
+                    onClickSubject.onNext(currentPet);
                 }
             });
         }
@@ -162,7 +184,7 @@ public class UpdatesListFragment extends Fragment {
             return favorites.size();
         }
 
-        public Observable<String> getPositionClicks(){
+        public Observable<Updates> getPositionClicks(){
             return onClickSubject.asObservable();
         }
 
