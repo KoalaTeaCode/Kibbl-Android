@@ -1,6 +1,7 @@
 package com.thehollidayinn.kibbl;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
@@ -16,6 +17,7 @@ import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -108,6 +110,19 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.action_settings) {
+            if (!user.isLoggedIn()) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setMessage("You must be logged in to view updates.")
+                        .setTitle("Woops!");
+                AlertDialog dialog = builder.create();
+                builder.setPositiveButton("Got it.", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.dismiss();
+                    }
+                });
+                dialog.show();
+                return false;
+            }
             Intent intent = new Intent(this, UpdatesActivity.class);
             startActivity(intent);
             return true;
@@ -200,9 +215,11 @@ public class MainActivity extends AppCompatActivity
 
         if (user.isLoggedIn()) {
             navigationView.getMenu().findItem(R.id.login_register).setVisible(false);
+            navigationView.getMenu().findItem(R.id.feedback).setVisible(true);
             navigationView.getMenu().findItem(R.id.logout).setVisible(true);
         } else {
             navigationView.getMenu().findItem(R.id.login_register).setVisible(true);
+            navigationView.getMenu().findItem(R.id.feedback).setVisible(false);
             navigationView.getMenu().findItem(R.id.logout).setVisible(false);
         }
 

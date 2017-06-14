@@ -1,8 +1,10 @@
 package com.thehollidayinn.kibbl.ui.fragments;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -22,6 +24,7 @@ import com.thehollidayinn.kibbl.data.models.Feedback;
 import com.thehollidayinn.kibbl.data.models.GenericResponse;
 import com.thehollidayinn.kibbl.data.models.Comment;
 import com.thehollidayinn.kibbl.data.models.Shelter;
+import com.thehollidayinn.kibbl.data.models.UserLogin;
 import com.thehollidayinn.kibbl.data.remote.ApiUtils;
 import com.thehollidayinn.kibbl.data.remote.KibblAPIInterface;
 
@@ -48,6 +51,7 @@ public class CommentListFragment extends Fragment {
     private Button sendFeedback;
     private EditText newFeedback;
     private String itemId;
+    private UserLogin user;
 
     public CommentListFragment() {
         // Required empty public constructor
@@ -64,6 +68,7 @@ public class CommentListFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        user = UserLogin.getInstance(getContext());
     }
 
     @Override
@@ -98,6 +103,20 @@ public class CommentListFragment extends Fragment {
     }
 
     private void sendComments(String message) {
+        if (!user.isLoggedIn()) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+            builder.setMessage("You must be logged in to comment.")
+                    .setTitle("Woops!");
+            AlertDialog dialog = builder.create();
+            builder.setPositiveButton("Got it.", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    dialog.dismiss();
+                }
+            });
+            dialog.show();
+            return;
+        }
+
         KibblAPIInterface mService = ApiUtils.getKibbleService(getActivity());
 
         Map<String, String> data = new HashMap<>();

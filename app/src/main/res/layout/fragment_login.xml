@@ -61,7 +61,8 @@
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
-        android:id="@+id/loginButton" />
+        android:id="@+id/loginButton"
+        style="@style/Widget.AppCompat.Button.Colored" />
 
     <com.facebook.login.widget.LoginButton
         android:id="@+id/login_button"

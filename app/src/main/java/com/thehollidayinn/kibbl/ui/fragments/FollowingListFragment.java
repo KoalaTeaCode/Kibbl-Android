@@ -20,6 +20,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.squareup.picasso.Picasso;
 import com.thehollidayinn.kibbl.R;
 import com.thehollidayinn.kibbl.data.models.Favorite;
@@ -106,18 +107,12 @@ public class FollowingListFragment extends Fragment {
         Switch enableNotificaitonSwitch = (Switch) view.findViewById(R.id.enablePushSwitch);
         if (userRepository.getSubscribed()) {
             enableNotificaitonSwitch.setChecked(true);
+            subscribeUserToPush(true);
         }
         enableNotificaitonSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                String token = userRepository.getToken();
-                if (isChecked) {
-                    Log.v("keithtest", "sendyes");
-                    userRepository.setSubscribed(true);
-                } else {
-                    Log.v("keithtest", "sendno");
-                    userRepository.setSubscribed(false);
-                }
+                subscribeUserToPush(isChecked);
             }
         });
 
@@ -128,6 +123,22 @@ public class FollowingListFragment extends Fragment {
         loadNotifications();
 
         return view;
+    }
+
+    private void subscribeUserToPush(Boolean isChecked) {
+        String token = userRepository.getToken();
+
+        if (token.isEmpty()) {
+            token = FirebaseInstanceId.getInstance().getToken();
+        }
+
+        if (isChecked) {
+            Log.v("keithtest", "sendyes" + token);
+            userRepository.setSubscribed(true);
+        } else {
+            Log.v("keithtest", "sendno");
+            userRepository.setSubscribed(false);
+        }
     }
 
     protected void unfollow(String petId) {

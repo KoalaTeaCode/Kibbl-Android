@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -26,6 +27,7 @@ import com.thehollidayinn.kibbl.data.models.GenericResponse;
 import com.thehollidayinn.kibbl.data.models.Pet;
 import com.thehollidayinn.kibbl.data.models.PetResponse;
 import com.thehollidayinn.kibbl.data.models.Shelter;
+import com.thehollidayinn.kibbl.data.models.UserLogin;
 import com.thehollidayinn.kibbl.data.remote.ApiUtils;
 import com.thehollidayinn.kibbl.data.remote.KibblAPIInterface;
 import com.thehollidayinn.kibbl.ui.activities.EventDetailActivity;
@@ -115,7 +117,10 @@ public class FavoritesListFragment extends Fragment {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        loadFavorites();
+        UserLogin user = UserLogin.getInstance(this.getContext());
+        if (user.isLoggedIn()) {
+            loadFavorites();
+        }
 
         return view;
     }
@@ -180,14 +185,14 @@ public class FavoritesListFragment extends Fragment {
         public ImageView avator;
         public TextView name;
         public TextView description;
-        public ImageView favoriteButton;
+        public Button favoriteButton;
 
         public ViewHolder(LayoutInflater inflater, ViewGroup parent) {
             super(inflater.inflate(R.layout.list_item_favorite, parent, false));
             avator = (ImageView) itemView.findViewById(R.id.list_avatar);
             name = (TextView) itemView.findViewById(R.id.list_title);
             description = (TextView) itemView.findViewById(R.id.list_desc);
-            favoriteButton = (ImageView) itemView.findViewById(R.id.favoriteButton);
+            favoriteButton = (Button) itemView.findViewById(R.id.favoriteButton);
         }
     }
 

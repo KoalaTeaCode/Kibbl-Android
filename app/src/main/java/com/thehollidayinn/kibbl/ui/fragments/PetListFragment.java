@@ -76,6 +76,12 @@ public class PetListFragment extends Fragment {
     }
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        filters = Filters.getSharedInstance();
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         RecyclerView recyclerView = (RecyclerView) inflater.inflate(
@@ -105,7 +111,7 @@ public class PetListFragment extends Fragment {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy)
             {
-                if(dy <= 0) {
+                if(dy <= 0 || dataSetManually) {
                     return;
                 }
 
@@ -121,8 +127,6 @@ public class PetListFragment extends Fragment {
                 {
                     loading = true;
                     Pet lastPet = adapter.pets.get(adapter.pets.size() - 1);
-                    Log.v("testlast", lastPet.getLastUpdate());
-
                     loadPets(lastPet.getLastUpdate());
                 }
             }
@@ -190,12 +194,7 @@ public class PetListFragment extends Fragment {
         }
     }
 
-    /**
-     * Adapter to display recycler view.
-     */
     public static class ContentAdapter extends RecyclerView.Adapter<ViewHolder> {
-        // Set numbers of List in RecyclerView.
-        private static final int LENGTH = 18;
         private final String[] mPlaces;
         private final String[] mPlaceDesc;
         private final Drawable[] mPlaceAvators;
@@ -238,7 +237,6 @@ public class PetListFragment extends Fragment {
                 holder.name.setText(currentPet.getName());
                 holder.description.setText(Html.fromHtml(currentPet.getDescription()));
             } else {
-//                holder.avator.setImageDrawable(mPlaceAvators[position % mPlaceAvators.length]);
                 holder.name.setText(mPlaces[position % mPlaces.length]);
                 holder.description.setText(mPlaceDesc[position % mPlaceDesc.length]);
             }

@@ -24,6 +24,7 @@ import com.thehollidayinn.kibbl.data.models.Facebook;
 import com.thehollidayinn.kibbl.data.models.Filters;
 import com.thehollidayinn.kibbl.data.models.GenericResponse;
 import com.thehollidayinn.kibbl.data.models.Pet;
+import com.thehollidayinn.kibbl.data.models.UserLogin;
 import com.thehollidayinn.kibbl.data.remote.ApiUtils;
 import com.thehollidayinn.kibbl.data.remote.KibblAPIInterface;
 import com.thehollidayinn.kibbl.ui.activities.EventDetailActivity;
@@ -65,14 +66,18 @@ public class EventListFragment extends Fragment {
         Bundle args = new Bundle();
         args.putString("FILTER", filter);
         f.setArguments(args);
-        f.filters = Filters.getSharedInstance();
-
         if (events != null) {
             f.events = events;
             f.dataSetManually = true;
         }
 
         return f;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        filters = Filters.getSharedInstance();
     }
 
     @Override
@@ -105,7 +110,7 @@ public class EventListFragment extends Fragment {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy)
             {
-                if(dy <= 0) {
+                if(dy <= 0 || dataSetManually) {
                     return;
                 }
 

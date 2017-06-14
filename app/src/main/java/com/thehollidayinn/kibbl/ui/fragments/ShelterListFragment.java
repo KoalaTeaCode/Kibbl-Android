@@ -71,6 +71,12 @@ public class ShelterListFragment extends Fragment {
     }
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        filters = Filters.getSharedInstance();
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         RecyclerView recyclerView = (RecyclerView) inflater.inflate(

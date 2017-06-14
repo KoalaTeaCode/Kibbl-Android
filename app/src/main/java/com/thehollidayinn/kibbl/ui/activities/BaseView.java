@@ -2,10 +2,12 @@ package com.thehollidayinn.kibbl.ui.activities;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
 import android.util.Log;
@@ -22,6 +24,7 @@ import com.thehollidayinn.kibbl.data.models.Event;
 import com.thehollidayinn.kibbl.data.models.GenericResponse;
 import com.thehollidayinn.kibbl.data.models.Pet;
 import com.thehollidayinn.kibbl.data.models.Shelter;
+import com.thehollidayinn.kibbl.data.models.UserLogin;
 import com.thehollidayinn.kibbl.data.remote.ApiUtils;
 import com.thehollidayinn.kibbl.data.remote.KibblAPIInterface;
 
@@ -54,8 +57,10 @@ public class BaseView extends AppCompatActivity {
     protected String type;
     protected TextView secondayTitle;
     protected TextView turnaryTitle;
+    protected UserLogin user;
 
     protected void setUp(Activity context) {
+        user = UserLogin.getInstance(this);
         secondayTitle = (TextView) context.findViewById(R.id.secondayTextView);
         turnaryTitle = (TextView) context.findViewById(R.id.turnaryTextView);
     }
@@ -73,7 +78,24 @@ public class BaseView extends AppCompatActivity {
             startActivity(Intent.createChooser(sharingIntent, "Share via"));
             return true;
         } else if (id == R.id.action_favorite) {
+            if (!user.isLoggedIn()) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setMessage("You must be logged in to favorite.")
+                        .setTitle("Woops!");
+                AlertDialog dialog = builder.create();
+                builder.setPositiveButton("Got it.", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.dismiss();
+                    }
+                });
+                dialog.show();
+                return false;
+            }
+
             favoritePet(petId);
+            if (pet.favorited == null) {
+                pet.favorited = false;
+            }
             pet.favorited = !pet.favorited;
             if (pet.favorited) {
                 item.setIcon(R.drawable.favorited_icon);
@@ -160,7 +182,7 @@ public class BaseView extends AppCompatActivity {
 
         Picasso.with(this)
                 .load(imageSrc)
-                .transform(new ColorFilterTransformation(Color.argb(120, 0, 0, 0)))
+                .transform(new ColorFilterTransformation(Color.argb(80, 0, 0, 0)))
                 .into(image);
     }
 

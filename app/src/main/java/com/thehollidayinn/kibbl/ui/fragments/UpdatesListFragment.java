@@ -27,6 +27,7 @@ import com.thehollidayinn.kibbl.data.repositories.UpdatesRepository;
 import com.thehollidayinn.kibbl.ui.activities.ShelterDetailActivity;
 import com.thehollidayinn.kibbl.ui.activities.UpdateDetailActivity;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -165,8 +166,10 @@ public class UpdatesListFragment extends Fragment {
                             .into(holder.avator);
                 }
 
+                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+                String dateString = format.format(favorite.checkDate);
 
-                holder.name.setText(favorite.checkDate.toString() + currentPet.getName());
+                holder.name.setText(dateString + " " + currentPet.getName());
                 holder.description.setText(currentPet.getDescription());
             }
 
