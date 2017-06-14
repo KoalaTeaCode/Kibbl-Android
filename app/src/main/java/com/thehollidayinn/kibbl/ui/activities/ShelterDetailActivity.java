@@ -18,11 +18,15 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 import com.thehollidayinn.kibbl.R;
 import com.thehollidayinn.kibbl.data.models.Event;
+import com.thehollidayinn.kibbl.data.models.Following;
 import com.thehollidayinn.kibbl.data.models.Shelter;
 import com.thehollidayinn.kibbl.data.models.GenericResponse;
 import com.thehollidayinn.kibbl.data.models.Pet;
 import com.thehollidayinn.kibbl.data.remote.ApiUtils;
 import com.thehollidayinn.kibbl.data.remote.KibblAPIInterface;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
@@ -38,6 +42,7 @@ public class ShelterDetailActivity extends BaseView {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_detail);
 
+        type = "shelter";
         setUp(this);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -63,13 +68,52 @@ public class ShelterDetailActivity extends BaseView {
             }
         });
 
-        type = "shelter";
+
+        subscriptionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                follow(petId);
+            }
+        });
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.detail_activity_menu, menu);
         optionsMenu = menu;
         return true;
+    }
+
+    protected void follow(String petId) {
+        KibblAPIInterface mService = ApiUtils.getKibbleService(context);
+
+        Map<String, String> options = new HashMap<>();
+        options.put("shelterId", petId);
+
+        mService.subscribe(options)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<Following>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.v("test", e.toString());
+                    }
+
+                    @Override
+                    public void onNext(Following petResponse) {
+                        Shelter shelter = (Shelter) pet;
+                        shelter.subscribed = !shelter.subscribed;
+                        if (shelter.subscribed) {
+                            subscriptionButton.setText("Following");
+                        } else {
+                            subscriptionButton.setText("Follow");
+                        }
+                    }
+                });
     }
 
     private void loadPet(String petId) {
@@ -101,6 +145,12 @@ public class ShelterDetailActivity extends BaseView {
                             img = pet.getFacebook().getCover();
                         }
                         displayPetInfo(pet.getName(), pet.getDescription(),  img);
+
+                        if (pet.subscribed) {
+                            subscriptionButton.setText("Following");
+                        } else {
+                            subscriptionButton.setText("Follow");
+                        }
                     }
                 });
     }

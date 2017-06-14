@@ -40,6 +40,7 @@ public class EventDetailActivity extends BaseView {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_detail);
 
+        type = "event";
         setUp(this);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -68,7 +69,6 @@ public class EventDetailActivity extends BaseView {
             }
         });
 
-        type = "event";
         loadPet(petId);
     }
 

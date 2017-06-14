@@ -13,8 +13,10 @@ import android.text.Html;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
@@ -58,11 +60,17 @@ public class BaseView extends AppCompatActivity {
     protected TextView secondayTitle;
     protected TextView turnaryTitle;
     protected UserLogin user;
+    protected Button subscriptionButton;
 
     protected void setUp(Activity context) {
         user = UserLogin.getInstance(this);
         secondayTitle = (TextView) context.findViewById(R.id.secondayTextView);
         turnaryTitle = (TextView) context.findViewById(R.id.turnaryTextView);
+        subscriptionButton = (Button) context.findViewById(R.id.subscribeButton);
+
+        if (!type.equals("shelter")) {
+            subscriptionButton.setVisibility(View.INVISIBLE);
+        }
     }
 
     @Override
@@ -119,6 +127,9 @@ public class BaseView extends AppCompatActivity {
     protected void displayPetInfo(String name, String description, String imageSrc) {
         titleTextView.setText(name);
         titleTextView2.setText(name);
+        if (description == null) {
+            description = "";
+        }
         descriptionTextView.setText(Html.fromHtml(description));
 
         findViewById(R.id.detail_content2).setVisibility(View.INVISIBLE);

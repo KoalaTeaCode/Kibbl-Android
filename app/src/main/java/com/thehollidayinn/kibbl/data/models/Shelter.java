@@ -64,6 +64,8 @@ public class Shelter extends CommonModel {
     @Expose
     private LocationCoords locationCoords;
 
+    public boolean subscribed;
+
     public String getId() {
         return id;
     }

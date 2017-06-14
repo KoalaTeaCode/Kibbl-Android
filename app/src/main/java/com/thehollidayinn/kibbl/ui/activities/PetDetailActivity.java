@@ -39,6 +39,7 @@ public class PetDetailActivity extends BaseView {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_detail);
 
+        type = "pet";
         setUp(this);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -68,8 +69,6 @@ public class PetDetailActivity extends BaseView {
                 context.startActivity(intent);
             }
         });
-
-        type = "pet";
     }
 
     @Override
