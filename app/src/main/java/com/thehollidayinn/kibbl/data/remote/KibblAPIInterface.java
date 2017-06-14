@@ -87,4 +87,7 @@ public interface KibblAPIInterface {
 
     @POST("comments")
     Observable<Comment> postComment(@Body Map<String, String> options);
+
+    @POST("users/push-notification")
+    Observable<GenericResponse<Void>> pushNotification(@Body Map<String, String> options);
 }

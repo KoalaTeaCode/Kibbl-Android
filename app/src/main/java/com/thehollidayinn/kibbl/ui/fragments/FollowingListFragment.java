@@ -133,12 +133,41 @@ public class FollowingListFragment extends Fragment {
         }
 
         if (isChecked) {
-            Log.v("keithtest", "sendyes" + token);
             userRepository.setSubscribed(true);
+            updatePushNotification(token, true);
         } else {
-            Log.v("keithtest", "sendno");
             userRepository.setSubscribed(false);
+            updatePushNotification(token, false);
         }
+    }
+
+    public void updatePushNotification (String token, Boolean active) {
+        KibblAPIInterface mService = ApiUtils.getKibbleService(context);
+
+        Map<String, String> options = new HashMap<>();
+        options.put("deviceToken", token);
+        options.put("platform", "android");
+        options.put("active", String.valueOf(active));
+
+        mService.pushNotification(options)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<GenericResponse<Void>>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.v("test", e.toString());
+                    }
+
+                    @Override
+                    public void onNext(GenericResponse<Void> response) {
+
+                    }
+                });
     }
 
     protected void unfollow(String petId) {
