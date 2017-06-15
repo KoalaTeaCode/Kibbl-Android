@@ -13,6 +13,7 @@ import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.thehollidayinn.kibbl.MainActivity;
 import com.thehollidayinn.kibbl.R;
+import com.thehollidayinn.kibbl.data.models.UserLogin;
 
 /**
  * Created by krh12 on 6/11/2017.
@@ -96,6 +97,10 @@ public class KibblMessagingService extends FirebaseMessagingService {
      * @param messageBody FCM message body received.
      */
     private void sendNotification(String messageBody) {
+
+        UserLogin userLogin = UserLogin.getInstance(this);
+        userLogin.setHasMessages(true);
+
         Intent intent = new Intent(this, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
@@ -104,7 +109,7 @@ public class KibblMessagingService extends FirebaseMessagingService {
         Uri defaultSoundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
                 .setSmallIcon(R.drawable.logo_dog)
-                .setContentTitle("FCM Message")
+                .setContentTitle("Kibbl Updates")
                 .setContentText(messageBody)
                 .setAutoCancel(true)
                 .setSound(defaultSoundUri)

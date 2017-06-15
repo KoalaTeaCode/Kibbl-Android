@@ -18,6 +18,7 @@ public class UserLogin {
     private Context context;
     private String place = "";
     private String zipCode = "";
+    private Boolean hasMessages = false;
 
     private UserLogin(Context context) {
         this.context = context;
@@ -35,6 +36,7 @@ public class UserLogin {
         Activity activity = (Activity) this.context;
         SharedPreferences sharedPref = activity.getSharedPreferences(activity.getString(R.string.app_prefrences), Context.MODE_PRIVATE);
         this.token = sharedPref.getString(activity.getString(R.string.user_token_preference), "");
+        this.hasMessages = sharedPref.getBoolean("user-has-messages", false);
     }
 
     public void setToken(String token) {
@@ -74,5 +76,21 @@ public class UserLogin {
 
     public String getZipCode() {
         return this.zipCode;
+    }
+
+    public void setHasMessages(Boolean hasMessages) {
+        this.hasMessages = hasMessages;
+
+        Activity activity = (Activity) this.context;
+        SharedPreferences sharedPref = activity.getSharedPreferences(activity.getString(R.string.app_prefrences), Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putBoolean("user-has-messages", this.hasMessages);
+        editor.apply();
+    }
+
+    public Boolean getHasMessages () {
+        SharedPreferences sharedPref = this.context.getSharedPreferences(this.context.getString(R.string.app_prefrences), Context.MODE_PRIVATE);
+        this.hasMessages = sharedPref.getBoolean("user-has-messages", false);
+        return this.hasMessages;
     }
 }

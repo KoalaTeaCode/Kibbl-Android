@@ -8,6 +8,7 @@ import android.support.v7.widget.Toolbar;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.thehollidayinn.kibbl.R;
+import com.thehollidayinn.kibbl.data.models.UserLogin;
 import com.thehollidayinn.kibbl.ui.fragments.FollowingListFragment;
 import com.thehollidayinn.kibbl.ui.fragments.UpdatesListFragment;
 
@@ -30,6 +31,9 @@ public class UpdatesActivity extends AppCompatActivity {
         final Drawable upArrow = getResources().getDrawable(R.drawable.abc_ic_ab_back_material);
         upArrow.setColorFilter(getResources().getColor(R.color.colorPrimary), PorterDuff.Mode.SRC_ATOP);
         getSupportActionBar().setHomeAsUpIndicator(upArrow);
+
+        UserLogin userLogin = UserLogin.getInstance(this);
+        userLogin.setHasMessages(false);
 
         logStat();
 
