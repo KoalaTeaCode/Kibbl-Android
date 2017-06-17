@@ -223,11 +223,11 @@ public class MainActivity extends AppCompatActivity
 
         if (user.isLoggedIn()) {
             navigationView.getMenu().findItem(R.id.login_register).setVisible(false);
-            navigationView.getMenu().findItem(R.id.feedback).setVisible(true);
+//            navigationView.getMenu().findItem(R.id.feedback).setVisible(true);
             navigationView.getMenu().findItem(R.id.logout).setVisible(true);
         } else {
             navigationView.getMenu().findItem(R.id.login_register).setVisible(true);
-            navigationView.getMenu().findItem(R.id.feedback).setVisible(false);
+//            navigationView.getMenu().findItem(R.id.feedback).setVisible(false);
             navigationView.getMenu().findItem(R.id.logout).setVisible(false);
         }
 

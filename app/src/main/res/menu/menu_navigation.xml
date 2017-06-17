@@ -21,7 +21,7 @@
             android:icon="@drawable/ic_action_envelope_icon"
             android:tint="@color/button_grey"
             android:id="@+id/feedback"
-            android:title="Feedback" />
+            android:title="Contact" />
 
         <!--<item-->
             <!--android:icon="@drawable/ic_bookmark_border_black_24dp"-->
