@@ -242,7 +242,7 @@ public class EventListFragment extends Fragment {
 
 
                 holder.name.setText(currentEvent.getName());
-                
+
                 String dateString = android.text.format.DateFormat.format("MMMM dd, yyyy", currentEvent.getStartTime()).toString();
                 holder.description.setText(dateString);
             } else {

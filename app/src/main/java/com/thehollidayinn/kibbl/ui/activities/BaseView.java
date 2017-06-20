@@ -38,6 +38,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TimeZone;
 
 import jp.wasabeef.picasso.transformations.ColorFilterTransformation;
 import rx.Subscriber;
@@ -139,17 +140,19 @@ public class BaseView extends AppCompatActivity {
             final Event event = (Event) pet;
 
             Calendar startDateCalendar = Calendar.getInstance();
+            startDateCalendar.setTimeZone(TimeZone.getDefault());
             startDateCalendar.setTimeInMillis(event.getStartTime().getTime());
-            String dayString = startDateCalendar.get(Calendar.MONTH) + "/" + startDateCalendar.get(Calendar.DAY_OF_MONTH) + "/" + startDateCalendar.get(Calendar.YEAR);
-
-            String amPm = "AM";
-            // @TOOD: Fix
-            String startTimeString = startDateCalendar.get(Calendar.HOUR) + ":" + startDateCalendar.get(Calendar.MINUTE) + " " + amPm;
 
             Calendar endDateCalendar = Calendar.getInstance();
+            endDateCalendar.setTimeZone(TimeZone.getDefault());
             endDateCalendar.setTimeInMillis(event.getEndTime().getTime());
-            String dayEndString = endDateCalendar.get(Calendar.MONTH) + "/" + endDateCalendar.get(Calendar.DAY_OF_MONTH) + "/" + endDateCalendar.get(Calendar.YEAR);
-            String endTimeString = endDateCalendar.get(Calendar.HOUR) + ":" + endDateCalendar.get(Calendar.MINUTE) + " " + endDateCalendar.get(Calendar.AM_PM);
+
+
+            String dayString = android.text.format.DateFormat.format("MMMM dd, yyyy", startDateCalendar.getTime()).toString();
+            String dayEndString = android.text.format.DateFormat.format("MMMM dd, yyyy", endDateCalendar.getTime()).toString();
+
+            String startTimeString = android.text.format.DateFormat.format("hh:mm a", startDateCalendar.getTime()).toString();
+            String endTimeString = android.text.format.DateFormat.format("hh:mm a", endDateCalendar.getTime()).toString();
 
             secondayTitle.setText(dayString + " - " + dayEndString);
             turnaryTitle.setText(startTimeString + " - " + endTimeString);
