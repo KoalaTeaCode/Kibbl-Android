@@ -29,6 +29,7 @@ import com.thehollidayinn.kibbl.data.remote.ApiUtils;
 import com.thehollidayinn.kibbl.data.remote.KibblAPIInterface;
 import com.thehollidayinn.kibbl.ui.activities.EventDetailActivity;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -241,7 +242,9 @@ public class EventListFragment extends Fragment {
 
 
                 holder.name.setText(currentEvent.getName());
-                holder.description.setText(currentEvent.getDescription());
+                
+                String dateString = android.text.format.DateFormat.format("MMMM dd, yyyy", currentEvent.getStartTime()).toString();
+                holder.description.setText(dateString);
             } else {
 //                holder.avator.setImageDrawable(mPlaceAvators[position % mPlaceAvators.length]);
                 holder.name.setText(mPlaces[position % mPlaces.length]);
