@@ -60,6 +60,7 @@ public class BaseView extends AppCompatActivity {
     protected String type;
     protected TextView secondayTitle;
     protected TextView turnaryTitle;
+    private TextView locationText;
     protected UserLogin user;
     protected Button subscriptionButton;
 
@@ -68,6 +69,7 @@ public class BaseView extends AppCompatActivity {
         secondayTitle = (TextView) context.findViewById(R.id.secondayTextView);
         turnaryTitle = (TextView) context.findViewById(R.id.turnaryTextView);
         subscriptionButton = (Button) context.findViewById(R.id.subscribeButton);
+        locationText = (TextView) context.findViewById(R.id.locationText);
 
         if (!type.equals("shelter")) {
             subscriptionButton.setVisibility(View.INVISIBLE);
@@ -165,6 +167,8 @@ public class BaseView extends AppCompatActivity {
                     startActivity(browserIntent);
                 }
             });
+
+            locationText.setText(event.getPlace().location.street + ", " + event.getPlace().location.city + ", " + event.getPlace().location.state);
         }
 
         if (type.equals("pet")) {
@@ -172,6 +176,8 @@ public class BaseView extends AppCompatActivity {
 
             secondayTitle.setText(petModel.getContact().getEmail());
             turnaryTitle.setText(petModel.getContact().getPhone().toString());
+
+            locationText.setText(petModel.getContact().getAddress1());
         }
 
         if (type.equals("shelter")) {
@@ -188,6 +194,8 @@ public class BaseView extends AppCompatActivity {
                     startActivity(browserIntent);
                 }
             });
+
+            locationText.setText(shelter.getAddress1() + ", " + shelter.getCity() + ", " + shelter.getState());
         }
 
         if (imageSrc.isEmpty()) {

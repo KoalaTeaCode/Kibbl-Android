@@ -13,6 +13,8 @@ public class Place {
     @Expose
     private String name;
 
+    public Location location;
+
     public String getName() {
         return name;
     }
