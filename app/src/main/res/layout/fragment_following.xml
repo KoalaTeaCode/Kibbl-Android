@@ -46,7 +46,7 @@
             android:layout_below="@+id/logo_dog"
             android:layout_centerHorizontal="true"
             android:textSize="36dp"
-            android:text="Woops. Nothing here yet." />
+            android:text="@string/emptyContent" />
     </RelativeLayout>
 
 

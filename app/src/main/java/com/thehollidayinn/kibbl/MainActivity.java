@@ -121,7 +121,7 @@ public class MainActivity extends AppCompatActivity
             if (!user.isLoggedIn()) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setMessage("You must be logged in to view updates.")
-                        .setTitle("Woops!");
+                        .setTitle("Whoops!");
                 AlertDialog dialog = builder.create();
                 builder.setPositiveButton("Got it.", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {

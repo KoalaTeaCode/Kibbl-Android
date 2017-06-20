@@ -38,4 +38,6 @@
     <string name="text_shelters">Shelters</string>
     <string name="title_activity_feedback">Feedback</string>
     <string name="title_activity_comment">Comments</string>
+
+    <string name="emptyContent">Whoops. Nothing here yet.</string>
 </resources>
