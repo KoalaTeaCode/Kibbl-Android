@@ -83,8 +83,8 @@ public class BaseView extends AppCompatActivity {
         if (id == R.id.action_share) {
             Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
             sharingIntent.setType("text/plain");
-            String shareBody = "Here is the share content body";
-            sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Subject Here");
+            String shareBody = "Check out this " + this.type + " on Kibbl: https://www.kibbl.io/" + this.type + "s/" + pet.getId();
+            sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Kibbl");
             sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
             startActivity(Intent.createChooser(sharingIntent, "Share via"));
             return true;
@@ -92,7 +92,7 @@ public class BaseView extends AppCompatActivity {
             if (!user.isLoggedIn()) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setMessage("You must be logged in to favorite.")
-                        .setTitle("Woops!");
+                        .setTitle("Whoops!");
                 AlertDialog dialog = builder.create();
                 builder.setPositiveButton("Got it.", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {

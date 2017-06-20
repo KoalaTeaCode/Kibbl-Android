@@ -7,9 +7,6 @@ import com.google.gson.annotations.SerializedName;
 
 public class Pet extends CommonModel {
 
-    @SerializedName("_id")
-    @Expose
-    private String id;
     @SerializedName("status")
     @Expose
     private String status;
@@ -51,13 +48,6 @@ public class Pet extends CommonModel {
     @Expose
     private String animal;
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
 
     public String getStatus() {
         return status;

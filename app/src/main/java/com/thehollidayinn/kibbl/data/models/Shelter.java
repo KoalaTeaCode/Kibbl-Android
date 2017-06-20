@@ -9,9 +9,6 @@ import com.google.gson.annotations.SerializedName;
 
 public class Shelter extends CommonModel {
 
-    @SerializedName("_id")
-    @Expose
-    private String id;
     @SerializedName("country")
     @Expose
     private String country;
@@ -66,13 +63,6 @@ public class Shelter extends CommonModel {
 
     public boolean subscribed;
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
 
     public String getCountry() {
         return country;

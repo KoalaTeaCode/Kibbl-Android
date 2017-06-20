@@ -12,9 +12,6 @@ import java.util.Date;
 
 public class Event extends CommonModel {
 
-    @SerializedName("_id")
-    @Expose
-    private String id;
     @SerializedName("description")
     @Expose
     private String description;
@@ -54,13 +51,6 @@ public class Event extends CommonModel {
         this.facebook = facebook;
     }
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
 
     public String getDescription() {
         return description;
