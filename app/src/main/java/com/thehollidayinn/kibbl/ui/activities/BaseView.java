@@ -172,12 +172,22 @@ public class BaseView extends AppCompatActivity {
         }
 
         if (type.equals("pet")) {
-            Pet petModel = (Pet) pet;
+            final Pet petModel = (Pet) pet;
 
             secondayTitle.setText(petModel.getContact().getEmail());
             turnaryTitle.setText(petModel.getContact().getPhone().toString());
 
             locationText.setText(petModel.getContact().getAddress1());
+
+            findViewById(R.id.contact_button).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String facebookUrl = "https://toolkit.rescuegroups.org/iframe/fb/v1.0/pet?animalID=" + petModel.rescueGroupId;
+                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(facebookUrl));
+                    startActivity(browserIntent);
+                }
+            });
+
         }
 
         if (type.equals("shelter")) {

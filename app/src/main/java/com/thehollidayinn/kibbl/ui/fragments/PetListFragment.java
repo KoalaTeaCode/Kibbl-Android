@@ -195,24 +195,11 @@ public class PetListFragment extends Fragment {
     }
 
     public static class ContentAdapter extends RecyclerView.Adapter<ViewHolder> {
-        private final String[] mPlaces;
-        private final String[] mPlaceDesc;
-        private final Drawable[] mPlaceAvators;
-
         private final PublishSubject<String> onClickSubject = PublishSubject.create();
 
         private List<Pet> pets = new ArrayList<Pet>();
 
         public ContentAdapter(Context context) {
-            Resources resources = context.getResources();
-            mPlaces = resources.getStringArray(R.array.places);
-            mPlaceDesc = resources.getStringArray(R.array.place_desc);
-            TypedArray a = resources.obtainTypedArray(R.array.place_avator);
-            mPlaceAvators = new Drawable[a.length()];
-            for (int i = 0; i < mPlaceAvators.length; i++) {
-                mPlaceAvators[i] = a.getDrawable(i);
-            }
-            a.recycle();
         }
 
         @Override
@@ -236,9 +223,6 @@ public class PetListFragment extends Fragment {
 
                 holder.name.setText(currentPet.getName());
                 holder.description.setText(Html.fromHtml(currentPet.getDescription()));
-            } else {
-                holder.name.setText(mPlaces[position % mPlaces.length]);
-                holder.description.setText(mPlaceDesc[position % mPlaceDesc.length]);
             }
 
             holder.itemView.setOnClickListener(new View.OnClickListener() {

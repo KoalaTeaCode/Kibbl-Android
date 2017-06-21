@@ -48,6 +48,8 @@ public class Pet extends CommonModel {
     @Expose
     private String animal;
 
+    public String rescueGroupId;
+
 
     public String getStatus() {
         return status;

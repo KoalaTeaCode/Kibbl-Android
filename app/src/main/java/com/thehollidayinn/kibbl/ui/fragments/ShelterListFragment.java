@@ -189,26 +189,11 @@ public class ShelterListFragment extends Fragment {
      * Adapter to display recycler view.
      */
     public static class ContentAdapter extends RecyclerView.Adapter<ShelterListFragment.ViewHolder> {
-        // Set numbers of List in RecyclerView.
-        private static final int LENGTH = 18;
-        private final String[] mPlaces;
-        private final String[] mPlaceDesc;
-        private final Drawable[] mPlaceAvators;
-
         private final PublishSubject<String> onClickSubject = PublishSubject.create();
 
         private List<Shelter> pets = new ArrayList<Shelter>();
 
         public ContentAdapter(Context context) {
-            Resources resources = context.getResources();
-            mPlaces = resources.getStringArray(R.array.places);
-            mPlaceDesc = resources.getStringArray(R.array.place_desc);
-            TypedArray a = resources.obtainTypedArray(R.array.place_avator);
-            mPlaceAvators = new Drawable[a.length()];
-            for (int i = 0; i < mPlaceAvators.length; i++) {
-                mPlaceAvators[i] = a.getDrawable(i);
-            }
-            a.recycle();
         }
 
         @Override
@@ -233,10 +218,6 @@ public class ShelterListFragment extends Fragment {
 
                 holder.name.setText(currentShelter.getName());
                 holder.description.setText(currentShelter.getDescription());
-            } else {
-//                holder.avator.setImageDrawable(mPlaceAvators[position % mPlaceAvators.length]);
-                holder.name.setText(mPlaces[position % mPlaces.length]);
-                holder.description.setText(mPlaceDesc[position % mPlaceDesc.length]);
             }
 
             holder.itemView.setOnClickListener(new View.OnClickListener() {

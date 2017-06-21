@@ -36,11 +36,28 @@
             />
 
         <TextView
+            android:text="Type"
+            style="@style/TextAppearance.AppCompat.Headline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/typeTextView"
+            android:layout_marginTop="45dp"
+            android:layout_below="@+id/place_autocomplete_fragment"
+            android:layout_centerHorizontal="true" />
+
+        <Spinner
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:id="@+id/typeSpinner"
+            android:layout_below="@+id/typeTextView"
+            android:layout_centerHorizontal="true" />
+
+        <TextView
             android:text="Breed"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/breedText"
-            android:layout_below="@+id/place_autocomplete_fragment"
+            android:layout_below="@+id/typeSpinner"
             android:layout_marginTop="12dp"
             style="@style/TextAppearance.AppCompat.Headline"
             android:layout_centerHorizontal="true" />

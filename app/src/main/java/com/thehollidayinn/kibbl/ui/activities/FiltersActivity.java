@@ -46,9 +46,15 @@ public class FiltersActivity extends AppCompatActivity implements DatePickerDial
     private DatePickerDialog datePickerDialog;
     private AutoCompleteTextView autocompleteTextView;
     private Spinner ageSpinner;
+    private Spinner typeSpinner;
     private Spinner genderSpinner;
     private DatePicker startDatePicker;
     private DatePicker endDatePicker;
+
+    ArrayAdapter<String> breedsAdapter;
+    ArrayAdapter<String> dogBreedsAdapter;
+    ArrayAdapter<String> catBreedsAdapter;
+
 
     private AdapterView.OnItemSelectedListener onItemSelectedListener = new AdapterView.OnItemSelectedListener() {
         @Override
@@ -65,6 +71,17 @@ public class FiltersActivity extends AppCompatActivity implements DatePickerDial
             } else if (spinnerID == R.id.genderSpinner) {
                 filters.gender = spinnerText;
                 filters.genderIndex = position;
+            } else if (spinnerID == R.id.typeSpinner) {
+                filters.type = spinnerText;
+                filters.typeIndex = position;
+                
+                if (filters.type.equals("Dog")) {
+                    autocompleteTextView.setAdapter(dogBreedsAdapter);
+                } else if (filters.type.equals("Cat")) {
+                    autocompleteTextView.setAdapter(catBreedsAdapter);
+                } else {
+                    autocompleteTextView.setAdapter(breedsAdapter);
+                }
             }
 
             Button findButton = (Button) findViewById(R.id.findButton);
@@ -82,6 +99,15 @@ public class FiltersActivity extends AppCompatActivity implements DatePickerDial
         }
 
     };
+
+    public String[] concat(String[] a, String[] b) {
+        int aLen = a.length;
+        int bLen = b.length;
+        String[] c = new String[aLen+bLen];
+        System.arraycopy(a, 0, c, 0, aLen);
+        System.arraycopy(b, 0, c, aLen, bLen);
+        return c;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,6 +128,13 @@ public class FiltersActivity extends AppCompatActivity implements DatePickerDial
         if(b != null) {
             activePage = b.getInt("activePage");
         }
+
+        String[] dogBreeds = getResources().getStringArray(R.array.breeds_dog);
+        String[] catBreeds = getResources().getStringArray(R.array.breeds_cats);
+        String[] allBreeds = concat(dogBreeds, catBreeds);
+        breedsAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, allBreeds);
+        catBreedsAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, catBreeds);
+        dogBreedsAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, dogBreeds);
 
         setUpView();
         hideFilters(activePage);
@@ -191,10 +224,7 @@ public class FiltersActivity extends AppCompatActivity implements DatePickerDial
         });
 
         autocompleteTextView = (AutoCompleteTextView) findViewById(R.id.breedAutoComplete);
-        String[] countries = getResources().getStringArray(R.array.breeds);
-        ArrayAdapter<String> adapter =
-                new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, countries);
-        autocompleteTextView.setAdapter(adapter);
+        autocompleteTextView.setAdapter(breedsAdapter);
         autocompleteTextView.setOnDismissListener(new AutoCompleteTextView.OnDismissListener() {
 
             @Override
@@ -202,6 +232,14 @@ public class FiltersActivity extends AppCompatActivity implements DatePickerDial
                 filters.breed = autocompleteTextView.getText().toString();
             }
         });
+
+        typeSpinner = (Spinner) findViewById(R.id.typeSpinner);
+        ArrayAdapter<CharSequence> typeAdapter = ArrayAdapter.createFromResource(this,
+                R.array.type, android.R.layout.simple_spinner_item);
+        typeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        typeSpinner.setAdapter(typeAdapter);
+        typeSpinner.setOnItemSelectedListener(onItemSelectedListener);
+        typeSpinner.setSelection(filters.typeIndex);
 
         ageSpinner = (Spinner) findViewById(R.id.ageSpinner);
         ArrayAdapter<CharSequence> ageAdpater = ArrayAdapter.createFromResource(this,
@@ -269,6 +307,7 @@ public class FiltersActivity extends AppCompatActivity implements DatePickerDial
         TextView breedView = (TextView) findViewById(R.id.breedText);
         TextView ageTextView = (TextView) findViewById(R.id.ageTextView);
         TextView genderTextView = (TextView) findViewById(R.id.genderTextView);
+        TextView typeTextView = (TextView) findViewById(R.id.typeTextView);
 
         breedView.setVisibility(View.INVISIBLE);
         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) breedView.getLayoutParams();
@@ -281,6 +320,18 @@ public class FiltersActivity extends AppCompatActivity implements DatePickerDial
         params1.height = 0;
         params1.topMargin = 0;
         autocompleteTextView.setLayoutParams(params1);
+
+        typeTextView.setVisibility(View.INVISIBLE);
+        RelativeLayout.LayoutParams paramsType = (RelativeLayout.LayoutParams) typeTextView.getLayoutParams();
+        paramsType.height = 0;
+        paramsType.topMargin = 0;
+        typeTextView.setLayoutParams(paramsType);
+
+        typeSpinner.setVisibility(View.INVISIBLE);
+        RelativeLayout.LayoutParams paramsTypeSpinner = (RelativeLayout.LayoutParams) typeSpinner.getLayoutParams();
+        paramsTypeSpinner.height = 0;
+        paramsTypeSpinner.topMargin = 0;
+        typeSpinner.setLayoutParams(paramsTypeSpinner);
 
         ageTextView.setVisibility(View.INVISIBLE);
         RelativeLayout.LayoutParams params2 = (RelativeLayout.LayoutParams) ageTextView.getLayoutParams();

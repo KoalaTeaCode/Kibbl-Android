@@ -31,6 +31,7 @@ public class Filters {
     public String gender;
     public Integer genderIndex = 0;
     public String type;
+    public Integer typeIndex = 0;
     public String lastUpdatedBefore;
     public String createdAtBefore;
     public Integer activeMainPage = 0;
