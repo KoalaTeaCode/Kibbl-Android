@@ -74,7 +74,7 @@ public class FiltersActivity extends AppCompatActivity implements DatePickerDial
             } else if (spinnerID == R.id.typeSpinner) {
                 filters.type = spinnerText;
                 filters.typeIndex = position;
-                
+
                 if (filters.type.equals("Dog")) {
                     autocompleteTextView.setAdapter(dogBreedsAdapter);
                 } else if (filters.type.equals("Cat")) {

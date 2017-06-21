@@ -46,7 +46,7 @@
             android:layout_below="@+id/main_image"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="30dp"
-            android:text="Have feedback for us? We love to here. Just contact us at:"
+            android:text="Have feedback for us? We love to hear it. Just contact us at:"
             android:textAlignment="center"
             android:textSize="24dp" />
 
