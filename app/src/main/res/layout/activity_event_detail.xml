@@ -96,7 +96,62 @@
                     android:layout_marginTop="18dp"
                     android:layout_weight="0.24"
                     android:textColor="#979390"
-                    android:text="Downtown Pet Palace" />
+                    android:text="No Address Supplied" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="24dp"
+                android:id="@+id/events_layout"
+                android:weightSum="1">
+
+                <ImageView
+                    android:id="@+id/eventImage"
+                    android:layout_width="38dp"
+                    android:layout_height="38dp"
+                    app:srcCompat="@drawable/event_icon"
+                    android:layout_weight="0.07" />
+
+                <TextView
+                    android:id="@+id/eventText"
+                    android:layout_width="124dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginLeft="12dp"
+                    android:textColor="#979390"
+                    android:text="View Events"
+                    android:layout_marginBottom="24dp"
+                    android:layout_weight="0.24" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="24dp"
+                android:id="@+id/pet_layout"
+                android:weightSum="1">
+
+                <ImageView
+                    android:id="@+id/petImage"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginLeft="10dp"
+                    app:srcCompat="@drawable/pets_icon"
+                    android:layout_weight="0.07" />
+
+                <TextView
+                    android:id="@+id/petsText"
+                    android:layout_width="124dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginLeft="12dp"
+                    android:textColor="#979390"
+                    android:text="View Pets"
+                    android:layout_marginBottom="24dp"
+                    android:layout_weight="0.24" />
             </LinearLayout>
 
             <LinearLayout

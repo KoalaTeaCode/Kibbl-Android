@@ -108,6 +108,12 @@ public class EventDetailActivity extends BaseView {
                             img = pet.getFacebook().getCover();
                         }
                         displayPetInfo(pet.getName(), pet.getDescription(), img);
+
+                        if (pet.shelterId.subscribed) {
+                            subscriptionButton.setText("Following");
+                        } else {
+                            subscriptionButton.setText("Follow");
+                        }
                     }
                 });
     }

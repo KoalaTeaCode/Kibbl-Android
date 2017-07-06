@@ -16,6 +16,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.thehollidayinn.kibbl.R;
@@ -30,6 +31,7 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import rx.Observable;
 import rx.Subscriber;
@@ -50,6 +52,8 @@ public class PetListFragment extends Fragment {
     private ProgressDialog dialog;
     private Boolean dataSetManually = false;
     private List<Pet> pets;
+    private String shelterId = "";
+    private RelativeLayout empty_view;
 
     private LinearLayoutManager mLayoutManager;
     private boolean loading = false;
@@ -58,18 +62,21 @@ public class PetListFragment extends Fragment {
     public PetListFragment() {
     }
 
-    public static PetListFragment newInstance(String filter, List<Pet> pets) {
+    public static PetListFragment newInstance(String shelterId, List<Pet> pets) {
         PetListFragment f = new PetListFragment();
 
         // Supply index input as an argument.
         Bundle args = new Bundle();
-        args.putString("FILTER", filter);
         f.setArguments(args);
         f.filters = Filters.getSharedInstance();
 
         if (pets != null) {
             f.pets = pets;
             f.dataSetManually = true;
+        }
+
+        if (!shelterId.isEmpty()) {
+            f.shelterId = shelterId;
         }
 
         return f;
@@ -88,6 +95,8 @@ public class PetListFragment extends Fragment {
                 R.layout.recycler_view, container, false);
 
         this.context = getContext();
+
+        empty_view = (RelativeLayout) this.getActivity().findViewById(R.id.empty_view);
 
         adapter = new ContentAdapter(recyclerView.getContext());
         adapter.getPositionClicks().subscribe(new Action1<String>() {
@@ -147,11 +156,6 @@ public class PetListFragment extends Fragment {
     private void loadPets(String lastUpdatedBefore) {
         KibblAPIInterface mService = ApiUtils.getKibbleService(getActivity());
 
-        if (!this.filter.isEmpty()) {
-//            query.put("type", this.filter);
-            filters.type = this.filter;
-        }
-
         if (!lastUpdatedBefore.isEmpty()) {
             filters.lastUpdatedBefore = lastUpdatedBefore;
         }
@@ -159,7 +163,14 @@ public class PetListFragment extends Fragment {
         dialog = ProgressDialog.show(getActivity(), "",
                 "Loading. Please wait...", true);
 
-        mService.getPets(filters.toMap())
+
+        Map<String, String> query = filters.toMap();
+        if (!shelterId.isEmpty()) {
+            query.put("shelterId", shelterId);
+        }
+
+
+        mService.getPets(query)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<PetResponse>() {
@@ -177,6 +188,10 @@ public class PetListFragment extends Fragment {
                     public void onNext(PetResponse petResponse) {
                         loading = false;
                         adapter.updatePets(petResponse.getPets());
+                        if (empty_view != null && petResponse.getPets().size() > 0) {
+                            empty_view.setVisibility(View.INVISIBLE);
+                        }
+
                     }
                 });
     }

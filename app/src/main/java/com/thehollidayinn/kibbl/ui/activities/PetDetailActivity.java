@@ -107,6 +107,12 @@ public class PetDetailActivity extends BaseView {
                             img = pet.getMedia().get(0).urlSecureFullsize;
                         }
                         displayPetInfo(pet.getName(), pet.getDescription(), img);
+
+                        if (pet.shelterId.subscribed) {
+                            subscriptionButton.setText("Following");
+                        } else {
+                            subscriptionButton.setText("Follow");
+                        }
                     }
                 });
     }

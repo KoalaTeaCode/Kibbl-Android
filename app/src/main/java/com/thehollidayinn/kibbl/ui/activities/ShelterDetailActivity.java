@@ -24,6 +24,7 @@ import com.thehollidayinn.kibbl.data.models.GenericResponse;
 import com.thehollidayinn.kibbl.data.models.Pet;
 import com.thehollidayinn.kibbl.data.remote.ApiUtils;
 import com.thehollidayinn.kibbl.data.remote.KibblAPIInterface;
+import com.thehollidayinn.kibbl.ui.fragments.ShelterListFragment;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -68,11 +69,23 @@ public class ShelterDetailActivity extends BaseView {
             }
         });
 
-
-        subscriptionButton.setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.events_layout).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                follow(petId);
+                Intent detailViewIntent = new Intent(ShelterDetailActivity.this, ShelterItemsActivity.class);
+                detailViewIntent.putExtra("SHELTER_ID", petId);
+                detailViewIntent.putExtra("CONTENT_TYPE", "Events");
+                ShelterDetailActivity.this.startActivity(detailViewIntent);
+            }
+        });
+
+        findViewById(R.id.pet_layout).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent detailViewIntent = new Intent(ShelterDetailActivity.this, ShelterItemsActivity.class);
+                detailViewIntent.putExtra("SHELTER_ID", petId);
+                detailViewIntent.putExtra("CONTENT_TYPE", "Pets");
+                ShelterDetailActivity.this.startActivity(detailViewIntent);
             }
         });
     }
@@ -81,39 +94,6 @@ public class ShelterDetailActivity extends BaseView {
         getMenuInflater().inflate(R.menu.detail_activity_menu, menu);
         optionsMenu = menu;
         return true;
-    }
-
-    protected void follow(String petId) {
-        KibblAPIInterface mService = ApiUtils.getKibbleService(context);
-
-        Map<String, String> options = new HashMap<>();
-        options.put("shelterId", petId);
-
-        mService.subscribe(options)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<Following>() {
-                    @Override
-                    public void onCompleted() {
-
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Log.v("test", e.toString());
-                    }
-
-                    @Override
-                    public void onNext(Following petResponse) {
-                        Shelter shelter = (Shelter) pet;
-                        shelter.subscribed = !shelter.subscribed;
-                        if (shelter.subscribed) {
-                            subscriptionButton.setText("Following");
-                        } else {
-                            subscriptionButton.setText("Follow");
-                        }
-                    }
-                });
     }
 
     private void loadPet(String petId) {

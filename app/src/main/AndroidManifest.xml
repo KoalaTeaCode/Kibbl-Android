@@ -170,14 +170,20 @@
             android:name="com.google.firebase.messaging.default_notification_color"
             android:resource="@color/colorAccent" />
 
-        <activity android:name=".ui.activities.UpdateDetailActivity"
+        <activity
+            android:name=".ui.activities.UpdateDetailActivity"
             android:label="Updates"
             android:theme="@style/AppTheme.NoActionBar">
+
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.thehollidayinn.kibbl.MainActivity" />
         </activity>
+        <activity
+            android:name=".ui.activities.ShelterItemsActivity"
+            android:label="@string/title_activity_shelter_items"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

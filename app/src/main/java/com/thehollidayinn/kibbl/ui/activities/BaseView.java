@@ -23,6 +23,7 @@ import com.squareup.picasso.Picasso;
 import com.thehollidayinn.kibbl.R;
 import com.thehollidayinn.kibbl.data.models.CommonModel;
 import com.thehollidayinn.kibbl.data.models.Event;
+import com.thehollidayinn.kibbl.data.models.Following;
 import com.thehollidayinn.kibbl.data.models.GenericResponse;
 import com.thehollidayinn.kibbl.data.models.Pet;
 import com.thehollidayinn.kibbl.data.models.Shelter;
@@ -63,6 +64,8 @@ public class BaseView extends AppCompatActivity {
     private TextView locationText;
     protected UserLogin user;
     protected Button subscriptionButton;
+    protected LinearLayout eventLayout;
+    protected LinearLayout petLayout;
 
     protected void setUp(Activity context) {
         user = UserLogin.getInstance(this);
@@ -71,9 +74,119 @@ public class BaseView extends AppCompatActivity {
         subscriptionButton = (Button) context.findViewById(R.id.subscribeButton);
         locationText = (TextView) context.findViewById(R.id.locationText);
 
+        eventLayout = (LinearLayout) context.findViewById(R.id.events_layout);
+        petLayout = (LinearLayout) context.findViewById(R.id.pet_layout);
+
         if (!type.equals("shelter")) {
-            subscriptionButton.setVisibility(View.INVISIBLE);
+            eventLayout.setVisibility(View.INVISIBLE);
+            LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) eventLayout.getLayoutParams();
+            params.height = 0;
+            params.topMargin = 0;
+            params.bottomMargin = 0;
+            params.setMarginEnd(0);
+            eventLayout.setLayoutParams(params);
+
+            petLayout.setVisibility(View.INVISIBLE);
+            LinearLayout.LayoutParams params2 = (LinearLayout.LayoutParams) petLayout.getLayoutParams();
+            params2.height = 0;
+            params2.topMargin = 0;
+            params2.bottomMargin = 0;
+            params2.setMarginEnd(0);
+            petLayout.setLayoutParams(params2);
+//            subscriptionButton.setVisibility(View.INVISIBLE);
         }
+
+        subscriptionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!user.isLoggedIn()) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(BaseView.this);
+                    builder.setMessage("You must be logged in to follow.")
+                            .setTitle("Whoops!");
+                    AlertDialog dialog = builder.create();
+                    builder.setPositiveButton("Got it.", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.dismiss();
+                        }
+                    });
+                    dialog.show();
+                    return;
+                }
+
+                if (type.equals("shelter")) {
+                    follow(petId);
+                } else {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(BaseView.this);
+                    builder.setMessage("Do you want to follow the shelter?")
+                            .setTitle("Follow");
+                    builder.setPositiveButton("Yes!", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.dismiss();
+
+                            String shelterId;
+
+                            if (type.equals("pet")) {
+                                Pet petModel = (Pet) pet;
+                                if (petModel.shelterId == null) return;
+                                follow(petModel.shelterId.getId());
+                            } else if (type.equals("event")) {
+                                Event event = (Event) pet;
+                                if (event.shelterId == null) return;
+                                follow(event.shelterId.getId());
+                            }
+                        }
+                    });
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+                }
+            }
+        });
+    }
+
+    protected void follow(String petId) {
+        KibblAPIInterface mService = ApiUtils.getKibbleService(context);
+
+        Map<String, String> options = new HashMap<>();
+        options.put("shelterId", petId);
+
+        mService.subscribe(options)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<Following>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.v("test", e.toString());
+                    }
+
+                    @Override
+                    public void onNext(Following petResponse) {
+                        Shelter shelter = null;
+                        if (type.equals("shelter")) {
+                            shelter = (Shelter) pet;
+                        } else if (type.equals("event")) {
+                            Event event = (Event) pet;
+                            shelter = event.shelterId;
+                        } else if (type.equals("pet")) {
+                            Pet petModel = (Pet) pet;
+                            shelter = petModel.shelterId;
+                        }
+
+                        if (shelter != null) {
+                            shelter.subscribed = !shelter.subscribed;
+                            if (shelter.subscribed) {
+                                subscriptionButton.setText("Following");
+                            } else {
+                                subscriptionButton.setText("Follow");
+                            }
+                        }
+
+                    }
+                });
     }
 
     @Override
@@ -177,7 +290,10 @@ public class BaseView extends AppCompatActivity {
             secondayTitle.setText(petModel.getContact().getEmail());
             turnaryTitle.setText(petModel.getContact().getPhone().toString());
 
-            locationText.setText(petModel.getContact().getAddress1());
+            if (!petModel.getContact().getAddress1().isEmpty()) {
+                locationText.setText(petModel.getContact().getAddress1());
+            }
+
 
             findViewById(R.id.contact_button).setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -199,6 +315,9 @@ public class BaseView extends AppCompatActivity {
             findViewById(R.id.contact_button).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    if (shelter.getFacebook() == null) {
+                        return;
+                    }
                     String facebookUrl = "https://www.facebook.com/" + shelter.getFacebook().getId();
                     Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(facebookUrl));
                     startActivity(browserIntent);

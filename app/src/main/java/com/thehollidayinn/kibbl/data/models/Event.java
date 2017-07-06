@@ -43,6 +43,8 @@ public class Event extends CommonModel {
     @Expose
     private Facebook facebook;
 
+    public Shelter shelterId;
+
     public Facebook getFacebook() {
         return facebook;
     }

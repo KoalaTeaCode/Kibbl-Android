@@ -50,6 +50,8 @@ public class Pet extends CommonModel {
 
     public String rescueGroupId;
 
+    public Shelter shelterId;
+
 
     public String getStatus() {
         return status;

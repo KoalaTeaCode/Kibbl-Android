@@ -40,4 +40,5 @@
     <string name="title_activity_comment">Comments</string>
 
     <string name="emptyContent">Whoops. Nothing here yet.</string>
+    <string name="title_activity_shelter_items">ShelterItemsActivity</string>
 </resources>

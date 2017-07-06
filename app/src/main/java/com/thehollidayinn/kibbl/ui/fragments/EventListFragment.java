@@ -15,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
@@ -32,6 +33,7 @@ import com.thehollidayinn.kibbl.ui.activities.EventDetailActivity;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import rx.Observable;
 import rx.Subscriber;
@@ -47,11 +49,12 @@ import rx.subjects.PublishSubject;
 public class EventListFragment extends Fragment {
     private EventListFragment.ContentAdapter adapter;
     private static Context context;
-    private String filter;
+    private String shelterId = "";
     private Filters filters;
     private ProgressDialog dialog;
     private Boolean dataSetManually = false;
     private List<Event> events;
+    private RelativeLayout empty_view;
 
     private LinearLayoutManager mLayoutManager;
     private boolean loading = false;
@@ -60,16 +63,20 @@ public class EventListFragment extends Fragment {
     public EventListFragment() {
     }
 
-    public static EventListFragment newInstance(String filter, List<Event> events) {
+    public static EventListFragment newInstance(String shelterId, List<Event> events) {
         EventListFragment f = new EventListFragment();
 
         // Supply index input as an argument.
         Bundle args = new Bundle();
-        args.putString("FILTER", filter);
         f.setArguments(args);
+
         if (events != null) {
             f.events = events;
             f.dataSetManually = true;
+        }
+
+        if (!shelterId.isEmpty()) {
+            f.shelterId = shelterId;
         }
 
         return f;
@@ -88,6 +95,8 @@ public class EventListFragment extends Fragment {
                 R.layout.recycler_view, container, false);
 
         this.context = getContext();
+
+        empty_view = (RelativeLayout) this.getActivity().findViewById(R.id.empty_view);
 
         adapter = new EventListFragment.ContentAdapter(recyclerView.getContext());
         adapter.getPositionClicks().subscribe(new Action1<String>() {
@@ -147,11 +156,6 @@ public class EventListFragment extends Fragment {
     private void loadEvents(String createdAtBefore) {
         KibblAPIInterface mService = ApiUtils.getKibbleService(getActivity());
 
-//        if (!this.filter.isEmpty()) {
-//            query.put("type", this.filter);
-//            filters.type = this.filter;
-//        }
-
         if (!createdAtBefore.isEmpty()) {
             filters.createdAtBefore = createdAtBefore;
         }
@@ -159,7 +163,12 @@ public class EventListFragment extends Fragment {
         dialog = ProgressDialog.show(getActivity(), "",
                 "Loading. Please wait...", true);
 
-        mService.getEvents(filters.toMap())
+        Map<String, String> query = filters.toMap();
+        if (!shelterId.isEmpty()) {
+            query.put("shelterId", shelterId);
+        }
+
+        mService.getEvents(query)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<GenericResponse<List<Event>>>() {
@@ -177,6 +186,9 @@ public class EventListFragment extends Fragment {
                     public void onNext(GenericResponse<List<Event>> response) {
                         loading = false;
                         adapter.updateEvents(response.data);
+                        if (empty_view != null && response.data.size() > 0) {
+                            empty_view.setVisibility(View.INVISIBLE);
+                        }
                     }
                 });
     }
