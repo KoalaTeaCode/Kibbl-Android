@@ -13,16 +13,16 @@ public class LocationCoords {
 
     @SerializedName("coordinates")
     @Expose
-    private List<Integer> coordinates = null;
+    private List<Float> coordinates = null;
     @SerializedName("type")
     @Expose
     private String type;
 
-    public List<Integer> getCoordinates() {
+    public List<Float> getCoordinates() {
         return coordinates;
     }
 
-    public void setCoordinates(List<Integer> coordinates) {
+    public void setCoordinates(List<Float> coordinates) {
         this.coordinates = coordinates;
     }
 

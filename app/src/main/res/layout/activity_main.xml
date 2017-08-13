@@ -17,66 +17,88 @@
 
         <android.support.design.widget.AppBarLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="110dp"
+            app:elevation="0dp"
             android:theme="@style/AppTheme.AppBarOverlay">
 
-            <android.support.v7.widget.Toolbar
-                android:id="@+id/toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/white"
-                app:elevation="0dp"
-                app:popupTheme="@style/AppTheme.PopupOverlay" >
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:src="@drawable/logo"/>
-
-            </android.support.v7.widget.Toolbar>
-
-            <!--<android.support.design.widget.TabLayout-->
-                <!--android:id="@+id/tabs"-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="wrap_content" />-->
-
-        </android.support.design.widget.AppBarLayout>
-
-        <!--<include layout="@layout/content_main" />-->
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/white">
-            <Button
-                android:id="@+id/filter_button"
-                android:layout_width="300dp"
-                android:layout_height="wrap_content"
-                android:background="@color/brand_orange"
-                android:src='@drawable/dotted'
-                style="?android:attr/borderlessButtonStyle"
-                android:layerType="software"
-                android:layout_centerHorizontal="true"
-                android:text="Filter"
-                android:elevation="0dp"
-                android:textColor="@color/white"
-                android:layout_marginTop="72dp" />
-
-            <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:id="@+id/fragment_container"
+            <android.support.design.widget.CollapsingToolbarLayout
+                android:id="@+id/collapsing_toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_below="@id/filter_button"
-                android:background="@color/white">
-            </FrameLayout>
-        </RelativeLayout>
+                android:fitsSystemWindows="true"
+                android:theme="@style/ThemeOverlay.AppCompat.Light"
+                android:background="@color/white"
+                app:contentScrim="?attr/colorPrimary"
+                app:expandedTitleMarginEnd="0dp"
+                android:textSize="0sp"
+                app:expandedTitleMarginStart="24dp"
+                app:layout_scrollFlags="scroll|exitUntilCollapsed"
+                android:textColor="@android:color/transparent">
 
-        <!--<android.support.v4.view.ViewPager-->
-            <!--android:id="@+id/viewpager"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="match_parent"-->
-            <!--app:layout_behavior="@string/appbar_scrolling_view_behavior" />-->
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="50dp"
+                    android:orientation="vertical"
+                    android:paddingLeft="24dp"
+                    android:paddingRight="24dp"
+                    android:id="@+id/details_top"
+                    android:gravity="bottom">
+                    <Button
+                        android:id="@+id/filter_button"
+                        android:layout_width="240dp"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/filterbutton"
+                        android:src='@drawable/dotted'
+                        android:padding="1dp"
+                        style="?android:attr/borderlessButtonStyle"
+                        android:layerType="software"
+                        android:layout_centerHorizontal="true"
+                        android:text="Filter"
+                        android:elevation="0dp"
+                        android:textColor="@color/brand_orange"
+                        android:layout_marginTop="0dp" />
+                </RelativeLayout>
+
+                <android.support.v7.widget.Toolbar
+                    android:id="@+id/toolbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:background="@color/white"
+                    app:elevation="0dp"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentEnd="true"
+                    app:layout_collapseMode="pin"
+                    app:popupTheme="@style/AppTheme.PopupOverlay" >
+
+                    <ImageView
+                        android:id="@+id/imageView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:src="@drawable/logo" />
+                </android.support.v7.widget.Toolbar>
+
+            </android.support.design.widget.CollapsingToolbarLayout>
+        </android.support.design.widget.AppBarLayout>
+
+
+        <android.support.v4.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@null">
+
+                <FrameLayout
+                    android:id="@+id/fragment_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/white" />
+            </RelativeLayout>
+        </android.support.v4.widget.NestedScrollView>
 
         <android.support.design.widget.BottomNavigationView
             android:id="@+id/bottom_navigation"

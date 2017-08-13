@@ -36,9 +36,7 @@ public class Event extends CommonModel {
     @SerializedName("place")
     @Expose
     private Place place;
-    @SerializedName("locationCoords")
-    @Expose
-    private LocationCoords locationCoords;
+
     @SerializedName("facebook")
     @Expose
     private Facebook facebook;
@@ -117,14 +115,5 @@ public class Event extends CommonModel {
     public void setPlace(Place place) {
         this.place = place;
     }
-
-    public LocationCoords getLocationCoords() {
-        return locationCoords;
-    }
-
-    public void setLocationCoords(LocationCoords locationCoords) {
-        this.locationCoords = locationCoords;
-    }
-
 }
 
