@@ -26,15 +26,22 @@ import com.thehollidayinn.kibbl.data.models.Filters;
 import com.thehollidayinn.kibbl.data.models.GenericResponse;
 import com.thehollidayinn.kibbl.data.models.Pet;
 import com.thehollidayinn.kibbl.data.models.UserLogin;
+import com.thehollidayinn.kibbl.data.realm.EventRealm;
+import com.thehollidayinn.kibbl.data.realm.FacebookRealm;
 import com.thehollidayinn.kibbl.data.remote.ApiUtils;
 import com.thehollidayinn.kibbl.data.remote.KibblAPIInterface;
+import com.thehollidayinn.kibbl.data.repositories.UserRepository;
 import com.thehollidayinn.kibbl.ui.activities.EventDetailActivity;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import io.realm.Realm;
+import io.realm.RealmResults;
 import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
@@ -55,6 +62,8 @@ public class EventListFragment extends Fragment {
     private Boolean dataSetManually = false;
     private List<Event> events;
     private RelativeLayout empty_view;
+    private Realm realmUI;
+    private UserRepository userLogin;
 
     private LinearLayoutManager mLayoutManager;
     private boolean loading = false;
@@ -86,6 +95,7 @@ public class EventListFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         filters = Filters.getSharedInstance();
+        userLogin = UserRepository.getInstance(this.getContext());
     }
 
     @Override
@@ -153,8 +163,66 @@ public class EventListFragment extends Fragment {
         return recyclerView;
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (realmUI != null) {
+            realmUI.close();
+        }
+    }
+
+    private void loadFromLocal () {
+        realmUI = Realm.getDefaultInstance();
+        RealmResults<EventRealm> results = realmUI
+                .where(EventRealm.class)
+                .findAll();
+
+        List<Event> events = new ArrayList<>();
+        for (EventRealm eventRealm : results) {
+            Event newEvent = new Event();
+            newEvent.setName(eventRealm.getName());
+
+            FacebookRealm facebookRealm = eventRealm.getFacebook();
+            if (facebookRealm != null) {
+                Facebook facebook = new Facebook();
+                facebook.setId(facebookRealm.getId());
+                facebook.setCover(facebookRealm.getCover());
+                newEvent.setFacebook(facebook);
+            }
+
+            newEvent.setStartTime(eventRealm.getStartTime());
+
+            events.add(newEvent);
+        }
+
+        if (results.size() > 0) {
+            adapter.updateEvents(events);
+            loading = false;
+        }
+    }
+
+    private boolean updatedToday () {
+        Date lastUpdate = userLogin.getLastEventUpdate();
+        if (lastUpdate == null) {
+            return false;
+        }
+        Calendar lastEventUpdate = Calendar.getInstance();
+        lastEventUpdate.setTime(lastUpdate);
+
+        Date now = new Date();
+        Calendar nowCalendar = Calendar.getInstance();
+        nowCalendar.setTime(now);
+
+        return nowCalendar.get(Calendar.DATE) == lastEventUpdate.get(Calendar.DATE);
+    }
+
     private void loadEvents(String createdAtBefore) {
         KibblAPIInterface mService = ApiUtils.getKibbleService(getActivity());
+
+        if (updatedToday()) {
+            loadFromLocal();
+            return;
+        }
 
         if (!createdAtBefore.isEmpty()) {
             filters.createdAtBefore = createdAtBefore;
@@ -175,6 +243,7 @@ public class EventListFragment extends Fragment {
                     @Override
                     public void onCompleted() {
                         dialog.hide();
+                        userLogin.setLastEventUpdate(new Date());
                     }
 
                     @Override
@@ -189,6 +258,38 @@ public class EventListFragment extends Fragment {
                         if (empty_view != null && response.data.size() > 0) {
                             empty_view.setVisibility(View.INVISIBLE);
                         }
+
+                        Realm realm = Realm.getDefaultInstance();
+
+                        List<Event> events = response.data;
+                        for (final Event event : events) {
+                            realm.executeTransaction(new Realm.Transaction() {
+                                @Override
+                                public void execute(Realm realm) {
+                                    EventRealm eventRealm = realm
+                                            .where(EventRealm.class)
+                                            .equalTo("_id", event.getId()).findFirst();
+
+                                    if (eventRealm == null) {
+                                        eventRealm = realm
+                                                .createObject(EventRealm.class, event.getId());
+                                    }
+                                    // @TODO: Is there a better way to update or add items?
+                                    eventRealm.setName(event.getName());
+
+                                    Facebook facebook = event.getFacebook();
+                                    if (facebook != null) {
+                                        FacebookRealm facebookRealm =  realm.createObject(FacebookRealm.class);
+                                        facebookRealm.setId(facebook.getId());
+                                        facebookRealm.setCover(facebook.getCover());
+                                        eventRealm.setFacebook(facebookRealm);
+                                    }
+//
+                                    eventRealm.setStartTime(event.getStartTime());
+                                }
+                            });
+                        }
+                        realm.close();
                     }
                 });
     }
@@ -210,8 +311,6 @@ public class EventListFragment extends Fragment {
      * Adapter to display recycler view.
      */
     public static class ContentAdapter extends RecyclerView.Adapter<EventListFragment.ViewHolder> {
-        // Set numbers of List in RecyclerView.
-        private static final int LENGTH = 18;
 
         private final PublishSubject<String> onClickSubject = PublishSubject.create();
 
@@ -240,11 +339,12 @@ public class EventListFragment extends Fragment {
                             .into(holder.avator);
                 }
 
-
                 holder.name.setText(currentEvent.getName());
 
-                String dateString = android.text.format.DateFormat.format("MMMM dd, yyyy", currentEvent.getStartTime()).toString();
-                holder.description.setText(dateString);
+                if (currentEvent.getStartTime() != null) {
+                    String dateString = android.text.format.DateFormat.format("MMMM dd, yyyy", currentEvent.getStartTime()).toString();
+                    holder.description.setText(dateString);
+                }
             }
 
             holder.itemView.setOnClickListener(new View.OnClickListener() {

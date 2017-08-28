@@ -51,7 +51,6 @@ public class Event extends CommonModel {
         this.facebook = facebook;
     }
 
-
     public String getDescription() {
         return description;
     }

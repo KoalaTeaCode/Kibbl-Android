@@ -1,19 +1,13 @@
-package com.thehollidayinn.kibbl.data.models;
+package com.thehollidayinn.kibbl.data.realm;
 
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
+import io.realm.RealmObject;
 
 /**
- * Created by krh12 on 4/29/2017.
+ * Created by krh12 on 8/27/2017.
  */
 
-public class Facebook {
-    @SerializedName("cover")
-    @Expose
+public class FacebookRealm extends RealmObject {
     private String cover;
-
-    @SerializedName("id")
-    @Expose
     private String id;
 
     public String getId() {

@@ -4,6 +4,10 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 /**
  * Created by krh12 on 6/11/2017.
  */
@@ -17,11 +21,22 @@ public class UserRepository {
     private boolean isSubscribedToNotifications = false;
     private String token = "";
     private SharedPreferences preferences;
+    private Date lastEventUpdate;
 
     protected UserRepository(Context context) {
         this.context = context;
         preferences = PreferenceManager.getDefaultSharedPreferences(context);
         this.token = preferences.getString(TOKEN_KEY, "");
+
+        String lastEventUpdateString = preferences.getString("LastEventUpdate", "");
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        try {
+            this.lastEventUpdate = format.parse(lastEventUpdateString);
+        } catch (ParseException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
         this.isSubscribedToNotifications = preferences.getBoolean(SUBSCRIBED_KEY, false);
     }
 
@@ -34,7 +49,6 @@ public class UserRepository {
 
     public void setToken (String token) {
         this.token = token;
-
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString(TOKEN_KEY, token);
         editor.apply();
@@ -46,7 +60,6 @@ public class UserRepository {
 
     public void setSubscribed (Boolean isSubscribedToNotifications) {
         this.isSubscribedToNotifications = isSubscribedToNotifications;
-
         SharedPreferences.Editor editor = preferences.edit();
         editor.putBoolean(SUBSCRIBED_KEY, isSubscribedToNotifications);
         editor.apply();
@@ -54,5 +67,16 @@ public class UserRepository {
 
     public Boolean getSubscribed () {
         return this.isSubscribedToNotifications;
+    }
+
+    public void setLastEventUpdate (Date date) {
+        this.lastEventUpdate = date;
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString("LastEventUpdate", date.toString());
+        editor.apply();
+    }
+
+    public Date getLastEventUpdate () {
+        return this.lastEventUpdate;
     }
 }
