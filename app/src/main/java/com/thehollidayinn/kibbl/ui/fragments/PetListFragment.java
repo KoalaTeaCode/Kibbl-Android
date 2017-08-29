@@ -22,17 +22,25 @@ import android.widget.TextView;
 import com.thehollidayinn.kibbl.R;
 import com.thehollidayinn.kibbl.data.models.Filters;
 import com.thehollidayinn.kibbl.data.models.Pet;
+import com.thehollidayinn.kibbl.data.models.PetMedia;
 import com.thehollidayinn.kibbl.data.models.PetResponse;
+import com.thehollidayinn.kibbl.data.realm.PetMediaRealm;
+import com.thehollidayinn.kibbl.data.realm.PetRealm;
 import com.thehollidayinn.kibbl.data.remote.ApiUtils;
 import com.thehollidayinn.kibbl.data.remote.KibblAPIInterface;
+import com.thehollidayinn.kibbl.data.repositories.UserRepository;
 import com.thehollidayinn.kibbl.ui.activities.PetDetailActivity;
 import com.squareup.picasso.Picasso;
 
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import io.realm.Realm;
+import io.realm.RealmResults;
 import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
@@ -54,6 +62,8 @@ public class PetListFragment extends Fragment {
     private List<Pet> pets;
     private String shelterId = "";
     private RelativeLayout empty_view;
+    private UserRepository userLogin;
+    private Realm realmUI;
 
     private LinearLayoutManager mLayoutManager;
     private boolean loading = false;
@@ -86,6 +96,7 @@ public class PetListFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         filters = Filters.getSharedInstance();
+        userLogin = UserRepository.getInstance(this.getContext());
     }
 
     @Override
@@ -152,9 +163,67 @@ public class PetListFragment extends Fragment {
 
         return recyclerView;
     }
+    
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (realmUI != null) {
+            realmUI.close();
+        }
+    }
+
+    private void loadFromLocal () {
+        realmUI = Realm.getDefaultInstance();
+        RealmResults<PetRealm> results = realmUI
+                .where(PetRealm.class)
+                .findAll();
+
+        List<Pet> pets = new ArrayList<>();
+        for (PetRealm petRealm : results) {
+            Pet newPet = new Pet();
+            newPet.setName(petRealm.getName());
+            newPet.setDescription(petRealm.getDescription());
+            newPet.setId(petRealm.getId());
+
+            List<PetMediaRealm> media = petRealm.getMedia();
+            for (PetMediaRealm item : media) {
+                PetMedia petMedia = new PetMedia();
+                petMedia.urlSecureFullsize = item.getUrlSecureFullsize();
+                petMedia.urlSecureThumbnail = item.getUrlSecureThumbnail();
+                newPet.getMedia().add(petMedia);
+            }
+
+            pets.add(newPet);
+        }
+
+        if (results.size() > 0) {
+            adapter.updatePets(pets);
+            loading = false;
+        }
+    }
+    
+    private boolean updatedToday () {
+        Date lastUpdate = userLogin.getLastPetUpdate();
+        if (lastUpdate == null) {
+            return false;
+        }
+        Calendar lastPetUpdate = Calendar.getInstance();
+        lastPetUpdate.setTime(lastUpdate);
+
+        Date now = new Date();
+        Calendar nowCalendar = Calendar.getInstance();
+        nowCalendar.setTime(now);
+
+        return nowCalendar.get(Calendar.DATE) == lastPetUpdate.get(Calendar.DATE);
+    }
 
     private void loadPets(String lastUpdatedBefore) {
         KibblAPIInterface mService = ApiUtils.getKibbleService(getActivity());
+
+        if (updatedToday()) {
+            loadFromLocal();
+            return;
+        }
 
         if (!lastUpdatedBefore.isEmpty()) {
             filters.lastUpdatedBefore = lastUpdatedBefore;
@@ -177,6 +246,7 @@ public class PetListFragment extends Fragment {
                     @Override
                     public void onCompleted() {
                         dialog.hide();
+                        userLogin.setLastPetUpdate(new Date());
                     }
 
                     @Override
@@ -192,6 +262,36 @@ public class PetListFragment extends Fragment {
                             empty_view.setVisibility(View.INVISIBLE);
                         }
 
+                        Realm realm = Realm.getDefaultInstance();
+
+                        List<Pet> pets = petResponse.getPets();
+                        for (final Pet pet : pets) {
+                            realm.executeTransaction(new Realm.Transaction() {
+                                @Override
+                                public void execute(Realm realm) {
+                                    PetRealm petRealm = realm
+                                            .where(PetRealm.class)
+                                            .equalTo("_id", pet.getId()).findFirst();
+
+                                    if (petRealm == null) {
+                                        petRealm = realm
+                                                .createObject(PetRealm.class, pet.getId());
+                                    }
+                                    // @TODO: Is there a better way to update or add items?
+                                    petRealm.setName(pet.getName());
+                                    petRealm.setDescription(pet.getDescription());
+
+                                    List<PetMedia> media = pet.getMedia();
+                                    for (PetMedia item : media) {
+                                        PetMediaRealm petMediaRealm = realm.createObject(PetMediaRealm.class);
+                                        petMediaRealm.setUrlSecureFullsize(item.urlSecureFullsize);
+                                        petMediaRealm.setUrlSecureThumbnail(item.urlSecureThumbnail);
+                                        petRealm.getMedia().add(petMediaRealm);
+                                    }
+                                }
+                            });
+                        }
+                        realm.close();
                     }
                 });
     }

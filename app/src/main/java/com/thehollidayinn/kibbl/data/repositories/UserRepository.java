@@ -22,6 +22,7 @@ public class UserRepository {
     private String token = "";
     private SharedPreferences preferences;
     private Date lastEventUpdate;
+    private Date lastPetUpdate;
 
     protected UserRepository(Context context) {
         this.context = context;
@@ -32,6 +33,14 @@ public class UserRepository {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
         try {
             this.lastEventUpdate = format.parse(lastEventUpdateString);
+        } catch (ParseException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        String lastPetEventString = preferences.getString("LastPetUpdate", "");
+        try {
+            this.lastPetUpdate = format.parse(lastPetEventString);
         } catch (ParseException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -76,7 +85,18 @@ public class UserRepository {
         editor.apply();
     }
 
+    public Date getLastPetUpdate () {
+        return this.lastPetUpdate;
+    }
+
+    public void setLastPetUpdate (Date date) {
+        this.lastPetUpdate = date;
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString("LastPetUpdate", date.toString());
+        editor.apply();
+    }
+
     public Date getLastEventUpdate () {
-        return this.lastEventUpdate;
+        return this.lastPetUpdate;
     }
 }

@@ -181,6 +181,7 @@ public class EventListFragment extends Fragment {
         for (EventRealm eventRealm : results) {
             Event newEvent = new Event();
             newEvent.setName(eventRealm.getName());
+            newEvent.setId(eventRealm.getId());
 
             FacebookRealm facebookRealm = eventRealm.getFacebook();
             if (facebookRealm != null) {

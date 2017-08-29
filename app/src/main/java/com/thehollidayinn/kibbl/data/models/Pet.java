@@ -1,6 +1,7 @@
 
 package com.thehollidayinn.kibbl.data.models;
 
+import java.util.ArrayList;
 import java.util.List;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
@@ -21,7 +22,7 @@ public class Pet extends CommonModel {
     private String size;
     @SerializedName("media")
     @Expose
-    private List<PetMedia> media = null;
+    private List<PetMedia> media = new ArrayList<>();
     @SerializedName("petId")
     @Expose
     private String petId;
