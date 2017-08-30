@@ -20,19 +20,26 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 import com.thehollidayinn.kibbl.R;
-import com.thehollidayinn.kibbl.data.models.Event;
+import com.thehollidayinn.kibbl.data.models.Shelter;
 import com.thehollidayinn.kibbl.data.models.Facebook;
 import com.thehollidayinn.kibbl.data.models.Filters;
 import com.thehollidayinn.kibbl.data.models.GenericResponse;
 import com.thehollidayinn.kibbl.data.models.Shelter;
 import com.thehollidayinn.kibbl.data.models.Shelter;
+import com.thehollidayinn.kibbl.data.realm.ShelterRealm;
+import com.thehollidayinn.kibbl.data.realm.FacebookRealm;
 import com.thehollidayinn.kibbl.data.remote.ApiUtils;
 import com.thehollidayinn.kibbl.data.remote.KibblAPIInterface;
+import com.thehollidayinn.kibbl.data.repositories.UserRepository;
 import com.thehollidayinn.kibbl.ui.activities.ShelterDetailActivity;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
+import io.realm.Realm;
+import io.realm.RealmResults;
 import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
@@ -50,6 +57,8 @@ public class ShelterListFragment extends Fragment {
     private String filter;
     private Filters filters;
     private ProgressDialog dialog;
+    private Realm realmUI;
+    private UserRepository userLogin;
 
     private LinearLayoutManager mLayoutManager;
     private boolean loading = false;
@@ -74,6 +83,15 @@ public class ShelterListFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         filters = Filters.getSharedInstance();
+        userLogin = UserRepository.getInstance(this.getContext());
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (realmUI != null) {
+            realmUI.close();
+        }
     }
 
     @Override
@@ -121,10 +139,8 @@ public class ShelterListFragment extends Fragment {
                 if ( (visibleItemCount + pastVisiblesItems) >= totalItemCount)
                 {
                     loading = true;
-                    Shelter lastEvent = adapter.pets.get(adapter.pets.size() - 1);
-                    Log.v("testlast", lastEvent.getCreatedAt());
-
-                    loadShelters(lastEvent.getCreatedAt());
+                    Shelter lastShelter = adapter.pets.get(adapter.pets.size() - 1);
+                    loadShelters(lastShelter.getCreatedAt());
                 }
             }
 
@@ -136,8 +152,58 @@ public class ShelterListFragment extends Fragment {
         return recyclerView;
     }
 
+    private void loadFromLocal () {
+        realmUI = Realm.getDefaultInstance();
+        RealmResults<ShelterRealm> results = realmUI
+                .where(ShelterRealm.class)
+                .findAll();
+
+        List<Shelter> shelters = new ArrayList<>();
+        for (ShelterRealm shelterRealm : results) {
+            Shelter newShelter = new Shelter();
+            newShelter.setName(shelterRealm.getName());
+            newShelter.setId(shelterRealm.getId());
+
+            FacebookRealm facebookRealm = shelterRealm.getFacebook();
+            if (facebookRealm != null) {
+                Facebook facebook = new Facebook();
+                facebook.setId(facebookRealm.getId());
+                facebook.setCover(facebookRealm.getCover());
+                newShelter.setFacebook(facebook);
+            }
+
+            shelters.add(newShelter);
+        }
+
+        if (results.size() > 0) {
+            adapter.updateShelters(shelters);
+            loading = false;
+        }
+    }
+
+    private boolean updatedToday () {
+        Date lastUpdate = userLogin.getLastShelterUpdate();
+        if (lastUpdate == null) {
+            return false;
+        }
+        Calendar lastShelterUpdate = Calendar.getInstance();
+        lastShelterUpdate.setTime(lastUpdate);
+
+        Date now = new Date();
+        Calendar nowCalendar = Calendar.getInstance();
+        nowCalendar.setTime(now);
+
+        return nowCalendar.get(Calendar.DATE) == lastShelterUpdate.get(Calendar.DATE);
+    }
+
     private void loadShelters(String createdAtBefore) {
         KibblAPIInterface mService = ApiUtils.getKibbleService(getActivity());
+
+        if (updatedToday()) {
+            loadFromLocal();
+            return;
+        }
+
 
         if (!this.filter.isEmpty()) {
 //            query.put("type", this.filter);
@@ -158,6 +224,7 @@ public class ShelterListFragment extends Fragment {
                     @Override
                     public void onCompleted() {
                         dialog.hide();
+                        userLogin.setLastShelterUpdate(new Date());
                     }
 
                     @Override
@@ -168,6 +235,35 @@ public class ShelterListFragment extends Fragment {
                     @Override
                     public void onNext(GenericResponse<List<Shelter>> response) {
                         adapter.updateShelters(response.data);
+                        Realm realm = Realm.getDefaultInstance();
+
+                        List<Shelter> shelters = response.data;
+                        for (final Shelter shelter : shelters) {
+                            realm.executeTransaction(new Realm.Transaction() {
+                                @Override
+                                public void execute(Realm realm) {
+                                    ShelterRealm shelterRealm = realm
+                                            .where(ShelterRealm.class)
+                                            .equalTo("_id", shelter.getId()).findFirst();
+
+                                    if (shelterRealm == null) {
+                                        shelterRealm = realm
+                                                .createObject(ShelterRealm.class, shelter.getId());
+                                    }
+                                    // @TODO: Is there a better way to update or add items?
+                                    shelterRealm.setName(shelter.getName());
+
+                                    Facebook facebook = shelter.getFacebook();
+                                    if (facebook != null) {
+                                        FacebookRealm facebookRealm =  realm.createObject(FacebookRealm.class);
+                                        facebookRealm.setId(facebook.getId());
+                                        facebookRealm.setCover(facebook.getCover());
+                                        shelterRealm.setFacebook(facebookRealm);
+                                    }
+                                }
+                            });
+                        }
+                        realm.close();
                     }
                 });
     }

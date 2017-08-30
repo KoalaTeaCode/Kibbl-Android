@@ -23,6 +23,7 @@ public class UserRepository {
     private SharedPreferences preferences;
     private Date lastEventUpdate;
     private Date lastPetUpdate;
+    private Date lastShelterUpdate;
 
     protected UserRepository(Context context) {
         this.context = context;
@@ -41,6 +42,14 @@ public class UserRepository {
         String lastPetEventString = preferences.getString("LastPetUpdate", "");
         try {
             this.lastPetUpdate = format.parse(lastPetEventString);
+        } catch (ParseException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        String lastPetShelterString = preferences.getString("LastShelterUpdate", "");
+        try {
+            this.lastShelterUpdate = format.parse(lastPetShelterString);
         } catch (ParseException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -78,12 +87,16 @@ public class UserRepository {
         return this.isSubscribedToNotifications;
     }
 
+    public Date getLastEventUpdate () {
+        return this.lastPetUpdate;
+    }
     public void setLastEventUpdate (Date date) {
         this.lastEventUpdate = date;
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString("LastEventUpdate", date.toString());
         editor.apply();
     }
+
 
     public Date getLastPetUpdate () {
         return this.lastPetUpdate;
@@ -96,7 +109,14 @@ public class UserRepository {
         editor.apply();
     }
 
-    public Date getLastEventUpdate () {
-        return this.lastPetUpdate;
+    public void setLastShelterUpdate (Date date) {
+        this.lastShelterUpdate = date;
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString("LastShelterUpdate", date.toString());
+        editor.apply();
+    }
+
+    public Date getLastShelterUpdate () {
+        return this.lastShelterUpdate;
     }
 }
