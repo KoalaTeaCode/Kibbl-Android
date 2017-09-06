@@ -3,6 +3,7 @@ package com.thehollidayinn.kibbl.data.repositories;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -29,32 +30,6 @@ public class UserRepository {
         this.context = context;
         preferences = PreferenceManager.getDefaultSharedPreferences(context);
         this.token = preferences.getString(TOKEN_KEY, "");
-
-        String lastEventUpdateString = preferences.getString("LastEventUpdate", "");
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-        try {
-            this.lastEventUpdate = format.parse(lastEventUpdateString);
-        } catch (ParseException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-
-        String lastPetEventString = preferences.getString("LastPetUpdate", "");
-        try {
-            this.lastPetUpdate = format.parse(lastPetEventString);
-        } catch (ParseException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-
-        String lastPetShelterString = preferences.getString("LastShelterUpdate", "");
-        try {
-            this.lastShelterUpdate = format.parse(lastPetShelterString);
-        } catch (ParseException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-
         this.isSubscribedToNotifications = preferences.getBoolean(SUBSCRIBED_KEY, false);
     }
 
@@ -87,36 +62,27 @@ public class UserRepository {
         return this.isSubscribedToNotifications;
     }
 
-    public Date getLastEventUpdate () {
-        return this.lastPetUpdate;
-    }
-    public void setLastEventUpdate (Date date) {
-        this.lastEventUpdate = date;
+    public void setCacheUpdateDateForKey (String key, Date date) {
+        // @TODO: Should we add a map to cache locally
+        // that way we don't have to keep loading from prefernces
+
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
         SharedPreferences.Editor editor = preferences.edit();
-        editor.putString("LastEventUpdate", date.toString());
+        editor.putString(key, format.format(date));
         editor.apply();
     }
 
+    public Date getCacheUpdateDateForKey (String key) {
+        String lastUpdateString = preferences.getString(key, "");
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 
-    public Date getLastPetUpdate () {
-        return this.lastPetUpdate;
-    }
+        try {
+            return format.parse(lastUpdateString);
+        } catch (ParseException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
 
-    public void setLastPetUpdate (Date date) {
-        this.lastPetUpdate = date;
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putString("LastPetUpdate", date.toString());
-        editor.apply();
-    }
-
-    public void setLastShelterUpdate (Date date) {
-        this.lastShelterUpdate = date;
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putString("LastShelterUpdate", date.toString());
-        editor.apply();
-    }
-
-    public Date getLastShelterUpdate () {
-        return this.lastShelterUpdate;
+        return null;
     }
 }

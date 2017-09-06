@@ -124,7 +124,7 @@ public class ShelterListFragment extends Fragment {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy)
             {
-                if(dy <= 0) {
+                if (dy <= 0) {
                     return;
                 }
 
@@ -136,8 +136,7 @@ public class ShelterListFragment extends Fragment {
                     return;
                 }
 
-                if ( (visibleItemCount + pastVisiblesItems) >= totalItemCount)
-                {
+                if ((visibleItemCount + pastVisiblesItems) >= totalItemCount) {
                     loading = true;
                     Shelter lastShelter = adapter.pets.get(adapter.pets.size() - 1);
                     loadShelters(lastShelter.getCreatedAt());
@@ -177,15 +176,18 @@ public class ShelterListFragment extends Fragment {
 
         if (results.size() > 0) {
             adapter.updateShelters(shelters);
-            loading = false;
         }
+
+        loading = false;
     }
 
     private boolean updatedToday () {
-        Date lastUpdate = userLogin.getLastShelterUpdate();
+        Date lastUpdate = userLogin.getCacheUpdateDateForKey("Shelters-" + filters.toMap().toString());
+
         if (lastUpdate == null) {
             return false;
         }
+
         Calendar lastShelterUpdate = Calendar.getInstance();
         lastShelterUpdate.setTime(lastUpdate);
 
@@ -199,19 +201,13 @@ public class ShelterListFragment extends Fragment {
     private void loadShelters(String createdAtBefore) {
         KibblAPIInterface mService = ApiUtils.getKibbleService(getActivity());
 
+        if (!createdAtBefore.isEmpty()) {
+            filters.createdAtBefore = createdAtBefore;
+        }
+
         if (updatedToday()) {
             loadFromLocal();
             return;
-        }
-
-
-        if (!this.filter.isEmpty()) {
-//            query.put("type", this.filter);
-//            filters.type = this.filter;
-        }
-
-        if (!createdAtBefore.isEmpty()) {
-            filters.createdAtBefore = createdAtBefore;
         }
 
         dialog = ProgressDialog.show(getActivity(), "",
@@ -224,7 +220,8 @@ public class ShelterListFragment extends Fragment {
                     @Override
                     public void onCompleted() {
                         dialog.hide();
-                        userLogin.setLastShelterUpdate(new Date());
+                        loading = false;
+                        userLogin.setCacheUpdateDateForKey("Shelters-" + filters.toMap().toString(), new Date());
                     }
 
                     @Override

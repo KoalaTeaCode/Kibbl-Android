@@ -202,8 +202,9 @@ public class EventListFragment extends Fragment {
         }
     }
 
-    private boolean updatedToday () {
-        Date lastUpdate = userLogin.getLastEventUpdate();
+    private boolean updatedToday (Map<String, String> query) {
+        Date lastUpdate = userLogin.getCacheUpdateDateForKey("Events-" + query.toString());
+        
         if (lastUpdate == null) {
             return false;
         }
@@ -220,22 +221,23 @@ public class EventListFragment extends Fragment {
     private void loadEvents(String createdAtBefore) {
         KibblAPIInterface mService = ApiUtils.getKibbleService(getActivity());
 
-        if (updatedToday()) {
-            loadFromLocal();
-            return;
-        }
-
         if (!createdAtBefore.isEmpty()) {
             filters.createdAtBefore = createdAtBefore;
+        }
+
+        final Map<String, String> query = filters.toMap();
+        if (!shelterId.isEmpty()) {
+            query.put("shelterId", shelterId);
+        }
+
+        if (updatedToday(query)) {
+            loadFromLocal();
+            return;
         }
 
         dialog = ProgressDialog.show(getActivity(), "",
                 "Loading. Please wait...", true);
 
-        Map<String, String> query = filters.toMap();
-        if (!shelterId.isEmpty()) {
-            query.put("shelterId", shelterId);
-        }
 
         mService.getEvents(query)
                 .subscribeOn(Schedulers.io())
@@ -244,7 +246,7 @@ public class EventListFragment extends Fragment {
                     @Override
                     public void onCompleted() {
                         dialog.hide();
-                        userLogin.setLastEventUpdate(new Date());
+                        userLogin.setCacheUpdateDateForKey("Events-" + query.toString(), new Date());
                     }
 
                     @Override

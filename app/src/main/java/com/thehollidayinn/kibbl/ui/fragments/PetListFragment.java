@@ -202,8 +202,8 @@ public class PetListFragment extends Fragment {
         }
     }
     
-    private boolean updatedToday () {
-        Date lastUpdate = userLogin.getLastPetUpdate();
+    private boolean updatedToday (Map<String, String> query) {
+        Date lastUpdate = userLogin.getCacheUpdateDateForKey("Pets-" + query.toString());
         if (lastUpdate == null) {
             return false;
         }
@@ -220,24 +220,22 @@ public class PetListFragment extends Fragment {
     private void loadPets(String lastUpdatedBefore) {
         KibblAPIInterface mService = ApiUtils.getKibbleService(getActivity());
 
-        if (updatedToday()) {
-            loadFromLocal();
-            return;
-        }
-
         if (!lastUpdatedBefore.isEmpty()) {
             filters.lastUpdatedBefore = lastUpdatedBefore;
         }
 
-        dialog = ProgressDialog.show(getActivity(), "",
-                "Loading. Please wait...", true);
-
-
-        Map<String, String> query = filters.toMap();
+        final Map<String, String> query = filters.toMap();
         if (!shelterId.isEmpty()) {
             query.put("shelterId", shelterId);
         }
 
+        if (updatedToday(query)) {
+            loadFromLocal();
+            return;
+        }
+
+        dialog = ProgressDialog.show(getActivity(), "",
+                "Loading. Please wait...", true);
 
         mService.getPets(query)
                 .subscribeOn(Schedulers.io())
@@ -246,7 +244,7 @@ public class PetListFragment extends Fragment {
                     @Override
                     public void onCompleted() {
                         dialog.hide();
-                        userLogin.setLastPetUpdate(new Date());
+                        userLogin.setCacheUpdateDateForKey("Pets-" + query.toString(), new Date());
                     }
 
                     @Override
