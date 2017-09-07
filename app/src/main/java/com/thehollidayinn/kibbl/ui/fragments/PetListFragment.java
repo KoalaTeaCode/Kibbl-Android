@@ -8,6 +8,7 @@ import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
@@ -24,6 +25,7 @@ import com.thehollidayinn.kibbl.data.models.Filters;
 import com.thehollidayinn.kibbl.data.models.Pet;
 import com.thehollidayinn.kibbl.data.models.PetMedia;
 import com.thehollidayinn.kibbl.data.models.PetResponse;
+import com.thehollidayinn.kibbl.data.models.Shelter;
 import com.thehollidayinn.kibbl.data.realm.PetMediaRealm;
 import com.thehollidayinn.kibbl.data.realm.PetRealm;
 import com.thehollidayinn.kibbl.data.remote.ApiUtils;
@@ -52,7 +54,7 @@ import rx.subjects.PublishSubject;
  * Created by krh12 on 1/3/2017.
  */
 
-public class PetListFragment extends Fragment {
+public class PetListFragment extends Fragment implements NestedScrollView.OnScrollChangeListener {
     private ContentAdapter adapter;
     private static Context context;
     private String filter;
@@ -126,33 +128,6 @@ public class PetListFragment extends Fragment {
         mLayoutManager = new LinearLayoutManager(this.getContext());
         recyclerView.setLayoutManager(mLayoutManager);
 
-        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener()
-        {
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy)
-            {
-                if(dy <= 0 || dataSetManually) {
-                    return;
-                }
-
-                visibleItemCount = mLayoutManager.getChildCount();
-                totalItemCount = mLayoutManager.getItemCount();
-                pastVisiblesItems = mLayoutManager.findFirstVisibleItemPosition();
-
-                if (loading) {
-                    return;
-                }
-
-                if ( (visibleItemCount + pastVisiblesItems) >= totalItemCount)
-                {
-                    loading = true;
-                    Pet lastPet = adapter.pets.get(adapter.pets.size() - 1);
-                    loadPets(lastPet.getLastUpdate());
-                }
-            }
-
-        });
-
         this.filter = getArguments().getString("FILTER");
 
         if (!dataSetManually) {
@@ -184,6 +159,7 @@ public class PetListFragment extends Fragment {
             newPet.setName(petRealm.getName());
             newPet.setDescription(petRealm.getDescription());
             newPet.setId(petRealm.getId());
+            newPet.setLastUpdate(petRealm.getLastUpdate());
 
             List<PetMediaRealm> media = petRealm.getMedia();
             for (PetMediaRealm item : media) {
@@ -278,6 +254,7 @@ public class PetListFragment extends Fragment {
                                     // @TODO: Is there a better way to update or add items?
                                     petRealm.setName(pet.getName());
                                     petRealm.setDescription(pet.getDescription());
+                                    petRealm.setLastUpdate(pet.getLastUpdate());
 
                                     List<PetMedia> media = pet.getMedia();
                                     for (PetMedia item : media) {
@@ -292,6 +269,34 @@ public class PetListFragment extends Fragment {
                         realm.close();
                     }
                 });
+    }
+
+    @Override
+    public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+        if(scrollY <= 0 || dataSetManually) {
+            return;
+        }
+
+        visibleItemCount = mLayoutManager.getChildCount();
+        totalItemCount = mLayoutManager.getItemCount();
+        pastVisiblesItems = mLayoutManager.findFirstVisibleItemPosition();
+
+        if (loading) {
+            return;
+        }
+
+        if (scrollY == (v.getChildAt(0).getMeasuredHeight() - v.getMeasuredHeight())) {
+            loading = true;
+            Pet lastPet = adapter.pets.get(adapter.pets.size() - 1);
+            loadPets(lastPet.getLastUpdate());
+        }
+
+        // @TODO: this is loading to early
+//        if ((visibleItemCount + pastVisiblesItems) >= totalItemCount) {
+//            loading = true;
+//            Pet lastPet = adapter.pets.get(adapter.pets.size() - 1);
+//            loadPets(lastPet.getLastUpdate());
+//        }
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {

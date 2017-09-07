@@ -8,6 +8,7 @@ import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -51,7 +52,7 @@ import rx.subjects.PublishSubject;
  * Created by krh12 on 4/27/2017.
  */
 
-public class ShelterListFragment extends Fragment {
+public class ShelterListFragment extends Fragment implements NestedScrollView.OnScrollChangeListener {
     private ShelterListFragment.ContentAdapter adapter;
     private static Context context;
     private String filter;
@@ -119,32 +120,6 @@ public class ShelterListFragment extends Fragment {
         mLayoutManager = new LinearLayoutManager(this.getContext());
         recyclerView.setLayoutManager(mLayoutManager);
 
-        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener()
-        {
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy)
-            {
-                if (dy <= 0) {
-                    return;
-                }
-
-                visibleItemCount = mLayoutManager.getChildCount();
-                totalItemCount = mLayoutManager.getItemCount();
-                pastVisiblesItems = mLayoutManager.findFirstVisibleItemPosition();
-
-                if (loading) {
-                    return;
-                }
-
-                if ((visibleItemCount + pastVisiblesItems) >= totalItemCount) {
-                    loading = true;
-                    Shelter lastShelter = adapter.pets.get(adapter.pets.size() - 1);
-                    loadShelters(lastShelter.getCreatedAt());
-                }
-            }
-
-        });
-
         this.filter = getArguments().getString("FILTER");
         loadShelters("");
 
@@ -162,6 +137,7 @@ public class ShelterListFragment extends Fragment {
             Shelter newShelter = new Shelter();
             newShelter.setName(shelterRealm.getName());
             newShelter.setId(shelterRealm.getId());
+            newShelter.setCreatedAt(shelterRealm.getCreatedAt());
 
             FacebookRealm facebookRealm = shelterRealm.getFacebook();
             if (facebookRealm != null) {
@@ -249,6 +225,7 @@ public class ShelterListFragment extends Fragment {
                                     }
                                     // @TODO: Is there a better way to update or add items?
                                     shelterRealm.setName(shelter.getName());
+                                    shelterRealm.setCreatedAt(shelter.getCreatedAt());
 
                                     Facebook facebook = shelter.getFacebook();
                                     if (facebook != null) {
@@ -263,6 +240,33 @@ public class ShelterListFragment extends Fragment {
                         realm.close();
                     }
                 });
+    }
+
+    @Override
+    public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+        if(scrollY <= 0) {
+            return;
+        }
+
+        visibleItemCount = mLayoutManager.getChildCount();
+        totalItemCount = mLayoutManager.getItemCount();
+        pastVisiblesItems = mLayoutManager.findFirstVisibleItemPosition();
+
+        if (loading) {
+            return;
+        }
+
+        if (scrollY == (v.getChildAt(0).getMeasuredHeight() - v.getMeasuredHeight())) {
+            loading = true;
+            Shelter lastShelter = adapter.pets.get(adapter.pets.size() - 1);
+            loadShelters(lastShelter.getCreatedAt());
+        }
+
+//        if ((visibleItemCount + pastVisiblesItems) >= totalItemCount) {
+//            loading = true;
+//            Shelter lastShelter = adapter.pets.get(adapter.pets.size() - 1);
+//            loadShelters(lastShelter.getCreatedAt());
+//        }
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {

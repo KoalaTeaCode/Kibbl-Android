@@ -19,6 +19,7 @@ public class PetRealm extends RealmObject {
     private String name;
     private String description;
     private RealmList<PetMediaRealm> media = null;
+    private String lastUpdate;
 
     public String getId() {
         return _id;
@@ -50,5 +51,13 @@ public class PetRealm extends RealmObject {
 
     public void setMedia(RealmList<PetMediaRealm> media) {
         this.media = media;
+    }
+
+    public String getLastUpdate() {
+        return lastUpdate;
+    }
+
+    public void setLastUpdate(String lastUpdate) {
+        this.lastUpdate = lastUpdate;
     }
 }

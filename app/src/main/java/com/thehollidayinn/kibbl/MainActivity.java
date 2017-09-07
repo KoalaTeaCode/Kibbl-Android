@@ -15,10 +15,12 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.NavigationView;
 import android.support.graphics.drawable.VectorDrawableCompat;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -60,6 +62,7 @@ public class MainActivity extends AppCompatActivity
     private Filters filters;
     private BottomNavigationView bottomNavigationView;
     private CollapsingToolbarLayout collapsingToolbar;
+    private NestedScrollView.OnScrollChangeListener activeFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +77,16 @@ public class MainActivity extends AppCompatActivity
         collapsingToolbar =
                 (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
         collapsingToolbar.setTitle("");
+
+        NestedScrollView nestedScrollView = (NestedScrollView) findViewById(R.id.nested_scrollview);
+        nestedScrollView.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
+            @Override
+            public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+                if (activeFragment != null) {
+                    activeFragment.onScrollChange(v, scrollX, scrollY, oldScrollX, oldScrollY);
+                }
+            }
+        });
 
         context = this;
 
@@ -197,18 +210,21 @@ public class MainActivity extends AppCompatActivity
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.fragment_container, fragment)
                     .commit();
+            activeFragment = fragment;
         } else if (this.activePage == 1) {
             bottomNavigationView.getMenu().getItem(1).setChecked(true);
             PetListFragment listContentFragment = PetListFragment.newInstance("", null);
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.fragment_container, listContentFragment)
                     .commit();
+            activeFragment = listContentFragment;
         } else if (this.activePage == 2) {
             bottomNavigationView.getMenu().getItem(2).setChecked(true);
             ShelterListFragment shelterListFragment = ShelterListFragment.newInstance("");
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.fragment_container, shelterListFragment)
                     .commit();
+            activeFragment = shelterListFragment;
         }
         filters.activeMainPage = activePage;
     }

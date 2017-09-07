@@ -14,6 +14,7 @@ public class ShelterRealm extends RealmObject {
     private String _id;
     private String name;
     private FacebookRealm facebook;
+    private String createdAt;
 
     public String getId() {
         return _id;
@@ -37,5 +38,13 @@ public class ShelterRealm extends RealmObject {
 
     public void setFacebook(FacebookRealm facebook) {
         this.facebook = facebook;
+    }
+
+    public String getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(String createdAt) {
+        this.createdAt = createdAt;
     }
 }
