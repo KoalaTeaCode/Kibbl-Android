@@ -21,10 +21,12 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.thehollidayinn.kibbl.R;
+import com.thehollidayinn.kibbl.data.models.Contact;
 import com.thehollidayinn.kibbl.data.models.Filters;
 import com.thehollidayinn.kibbl.data.models.Pet;
 import com.thehollidayinn.kibbl.data.models.PetMedia;
 import com.thehollidayinn.kibbl.data.models.PetResponse;
+import com.thehollidayinn.kibbl.data.models.Place;
 import com.thehollidayinn.kibbl.data.models.Shelter;
 import com.thehollidayinn.kibbl.data.realm.PetMediaRealm;
 import com.thehollidayinn.kibbl.data.realm.PetRealm;
@@ -41,7 +43,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import io.realm.Case;
 import io.realm.Realm;
+import io.realm.RealmQuery;
 import io.realm.RealmResults;
 import rx.Observable;
 import rx.Subscriber;
@@ -147,11 +151,59 @@ public class PetListFragment extends Fragment implements NestedScrollView.OnScro
         }
     }
 
-    private void loadFromLocal () {
+    private void loadFromLocal (Map<String, String> query) {
         realmUI = Realm.getDefaultInstance();
-        RealmResults<PetRealm> results = realmUI
-                .where(PetRealm.class)
-                .findAll();
+        Log.v("keithtest", query.toString());
+
+        RealmQuery<PetRealm> realmQuery = realmUI
+                .where(PetRealm.class);
+
+        String type = query.get("type");
+        if (type != null && !type.isEmpty()) {
+            realmQuery.equalTo("animal", type);
+        }
+
+        String breed = query.get("breed");
+        if (breed != null && !breed.isEmpty()) {
+            realmQuery.contains("breeds", breed, Case.INSENSITIVE);
+        }
+
+        String age = query.get("age");
+        if (age != null && !age.isEmpty()) {
+            realmQuery.equalTo("age", age);
+        }
+
+        String gender = query.get("gender");
+        if (gender != null && !gender.isEmpty()) {
+            realmQuery.equalTo("sex", type);
+        }
+
+        String city = query.get("city");
+        if (city == null) {
+            city = "";
+        }
+
+        String state = query.get("state");
+        if (state == null) {
+            state = "";
+        }
+
+        if (!city.isEmpty() || !state.isEmpty()) {
+            realmQuery.beginGroup();
+            if (!city.isEmpty()) {
+                realmQuery
+                        .equalTo("city", city)
+                        .or();
+            }
+
+            if (!state.isEmpty()) {
+                realmQuery
+                        .equalTo("state", state);
+            }
+            realmQuery.endGroup();
+        }
+
+        RealmResults<PetRealm> results = realmQuery.findAll();
 
         List<Pet> pets = new ArrayList<>();
         for (PetRealm petRealm : results) {
@@ -160,6 +212,13 @@ public class PetListFragment extends Fragment implements NestedScrollView.OnScro
             newPet.setDescription(petRealm.getDescription());
             newPet.setId(petRealm.getId());
             newPet.setLastUpdate(petRealm.getLastUpdate());
+            newPet.setAnimal(petRealm.getAnimal());
+            newPet.setBreeds(petRealm.getBreeds());
+            newPet.setAge(petRealm.getAge());
+            newPet.setSex(petRealm.getSex());
+
+            Contact contact = new Contact();
+            contact.setState(petRealm.getState());
 
             List<PetMediaRealm> media = petRealm.getMedia();
             for (PetMediaRealm item : media) {
@@ -206,7 +265,7 @@ public class PetListFragment extends Fragment implements NestedScrollView.OnScro
         }
 
         if (updatedToday(query)) {
-            loadFromLocal();
+            loadFromLocal(query);
             return;
         }
 
@@ -255,6 +314,15 @@ public class PetListFragment extends Fragment implements NestedScrollView.OnScro
                                     petRealm.setName(pet.getName());
                                     petRealm.setDescription(pet.getDescription());
                                     petRealm.setLastUpdate(pet.getLastUpdate());
+                                    petRealm.setAnimal(pet.getAnimal());
+                                    petRealm.setBreeds(pet.getBreeds());
+                                    petRealm.setAge(pet.getAge());
+                                    petRealm.setSex(pet.getSex());
+
+                                    Contact contact = pet.getContact();
+                                    if (contact != null) {
+                                        petRealm.setState(contact.getState());
+                                    }
 
                                     List<PetMedia> media = pet.getMedia();
                                     for (PetMedia item : media) {

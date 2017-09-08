@@ -25,6 +25,8 @@ public class Filters {
     }
 
     public String location;
+    public String state;
+    public String city;
     public String breed;
     public String age;
     public Integer ageIndex = 0;
@@ -95,6 +97,14 @@ public class Filters {
             Date end = endDate.getTime();
             String nowAsISO = df.format(end);
             filterMap.put("endDate", nowAsISO);
+        }
+
+        if (city != null && !city.isEmpty()) {
+            filterMap.put("city", city);
+        }
+
+        if (state != null && !state.isEmpty()) {
+            filterMap.put("state", state);
         }
 
         return filterMap;

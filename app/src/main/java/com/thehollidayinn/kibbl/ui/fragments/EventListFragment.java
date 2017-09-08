@@ -25,7 +25,9 @@ import com.thehollidayinn.kibbl.data.models.Event;
 import com.thehollidayinn.kibbl.data.models.Facebook;
 import com.thehollidayinn.kibbl.data.models.Filters;
 import com.thehollidayinn.kibbl.data.models.GenericResponse;
+import com.thehollidayinn.kibbl.data.models.Location;
 import com.thehollidayinn.kibbl.data.models.Pet;
+import com.thehollidayinn.kibbl.data.models.Place;
 import com.thehollidayinn.kibbl.data.models.UserLogin;
 import com.thehollidayinn.kibbl.data.realm.EventRealm;
 import com.thehollidayinn.kibbl.data.realm.FacebookRealm;
@@ -34,6 +36,7 @@ import com.thehollidayinn.kibbl.data.remote.KibblAPIInterface;
 import com.thehollidayinn.kibbl.data.repositories.UserRepository;
 import com.thehollidayinn.kibbl.ui.activities.EventDetailActivity;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -42,6 +45,7 @@ import java.util.List;
 import java.util.Map;
 
 import io.realm.Realm;
+import io.realm.RealmQuery;
 import io.realm.RealmResults;
 import rx.Observable;
 import rx.Subscriber;
@@ -144,17 +148,76 @@ public class EventListFragment extends Fragment implements NestedScrollView.OnSc
         }
     }
 
-    private void loadFromLocal () {
+    private void loadFromLocal (Map<String, String> query) {
         realmUI = Realm.getDefaultInstance();
-        RealmResults<EventRealm> results = realmUI
-                .where(EventRealm.class)
-                .findAll();
+
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
+
+        RealmQuery<EventRealm> realmQuery = realmUI
+            .where(EventRealm.class);
+
+        String startDateString = query.get("startDate");
+        if (startDateString != null && !startDateString.isEmpty()) {
+            try {
+                Date startDate = format.parse(startDateString);
+                Log.v("keithtest", startDate.toString());
+                realmQuery.greaterThan("startTime", startDate);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+
+        String endDateString = query.get("endDate");
+        if (endDateString != null && !endDateString.isEmpty()) {
+            try {
+                Date endDate = format.parse(endDateString);
+                realmQuery.lessThan("endTime", endDate);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+
+        String city = query.get("city");
+        if (city == null) {
+            city = "";
+        }
+
+        String state = query.get("state");
+        if (state == null) {
+            state = "";
+        }
+
+        if (!city.isEmpty() || !state.isEmpty()) {
+            realmQuery.beginGroup();
+            if (!city.isEmpty()) {
+                realmQuery
+                        .equalTo("city", city)
+                        .or();
+            }
+
+            if (!state.isEmpty()) {
+                realmQuery
+                        .equalTo("state", state);
+            }
+            realmQuery.endGroup();
+        }
+
+        RealmResults<EventRealm> results = realmQuery.findAll();
 
         List<Event> events = new ArrayList<>();
         for (EventRealm eventRealm : results) {
             Event newEvent = new Event();
             newEvent.setName(eventRealm.getName());
             newEvent.setId(eventRealm.getId());
+            newEvent.setStartTime(eventRealm.getStartTime());
+            newEvent.setEndTime(eventRealm.getEndTime());
+
+            Place place = new Place();
+            Location location = new Location();
+            location.city = eventRealm.getCity();
+            location.state = eventRealm.getState();
+            place.location = location;
+            newEvent.setPlace(place);
 
             FacebookRealm facebookRealm = eventRealm.getFacebook();
             if (facebookRealm != null) {
@@ -163,8 +226,6 @@ public class EventListFragment extends Fragment implements NestedScrollView.OnSc
                 facebook.setCover(facebookRealm.getCover());
                 newEvent.setFacebook(facebook);
             }
-
-            newEvent.setStartTime(eventRealm.getStartTime());
 
             events.add(newEvent);
         }
@@ -203,7 +264,7 @@ public class EventListFragment extends Fragment implements NestedScrollView.OnSc
         }
 
         if (updatedToday(query)) {
-            loadFromLocal();
+            loadFromLocal(query);
             return;
         }
 
@@ -251,6 +312,17 @@ public class EventListFragment extends Fragment implements NestedScrollView.OnSc
                                     }
                                     // @TODO: Is there a better way to update or add items?
                                     eventRealm.setName(event.getName());
+                                    eventRealm.setStartTime(event.getStartTime());
+                                    eventRealm.setEndTime(event.getEndTime());
+
+                                    Place place = event.getPlace();
+                                    if (place != null) {
+                                        Location location = place.location;
+                                        if (location != null) {
+                                            eventRealm.setCity(location.city);
+                                            eventRealm.setState(location.state);
+                                        }
+                                    }
 
                                     Facebook facebook = event.getFacebook();
                                     if (facebook != null) {
@@ -259,8 +331,6 @@ public class EventListFragment extends Fragment implements NestedScrollView.OnSc
                                         facebookRealm.setCover(facebook.getCover());
                                         eventRealm.setFacebook(facebookRealm);
                                     }
-//
-                                    eventRealm.setStartTime(event.getStartTime());
                                 }
                             });
                         }

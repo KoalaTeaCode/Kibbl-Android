@@ -50,6 +50,7 @@ public class FiltersActivity extends AppCompatActivity implements DatePickerDial
     private Spinner genderSpinner;
     private DatePicker startDatePicker;
     private DatePicker endDatePicker;
+    private String TAG = "keithtest";
 
     ArrayAdapter<String> breedsAdapter;
     ArrayAdapter<String> dogBreedsAdapter;
@@ -170,38 +171,28 @@ public class FiltersActivity extends AppCompatActivity implements DatePickerDial
                     place.getLatLng().longitude,
                     1);
         } catch (IOException ioException) {
-            // Catch network or other I/O problems.
-//            errorMessage = getString(R.string.service_not_available);
-//            Log.e(TAG, errorMessage, ioException);
+            Log.e(TAG, ioException.toString());
         } catch (IllegalArgumentException illegalArgumentException) {
-            // Catch invalid latitude or longitude values.
-//            errorMessage = getString(R.string.invalid_lat_long_used);
-//            Log.e(TAG, errorMessage + ". " +
-//                    "Latitude = " + location.getLatitude() +
-//                    ", Longitude = " +
-//                    location.getLongitude(), illegalArgumentException);
+            Log.e(TAG, illegalArgumentException.toString());
         }
 
         // Handle case where no address was found.
         if (addresses == null || addresses.size()  == 0) {
-//            if (errorMessage.isEmpty()) {
-//                errorMessage = getString(R.string.no_address_found);
-//                Log.e(TAG, errorMessage);
-//            }
-//            deliverResultToReceiver(Constants.FAILURE_RESULT, errorMessage);
-        } else {
-            Address address = addresses.get(0);
-            ArrayList<String> addressFragments = new ArrayList<String>();
-
-            for(int i = 0; i < address.getMaxAddressLineIndex(); i++) {
-                addressFragments.add(address.getAddressLine(i));
-            }
-
-//            userLogin.setZipCode(address.getPostalCode());
-//            filters.location = address.getPostalCode();
-            userLogin.setZipCode(place.getName().toString());
-            filters.location = place.getName().toString();
+            Log.e(TAG, "No Address");
+            return;
         }
+
+        Address address = addresses.get(0);
+        ArrayList<String> addressFragments = new ArrayList<String>();
+
+        for(int i = 0; i < address.getMaxAddressLineIndex(); i++) {
+            addressFragments.add(address.getAddressLine(i));
+        }
+
+        userLogin.setZipCode(place.getName().toString());
+        filters.location = place.getName().toString();
+//        filters.state = address.getC
+        Log.v("keithtest", String.valueOf(addressFragments));
     }
 
     private void setUpView() {
@@ -212,6 +203,7 @@ public class FiltersActivity extends AppCompatActivity implements DatePickerDial
         autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
             public void onPlaceSelected(Place place) {
+                Log.v("keithtest", place.getName().toString());
                 userLogin.setPlace(place.getName().toString());
                 setZipCode(place);
             }

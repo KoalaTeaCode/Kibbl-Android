@@ -17,6 +17,9 @@ public class App extends Application {
         RealmConfiguration config = new RealmConfiguration.Builder()
                 .deleteRealmIfMigrationNeeded() // @TODO: Change this
                 .build();
+
+        // @TODO: May need to reset last check dates when a migration happens
+
         Realm.setDefaultConfiguration(config);
     }
 }

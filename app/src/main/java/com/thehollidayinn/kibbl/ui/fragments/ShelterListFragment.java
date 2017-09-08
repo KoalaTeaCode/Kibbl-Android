@@ -3,9 +3,6 @@ package com.thehollidayinn.kibbl.ui.fragments;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Resources;
-import android.content.res.TypedArray;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.NestedScrollView;
@@ -15,7 +12,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -25,8 +21,6 @@ import com.thehollidayinn.kibbl.data.models.Shelter;
 import com.thehollidayinn.kibbl.data.models.Facebook;
 import com.thehollidayinn.kibbl.data.models.Filters;
 import com.thehollidayinn.kibbl.data.models.GenericResponse;
-import com.thehollidayinn.kibbl.data.models.Shelter;
-import com.thehollidayinn.kibbl.data.models.Shelter;
 import com.thehollidayinn.kibbl.data.realm.ShelterRealm;
 import com.thehollidayinn.kibbl.data.realm.FacebookRealm;
 import com.thehollidayinn.kibbl.data.remote.ApiUtils;
@@ -40,6 +34,7 @@ import java.util.Date;
 import java.util.List;
 
 import io.realm.Realm;
+import io.realm.RealmQuery;
 import io.realm.RealmResults;
 import rx.Observable;
 import rx.Subscriber;
@@ -128,9 +123,36 @@ public class ShelterListFragment extends Fragment implements NestedScrollView.On
 
     private void loadFromLocal () {
         realmUI = Realm.getDefaultInstance();
-        RealmResults<ShelterRealm> results = realmUI
-                .where(ShelterRealm.class)
-                .findAll();
+
+        RealmQuery<ShelterRealm> realmQuery = realmUI
+                .where(ShelterRealm.class);
+
+        String city = filters.toMap().get("city");
+        if (city == null) {
+            city = "";
+        }
+
+        String state = filters.toMap().get("state");
+        if (state == null) {
+            state = "";
+        }
+
+        if (!city.isEmpty() || !state.isEmpty()) {
+            realmQuery.beginGroup();
+            if (!city.isEmpty()) {
+                realmQuery
+                        .equalTo("city", city)
+                        .or();
+            }
+
+            if (!state.isEmpty()) {
+                realmQuery
+                        .equalTo("state", state);
+            }
+            realmQuery.endGroup();
+        }
+
+        RealmResults<ShelterRealm> results = realmQuery.findAll();
 
         List<Shelter> shelters = new ArrayList<>();
         for (ShelterRealm shelterRealm : results) {
@@ -138,6 +160,8 @@ public class ShelterListFragment extends Fragment implements NestedScrollView.On
             newShelter.setName(shelterRealm.getName());
             newShelter.setId(shelterRealm.getId());
             newShelter.setCreatedAt(shelterRealm.getCreatedAt());
+            newShelter.setState(shelterRealm.getState());
+            newShelter.setCity(shelterRealm.getCity());
 
             FacebookRealm facebookRealm = shelterRealm.getFacebook();
             if (facebookRealm != null) {
@@ -226,6 +250,8 @@ public class ShelterListFragment extends Fragment implements NestedScrollView.On
                                     // @TODO: Is there a better way to update or add items?
                                     shelterRealm.setName(shelter.getName());
                                     shelterRealm.setCreatedAt(shelter.getCreatedAt());
+                                    shelterRealm.setState(shelter.getState());
+                                    shelterRealm.setCity(shelter.getCity());
 
                                     Facebook facebook = shelter.getFacebook();
                                     if (facebook != null) {

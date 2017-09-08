@@ -17,6 +17,35 @@ public class EventRealm extends RealmObject {
     private String name;
     private FacebookRealm facebook;
     private Date startTime;
+    private String city;
+    private String state;
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
+
+
+    public Date getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(Date endTime) {
+        this.endTime = endTime;
+    }
+
+    private Date endTime;
 
     public String getId() {
         return _id;
