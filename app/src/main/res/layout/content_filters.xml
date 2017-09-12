@@ -23,15 +23,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/locationText"
-            android:layout_marginTop="52dp"
-            android:layout_centerHorizontal="true" />
+            android:layout_marginTop="52dp" />
 
         <fragment
             android:id="@+id/place_autocomplete_fragment"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/locationText"
             android:layout_centerHorizontal="true"
+            android:background="@drawable/border"
+            android:layout_marginTop="10dp"
             android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
             />
 
@@ -41,15 +42,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/typeTextView"
-            android:layout_marginTop="45dp"
-            android:layout_below="@+id/place_autocomplete_fragment"
-            android:layout_centerHorizontal="true" />
+            android:layout_marginTop="15dp"
+            android:layout_below="@+id/place_autocomplete_fragment" />
 
         <Spinner
+            android:layout_marginTop="10dp"
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:id="@+id/typeSpinner"
             android:layout_below="@+id/typeTextView"
+            android:background="@drawable/border"
             android:layout_centerHorizontal="true" />
 
         <TextView
@@ -58,17 +60,17 @@
             android:layout_height="wrap_content"
             android:id="@+id/breedText"
             android:layout_below="@+id/typeSpinner"
-            android:layout_marginTop="12dp"
-            style="@style/TextAppearance.AppCompat.Headline"
-            android:layout_centerHorizontal="true" />
+            android:layout_marginTop="15dp"
+            style="@style/TextAppearance.AppCompat.Headline" />
 
         <AutoCompleteTextView
             xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/breedAutoComplete"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="60dp"
             android:layout_below="@+id/breedText"
-            android:layout_marginTop="12dp"
+            android:background="@drawable/border"
+            android:layout_marginTop="10dp"
             android:layout_centerHorizontal="true"/>
 
         <TextView
@@ -77,14 +79,15 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/ageTextView"
-            android:layout_marginTop="45dp"
-            android:layout_below="@+id/breedAutoComplete"
-            android:layout_centerHorizontal="true" />
+            android:layout_marginTop="15dp"
+            android:layout_below="@+id/breedAutoComplete" />
 
         <Spinner
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:id="@+id/ageSpinner"
+            android:background="@drawable/border"
+            android:layout_marginTop="10dp"
             android:layout_below="@+id/ageTextView"
             android:layout_centerHorizontal="true" />
 
@@ -94,8 +97,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/ageSpinner"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="32dp"
+            android:layout_marginTop="15dp"
             android:id="@+id/genderTextView" />
 
         <Spinner
@@ -104,6 +106,8 @@
             android:layout_below="@+id/genderTextView"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
+            android:background="@drawable/border"
+            android:layout_marginTop="10dp"
             android:id="@+id/genderSpinner"
             />
 
@@ -113,8 +117,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/genderSpinner"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="32dp"
+            android:layout_marginTop="15dp"
             android:id="@+id/startDateTextView" />
 
         <DatePicker
@@ -132,8 +135,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/startDatePicker"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="32dp"
+            android:layout_marginTop="15dp"
             android:id="@+id/endDateTextView" />
 
         <DatePicker
@@ -146,12 +148,13 @@
 
         <Button
             android:text="Find"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/endDatePicker"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="32dp"
-            android:textSize="28dp"
+            android:layout_marginTop="15dp"
+            android:padding="5dp"
+            android:textSize="22dp"
             android:id="@+id/findButton"
             style="@style/Widget.AppCompat.Button.Colored" />
     </RelativeLayout>
