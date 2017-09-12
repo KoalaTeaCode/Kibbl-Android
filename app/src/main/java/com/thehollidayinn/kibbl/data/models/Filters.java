@@ -40,6 +40,7 @@ public class Filters {
     public Calendar startDate;
     public Calendar endDate;
     public Locale locale;
+    public String search;
 
     public Map<String, String> toMap() {
         Map<String, String> filterMap = new HashMap<>();
@@ -105,6 +106,10 @@ public class Filters {
 
         if (state != null && !state.isEmpty()) {
             filterMap.put("state", state);
+        }
+
+        if (search != null && !search.isEmpty()) {
+            filterMap.put("search", search);
         }
 
         return filterMap;

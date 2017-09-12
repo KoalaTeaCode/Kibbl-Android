@@ -11,6 +11,8 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -18,6 +20,7 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -196,6 +199,30 @@ public class FiltersActivity extends AppCompatActivity implements DatePickerDial
     }
 
     private void setUpView() {
+
+        EditText searchEditText = (EditText) findViewById(R.id.searchEditText);
+
+        if (filters.search != null) {
+            searchEditText.setText(filters.search);
+        }
+
+        searchEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void afterTextChanged(Editable s) {}
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start,
+                                          int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start,
+                                      int before, int count) {
+                if(s.length() != 0)
+                    filters.search = s.toString();
+            }
+        });
+
         PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)
                 getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
         autocompleteFragment.setText(userLogin.getPlace());
@@ -203,7 +230,6 @@ public class FiltersActivity extends AppCompatActivity implements DatePickerDial
         autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
             public void onPlaceSelected(Place place) {
-                Log.v("keithtest", place.getName().toString());
                 userLogin.setPlace(place.getName().toString());
                 setZipCode(place);
             }

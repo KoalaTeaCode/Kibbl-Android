@@ -18,12 +18,30 @@
         tools:showIn="@layout/activity_filters">
 
         <TextView
+            android:text="Search"
+            style="@style/TextAppearance.AppCompat.Headline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/searchTextView"
+            android:layout_marginTop="52dp" />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:id="@+id/searchEditText"
+            android:background="@drawable/border"
+            android:layout_marginTop="10dp"
+            android:layout_below="@+id/searchTextView"
+            android:layout_centerHorizontal="true" />
+
+        <TextView
             android:text="Location"
             style="@style/TextAppearance.AppCompat.Headline"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/locationText"
-            android:layout_marginTop="52dp" />
+            android:layout_below="@+id/searchEditText"
+            android:layout_marginTop="15dp" />
 
         <fragment
             android:id="@+id/place_autocomplete_fragment"

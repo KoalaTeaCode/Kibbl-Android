@@ -204,6 +204,8 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void loadPage() {
+        filters.search = "";
+        
         if (this.activePage == 0) {
             bottomNavigationView.getMenu().getItem(0).setChecked(true);
             EventListFragment fragment = EventListFragment.newInstance("", null);
