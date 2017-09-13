@@ -263,7 +263,7 @@ public class EventListFragment extends Fragment implements NestedScrollView.OnSc
             query.put("shelterId", shelterId);
         }
 
-        if (updatedToday(query)) {
+        if (updatedToday(query) && (filters.search == null || filters.search.isEmpty())) {
             loadFromLocal(query);
             return;
         }
@@ -279,7 +279,9 @@ public class EventListFragment extends Fragment implements NestedScrollView.OnSc
                     @Override
                     public void onCompleted() {
                         dialog.hide();
-                        userLogin.setCacheUpdateDateForKey("Events-" + query.toString(), new Date());
+                        if (filters.search == null || filters.search.isEmpty()) {
+                            userLogin.setCacheUpdateDateForKey("Events-" + query.toString(), new Date());
+                        }
                     }
 
                     @Override

@@ -205,7 +205,7 @@ public class ShelterListFragment extends Fragment implements NestedScrollView.On
             filters.createdAtBefore = createdAtBefore;
         }
 
-        if (updatedToday()) {
+        if (updatedToday() && (filters.search == null || filters.search.isEmpty())) {
             loadFromLocal();
             return;
         }
@@ -221,7 +221,9 @@ public class ShelterListFragment extends Fragment implements NestedScrollView.On
                     public void onCompleted() {
                         dialog.hide();
                         loading = false;
-                        userLogin.setCacheUpdateDateForKey("Shelters-" + filters.toMap().toString(), new Date());
+                        if (filters.search == null || filters.search.isEmpty()) {
+                            userLogin.setCacheUpdateDateForKey("Shelters-" + filters.toMap().toString(), new Date());
+                        }
                     }
 
                     @Override

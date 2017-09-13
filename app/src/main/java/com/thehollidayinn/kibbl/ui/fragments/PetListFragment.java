@@ -264,7 +264,7 @@ public class PetListFragment extends Fragment implements NestedScrollView.OnScro
             query.put("shelterId", shelterId);
         }
 
-        if (updatedToday(query)) {
+        if (updatedToday(query) && (filters.search == null || filters.search.isEmpty())) {
             loadFromLocal(query);
             return;
         }
@@ -279,7 +279,9 @@ public class PetListFragment extends Fragment implements NestedScrollView.OnScro
                     @Override
                     public void onCompleted() {
                         dialog.hide();
-                        userLogin.setCacheUpdateDateForKey("Pets-" + query.toString(), new Date());
+                        if (filters.search == null || filters.search.isEmpty()) {
+                            userLogin.setCacheUpdateDateForKey("Pets-" + query.toString(), new Date());
+                        }
                     }
 
                     @Override
