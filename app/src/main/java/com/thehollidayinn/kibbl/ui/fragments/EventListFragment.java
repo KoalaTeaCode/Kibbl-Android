@@ -160,11 +160,13 @@ public class EventListFragment extends Fragment implements NestedScrollView.OnSc
         if (startDateString != null && !startDateString.isEmpty()) {
             try {
                 Date startDate = format.parse(startDateString);
-                Log.v("keithtest", startDate.toString());
                 realmQuery.greaterThan("startTime", startDate);
             } catch (ParseException e) {
                 e.printStackTrace();
             }
+        } else {
+            Date startDate = new Date();
+            realmQuery.greaterThan("startTime", startDate);
         }
 
         String endDateString = query.get("endDate");
