@@ -8,8 +8,8 @@ android {
         applicationId "com.thehollidayinn.kibbl"
         minSdkVersion 17
         targetSdkVersion 25
-        versionCode 5
-        versionName "1.03"
+        versionCode 8
+        versionName "1.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
